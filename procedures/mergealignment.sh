@@ -66,12 +66,11 @@ done
 
 # Defaults if No Arguments Passed
 ncoresDef="16"
-memoryDef="8G"
+memoryDef="5G"
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-index=${indexOpt:-$indexDef}
  
 printf "\nPARAMETERS: 
 Picard Directory    = $jar
@@ -81,6 +80,7 @@ Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
+Cores               = $ncores
 Memory              = $memory
 \n\n"
 
@@ -103,8 +103,17 @@ files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experimen
 # 
 
 printf "\n\nSamtools Merge"
-printf "\n\nCommand:\nsamtools merge $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
-samtools merge $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
+printf "\n\nCommand:\nsamtools merge -r $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam $files"
+samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam $files
 printf "\n\nSamtools Merge Complete"
+
+#
+# Sort Merged BAM
+#
+
+printf "\n\nSamtools Sort"
+printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
+samtools sort -m $memory -@ $ncores $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+printf "\n\nSamtools Sort Complete"
 
 printf "\n\nDone\n"
