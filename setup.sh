@@ -1,3 +1,12 @@
+# Dependencies
+#
+# Java          1.8.0_112
+# GATK          3.6+
+# Picard Tools  2.6.0
+# Samtools      1.3.1
+# BWA           7.15
+# Seqtk         1.2-r94
+
 # Processing Steps:
 # 
 # Step      File        Function        Output Directory

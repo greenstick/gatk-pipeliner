@@ -2,66 +2,65 @@
 
 # Assign Arguments
 for i in "$@"
-do
-case $i in
+    do case $i in
 
-# Standard Arguments
+    # Standard Arguments
 
-    -r=*|--ref=*)
-    reference="${i#*=}"
-    shift # Reference Sequence Directory
-    ;;
-    -f=*|--fileprefix=*)
-    fileprefix="${i#*=}"
-    shift # Access & Write Files With This Prefix
-    ;;
-    -s=*|--subset=*)
-    subset="${i#*=}"
-    shift # Access & Write Files With This Subset
-    ;;
-    -c=*|--condition=*)
-    condition="${i#*=}"
-    shift # Access & Write Files With This Condition
-    ;;
-    -x=*|--experiment=*)
-    experiment="${i#*=}"
-    shift # Access & Write Files With This Experiment
-    ;;
-    -p=*|--parameters=*)
-    parameters="${i#*=}"
-    shift # Access & Write Files With This Parameter Set
-    ;;
-    -q=*|--qualitymodel=*)
-    qualitymodel="${i#*=}"
-    shift # Access & Write Files With This Quality Model
-    ;;
+        -r=*|--ref=*)
+        reference="${i#*=}"
+        shift # Reference Sequence Directory
+        ;;
+        -f=*|--fileprefix=*)
+        fileprefix="${i#*=}"
+        shift # Access & Write Files With This Prefix
+        ;;
+        -s=*|--subset=*)
+        subset="${i#*=}"
+        shift # Access & Write Files With This Subset
+        ;;
+        -c=*|--condition=*)
+        condition="${i#*=}"
+        shift # Access & Write Files With This Condition
+        ;;
+        -x=*|--experiment=*)
+        experiment="${i#*=}"
+        shift # Access & Write Files With This Experiment
+        ;;
+        -p=*|--parameters=*)
+        parameters="${i#*=}"
+        shift # Access & Write Files With This Parameter Set
+        ;;
+        -q=*|--qualitymodel=*)
+        qualitymodel="${i#*=}"
+        shift # Access & Write Files With This Quality Model
+        ;;
 
-# Additional Arguments
+    # Additional Arguments
 
-    -j=*|--jar=*)
-    jar="${i#*=}"
-    shift
-    ;;
+        -j=*|--jar=*)
+        jar="${i#*=}"
+        shift
+        ;;
 
-# Optional Arguments With Defaults
+    # Optional Arguments With Defaults
 
-    -n=*|--ncores=*)
-    ncoresOpt="${i#*=}"
-    shift # Number of Cores to Use
-    ;;
-    -m=*|--memory=*)
-    memoryOpt="${i#*=}"
-    shift # Per Core Memory Requirement
-    ;;
+        -n=*|--ncores=*)
+        ncoresOpt="${i#*=}"
+        shift # Number of Cores to Use
+        ;;
+        -m=*|--memory=*)
+        memoryOpt="${i#*=}"
+        shift # Per Core Memory Requirement
+        ;;
 
-# Invalid Argument Handler
+    # Invalid Argument Handler
 
-    *)
-    # invalid option
-    printf "Invalid/Unused Parameter: $i"
-    ;;
-    
-esac
+        *)
+        # invalid option
+        printf "Invalid/Unused Parameter: $i"
+        ;;
+        
+    esac
 done
 
 # Defaults if No Arguments Passed
