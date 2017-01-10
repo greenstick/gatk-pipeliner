@@ -195,8 +195,8 @@ elif [ "$align" = "sampe" ]; then
                 suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Split Paired End FastQ Files
-                grep '@.*/1' -A 3 --no-group-separator $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq
-                grep '@.*/2' -A 3 --no-group-separator $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq
+                seqtk seq -l0 -1 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq
+                seqtk seq -l0 -2 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq
                 # BWA aln
                 printf "\n\nCommand:\nbwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
                 bwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai
