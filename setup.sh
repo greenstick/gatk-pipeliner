@@ -32,10 +32,10 @@ pipeline_dir="MRD_aml/data/dream-synthetic/pipeline"
 printf "\nExporting Locations...\n"
 
 # Write Pipeline Home Directory to ~/.bash_profile
-# echo 'export $PIPELINE_HOME="$pipeline_dir"' >> ~/.bash_profile
+echo 'export $PIPELINE_HOME="$pipeline_dir"' >> ~/.bash_profile
 
 # Set Pipeline Home Directory
-export PIPELINE_HOME="$root_dir/$pipeline_dir"
+# export PIPELINE_HOME="$root_dir/$pipeline_dir"
 
 #
 # Scaffolding
