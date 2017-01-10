@@ -35,7 +35,7 @@ printf "\nExporting Locations...\n"
 echo 'export $PIPELINE_HOME="$pipeline_dir"' >> ~/.bash_profile
 
 # Set Pipeline Home Directory
-# export PIPELINE_HOME="$root_dir/$pipeline_dir"
+export PIPELINE_HOME="$root_dir/$pipeline_dir"
 
 #
 # Scaffolding
