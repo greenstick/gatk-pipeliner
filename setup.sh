@@ -22,6 +22,7 @@
 # 10.       bam         -- contest      -> model/{}/param/{}/recal/{}/log/contest
 # 11.       bam         -- mutect2      -> model/{}/param/{}/recal/{}/log/mutect2
 
+
 #
 # References
 #
@@ -38,13 +39,19 @@ pipeline_dir=MRD_aml/data/dream-synthetic/pipeline
 # Exports
 #
 
-printf "\nExporting Locations...\n"
-
-# Write Pipeline Home Directory to ~/.bash_profile
-echo "export PIPELINE_HOME=$root_dir/$pipeline_dir" >> ~/.bash_profile
-
-# Set Pipeline Home Directory
-export PIPELINE_HOME=$root_dir/$pipeline_dir
+while true; do
+    read -p "Write pipeline home directory export to ~/.bash_profile (default is yes)?" yn
+    case $yn in
+        [Yy]* ) (printf "\nExporting Locations...\n"
+            # Write Pipeline Home Directory to ~/.bash_profile
+            echo "export PIPELINE_HOME=$root_dir/$pipeline_dir" >> ~/.bash_profile
+            # Set Pipeline Home Directory
+            export PIPELINE_HOME=$root_dir/$pipeline_dir
+            ); break;;
+        [Nn]* ) break;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
 
 #
 # Scaffolding

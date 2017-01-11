@@ -95,6 +95,7 @@ Memory              = $memory
 \n"
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
@@ -102,8 +103,6 @@ recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$quali
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning BWA Script\n"
-
-cd $dataDir
 
 #
 # BWA Index

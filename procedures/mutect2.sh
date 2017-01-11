@@ -92,6 +92,7 @@ Cores               = $ncores
 \n\n"
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
@@ -177,8 +178,6 @@ printf "\n\nMuTect2 Complete"
 printf "\n\nCopying VCFs to I/O Directory..."
 cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/
 printf "\n\nDone"
-
-cd ../procedures
 
 printf "\n\nDone\n"
 

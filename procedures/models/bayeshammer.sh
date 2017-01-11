@@ -39,13 +39,6 @@ for i in "$@"
         shift # Access & Write Files With This Read Group
         ;;
 
-    # Additional Arguments
-
-        -a=*|--arguments=*)
-        arguments="${i#*=}"
-        shift
-        ;;
-
     # Optional Arguments With Defaults
 
         -n=*|--ncores=*)
@@ -67,33 +60,84 @@ for i in "$@"
 done
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
-# 
-# Run BQSR
-# 
-
 cd $dataDir
 
-printf "\n\nRunning BayesHammer"
+# 
+# Run BayesHammer
+# 
 
-# Quorum
+files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
 
-printf "\n\nCommand:\n \
-$BAYESHAMMER --prefix experiments/bayeshammer/$prefix.$subset.$condition.bayeshammer --no-discard --debug"
+if [ "$parameters" = "default" ]; then
+    
+    printf "\n\nRunning BayesHammer - Default Parameters"
+    for file in $files
+        # In Parallel
+        do (
+            # Get Read Group to Process
+            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+            readgroup=$(echo "$suffix" | sed "s/.bam$//")
+            # Call Error Model
+            printf "\n\nCommand:\n
+            python $BAYESHAMMER \
+            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --threads $ncores \
+            --memory $memory \
+            --only-error-correction \
+            --no-discard \
+            --debug"
+            python $BAYESHAMMER \
+            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --threads $ncores \
+            --memory $memory \
+            --only-error-correction \
+            --no-discard \
+            --debug
+        ) &
+    done
+    wait # Prevent Premature Exiting of Script
 
-$BAYESHAMMER \
--o $paramDir \
---12 fastq/$fileprefix.$subset.$condition.$readgroup.fastq \
---only-error-correction \
---threads 4 \
---memory 92
+elif [ "$parameters" = "custom" ]; then
+    
+    printf "\n\nRunning BayesHammer - Custom Parameters"
+    for file in $files
+        # In Parallel
+        do (
+            # Get Read Group to Process
+            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+            readgroup=$(echo "$suffix" | sed "s/.bam$//")
+            # Call Error Model
+            printf "\n\nCommand:\n
+            python $BAYESHAMMER \
+            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --threads $ncores \
+            --memory $memory \
+            --only-error-correction \
+            --no-discard \
+            --debug"
+            python $BAYESHAMMER \
+            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --threads $ncores \
+            --memory $memory \
+            --only-error-correction \
+            --no-discard \
+            --debug
+        ) &
+    done
+    wait # Prevent Premature Exiting of Script
 
-cd ../procedures
+fi
 
 printf "\n\nDone\n"
 

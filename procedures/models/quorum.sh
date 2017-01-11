@@ -34,6 +34,13 @@ for i in "$@"
         qualitymodel="${i#*=}"
         shift # Access & Write Files With This Quality Model
         ;;
+        -g=*|--readgroup=*)
+        readgroup="${i#*=}"
+        shift # Access & Write Files With This Read Group
+        ;;
+
+    # Optional Arguments With Defaults
+
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
         shift # Number of Cores to Use
@@ -41,13 +48,6 @@ for i in "$@"
         -m=*|--memory=*)
         memoryOpt="${i#*=}"
         shift # Per Core Memory Requirement
-        ;;
-
-    # Additional Arguments
-
-        -a=*|--arguments=*)
-        arguments="${i#*=}"
-        shift
         ;;
 
     # Invalid Argument Handler
@@ -62,37 +62,88 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="6"
 memoryDef="20G"
-kmerDef="24"
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-kmer=${kmerOpt:-$kmerDef}
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
+cd $dataDir
+
 # 
 # Run Quorum
 # 
 
-cd ../$subset
-
 printf "\n\nRunning Quorum"
 
-# Quorum
-printf "\n\nCommand:\n \
-$QUORUM --prefix $prefix.$subset.quorum.$condition.fastq --size 20G --kmer-len $kmer --no-discard --debug"
-$QUORUM --prefix $prefix.$subset.quorum.$condition.fastq --size 20G --kmer-len $kmer --no-discard --debug
+files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
 
-# Move Output to 
-mv experiments/$experiment/fastq/pre/$prefix.$subset.$experiment.$condition.fastq experiments/$experiment/fastq/post/$prefix.$subset.$experiment.$condition.fastq
+if [ "$parameters" = "default" ]; then
+    
+    printf "\n\nRunning BayesHammer - Default Parameters"
+    for file in $files
+        # In Parallel
+        do (
+            # Get Read Group to Process
+            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+            readgroup=$(echo "$suffix" | sed "s/.bam$//")
+            # Call Error Model
+            printf "\n\nCommand:\n \
+            $QUORUM \
+            $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 20G \
+            --no-discard \
+            --debug"
+            $QUORUM \
+            $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 20G \
+            --no-discard \
+            --debug
+        ) &
+    done
+    wait # Prevent Premature Exiting of Script
 
-cd ../procedures
+elif [ "$parameters" = "custom" ]; then
+    
+    printf "\n\nRunning BayesHammer - Custom Parameters"
+    for file in $files
+        # In Parallel
+        do (
+            # Get Read Group to Process
+            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+            readgroup=$(echo "$suffix" | sed "s/.bam$//")
+            # Call Error Model
+            printf "\n\nCommand:\n \
+            $QUORUM \
+            $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 20G \
+            --no-discard \
+            --debug"
+            $QUORUM \
+            $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+            --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 20G \
+            --no-discard \
+            --debug
+        ) &
+    done
+    wait # Prevent Premature Exiting of Script
+
+fi
 
 printf "\n\nDone\n"
 

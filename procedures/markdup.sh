@@ -84,6 +84,7 @@ Memory              = $memory
 \n\n"
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
@@ -104,14 +105,14 @@ if [ "$experiment" = "norealign" ]; then
     printf "\n\nMarkDuplicates Start"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar MarkDuplicates \
-    I=downloaded/$fileprefix.$subset.$condition.bam \
+    I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
     O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
     PG=null \
     TMP_DIR=$tmpDir\n"
     java -Xmx$memory \
     -jar $jar MarkDuplicates \
-    I=downloaded/$fileprefix.$subset.$condition.bam \
+    I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
     O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
     PG=null \
@@ -128,14 +129,14 @@ else
     printf "\n\nSorting BAM"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar SortSam \ 
-    I=$paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.sam \ 
-    O=$paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.bam \ 
+    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \ 
+    O=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \ 
     SORT_ORDER=coordinate \
     TMP_DIR=$tmpDir\n"
     java -Xmx$memory \
     -jar $jar SortSam \
-    I=$paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.sam \
-    O=$paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+    O=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     SORT_ORDER=coordinate \
     TMP_DIR=$tmpDir
     printf "\n\nSorting Complete"
@@ -154,7 +155,7 @@ else
     TMP_DIR=$tmpDir\n"
     java -Xmx$memory \
     -jar $jar MarkDuplicates \
-    I=$paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
     PG=null \
@@ -171,8 +172,6 @@ printf "\n\nIndexing BAM Output"
 printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
 samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
 printf "\n\nBAM Indexing Complete"
-
-cd ../procedures
 
 printf "\n\nDone\n"
 

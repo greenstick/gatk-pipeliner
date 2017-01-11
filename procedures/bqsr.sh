@@ -85,6 +85,7 @@ Cores               = $ncores
 \n\n"
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
@@ -96,8 +97,6 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 # 
 
 printf "\n\nRunning BQSR Script"
-
-cd $dataDir
 
 if [ "$qualitymodel" = "nobqsr" ]; then
 
@@ -217,7 +216,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
     rm $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai
     printf "\n\nBAM Indexing Complete"
-    cd ../procedures
+
 fi
 
 printf "\n\nDone\n"

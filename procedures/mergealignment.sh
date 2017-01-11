@@ -84,6 +84,7 @@ Memory              = $memory
 \n\n"
 
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
@@ -107,12 +108,12 @@ samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$p
 printf "\n\nSamtools Merge Complete"
 
 #
-# Sort Merged BAM
+# Index Merged BAM
 #
 
-printf "\n\nSamtools Sort"
-printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
-samtools sort -m $memory -@ $ncores $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam
-printf "\n\nSamtools Sort Complete"
+printf "\n\nIndexing BAM Output"
+printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
+samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+printf "\n\nBAM Indexing Complete"
 
 printf "\n\nDone\n"
