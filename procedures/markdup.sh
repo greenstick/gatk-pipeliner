@@ -138,18 +138,8 @@ else
     # 
 
     printf "\n\nSorting BAM"
-    printf "\n\nCommand:\njava -Xmx$memory \
-    -jar $jar SortSam \ 
-    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \ 
-    O=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \ 
-    SORT_ORDER=coordinate \
-    TMP_DIR=$tmpDir\n"
-    java -Xmx$memory \
-    -jar $jar SortSam \
-    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    O=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    SORT_ORDER=coordinate \
-    TMP_DIR=$tmpDir
+    printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
+    samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
     printf "\n\nSorting Complete"
 
     #
@@ -157,8 +147,8 @@ else
     #
 
     printf "\n\nIndexing BAM Output"
-    printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
-    samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+    printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
+    samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
     printf "\n\nBAM Indexing Complete"
 
     #
@@ -175,7 +165,7 @@ else
     TMP_DIR=$tmpDir\n"
     java -Xmx$memory \
     -jar $jar MarkDuplicates \
-    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
     O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
     PG=null \

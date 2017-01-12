@@ -52,7 +52,8 @@ logging_dir=$pipeline_dir/logs
 #
 
 while true; do
-    IFS= read -p "\nWrite pipeline exports to ~/.bash_profile & ~/.bashrc(default is yes)? " yn
+    echo
+    IFS= read -p "Write pipeline exports to ~/.bash_profile & ~/.bashrc(default is yes)? " yn
     case $yn in
         [Yy]* ) (
                 printf "Exporting Directory Locations...\n"
@@ -100,6 +101,7 @@ done
 #
 
 while true; do
+    echo
     IFS= read -p "\nEnforce TMUX session logging via ~/.bash_profile & ~/.bashrc (default is yes)? " yn
     case $yn in
         [Yy]* )  
