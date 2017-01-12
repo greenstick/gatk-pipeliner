@@ -91,8 +91,8 @@ files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experimen
 # 
 
 printf "\n\nSamtools Merge"
-printf "\n\nCommand:\nsamtools merge -r $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam $files"
-samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam $files
+printf "\n\nCommand:\nsamtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
+samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
 printf "\n\nSamtools Merge Complete"
 
 printf "\n\nDone\n"

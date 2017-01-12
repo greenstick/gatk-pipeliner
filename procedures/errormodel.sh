@@ -346,18 +346,8 @@ case "$experiment" in
     ;;
 
     "norealign")
-
         printf "\n\nNo Realignment Selected"
-        printf "\n\nMoving FastQ to Merged Directory...\n"
-        files=$(echo $(ls $dataDir/downloaded/$fileprefix.$subset.$condition.ba*))
-        for file in $files
-            # In Parallel
-            do (
-                suffix=$(echo "$file" | sed "s|$dataDir/downloaded/$fileprefix.$subset.$condition.||")
-                cp $file $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameter.$suffix
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
+        printf "\n\nNothing to do...Exiting"
     ;;
 
     # Catch Any Invalid Error Models & Output Error
