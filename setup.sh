@@ -52,31 +52,36 @@ logging_dir=$pipeline_dir/logs
 #
 
 while true; do
-    IFS= read -p "\nWrite pipeline exports to ~/.bash_profile (default is yes)? " yn
+    IFS= read -p "\nWrite pipeline exports to ~/.bash_profile & ~/.bashrc(default is yes)? " yn
     case $yn in
         [Yy]* ) (
                 printf "Exporting Directory Locations...\n"
 
                 # Header for Bash Profile
                 echo -e '\n#\n# Pipeline Management\n#' >> ~/.bash_profile
+                echo -e '\n#\n# Pipeline Management\n#' >> ~/.bashrc
 
                 # Write Pipeline Home Directory to ~/.bash_profile
                 echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> ~/.bashrc
                 # Set Pipeline Home Directory
                 export PIPELINE_HOME=$pipeline_dir
 
                 # Write Pipeline Output Directory to ~/.bash_profile
                 echo -e "\nexport PIPELINE_OUT=$output_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_OUT=$output_dir" >> ~/.bashrc
                 # Set Pipeline Output Directory
                 export PIPELINE_OUT=$output_dir
                 
                 # Write Pipeline Reference Directory to ~/.bash_profile
                 echo -e "\nexport PIPELINE_REF=$reference_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_REF=$reference_dir" >> ~/.bashrc
                 # Set Pipeline Reference Directory
                 export PIPELINE_REF=$reference_dir
                 
                 # Write Pipeline Logging Directory to ~/.bash_profile
                 echo -e "\nexport PIPELINE_LOG=$logging_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_LOG=$logging_dir" >> ~/.bashrc
                 # Set Pipeline Logging Directory
                 export PIPELINE_LOG=$logging_dir
 
@@ -95,11 +100,12 @@ done
 #
 
 while true; do
-    IFS= read -p "\nEnforce TMUX session logging via ~/.bash_profile (default is yes)? " yn
+    IFS= read -p "\nEnforce TMUX session logging via ~/.bash_profile & ~/.bashrc (default is yes)? " yn
     case $yn in
         [Yy]* )  
             # Inject Logging Automation Script to ~/.bash_profile
             echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> ~/.bash_profile
+            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> ~/.bashrc
             break
             ;;
         [Nn]* ) 
