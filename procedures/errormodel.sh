@@ -364,6 +364,7 @@ case "$experiment" in
         wait # Prevent Premature Exiting of Script
     ;;
 
+    # Catch Any Invalid Error Models & Output Error
     *)
 
     printf "\n\nInvalid Experiment (Error Model) Parameter: $experiment"

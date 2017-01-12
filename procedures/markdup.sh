@@ -44,6 +44,10 @@ for i in "$@"
 
     # Optional Arguments With Defaults
 
+        -b=*|--buildindex=*)
+        indexOpt="${i#*=}"
+        shift # Build BAM Index?
+        ;;
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
         shift # Number of Cores to Use
@@ -66,10 +70,12 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="12"
 memoryDef="6G"
+indexDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
+index=${indexOpt:-$indexDef}
 
 printf "\nPARAMETERS:
 Picard Directory    = $jar
@@ -79,6 +85,7 @@ Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
+Build BAM Index     = $index
 Recalibration Model = $qualitymodel
 Memory              = $memory
 \n\n"
@@ -119,11 +126,20 @@ if [ "$experiment" = "norealign" ]; then
     TMP_DIR=$tmpDir
     printf "\n\nMark Duplicates Complete"
 
-# Otherwise, Grab Data From Post-Align Directory & Sort
+    #
+    # Create New BAM Index
+    #
+
+    printf "\n\nIndexing BAM Output"
+    printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
+    samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+    printf "\n\nBAM Indexing Complete"
+
+# Otherwise, Grab Data From Merged Alignment Directory & Sort
 else
 
     # 
-    # Sort Bam
+    # Sort BAM
     # 
 
     printf "\n\nSorting BAM"
@@ -142,13 +158,22 @@ else
     printf "\n\nSorting Complete"
 
     #
+    # Create New BAM Index
+    #
+
+    printf "\n\nIndexing BAM Output"
+    printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
+    samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+    printf "\n\nBAM Indexing Complete"
+
+    #
     # Mark Duplicates
     #
 
     printf "\n\nMarkDuplicates Start"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar MarkDuplicates \
-    I=$paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+    I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
     PG=null \
@@ -162,16 +187,16 @@ else
     TMP_DIR=$tmpDir
     printf "\n\nMark Duplicates Complete"
 
+    #
+    # Create New BAM Index
+    #
+
+    printf "\n\nIndexing BAM Output"
+    printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
+    samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+    printf "\n\nBAM Indexing Complete"
+
 fi
-
-#
-# Create New BAM Index (Not Strictly Neccessary, Could Copy the Old One, but Does Appear to Prevent Downstream Errors)
-#
-
-printf "\n\nIndexing BAM Output"
-printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
-samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
-printf "\n\nBAM Indexing Complete"
 
 printf "\n\nDone\n"
 

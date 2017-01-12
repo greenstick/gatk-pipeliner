@@ -35,13 +35,6 @@ for i in "$@"
         shift # Access & Write Files With This Quality Model
         ;;
 
-    # Additional Arguments
-
-        -j=*|--jar=*)
-        jar="${i#*=}"
-        shift
-        ;;
-
     # Optional Arguments With Defaults
 
         -n=*|--ncores=*)
@@ -106,14 +99,5 @@ printf "\n\nSamtools Merge"
 printf "\n\nCommand:\nsamtools merge -r $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam $files"
 samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.merged.bam $files
 printf "\n\nSamtools Merge Complete"
-
-#
-# Index Merged BAM
-#
-
-printf "\n\nIndexing BAM Output"
-printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
-samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam
-printf "\n\nBAM Indexing Complete"
 
 printf "\n\nDone\n"

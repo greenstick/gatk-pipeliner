@@ -119,7 +119,6 @@ for file in $files
         -jar $jar SamToFastq \
         I=$file \
         F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        OUTPUT_PER_RG=true \
         INTERLEAVE=true \
         INCLUDE_NON_PF_READS=true \
         TMP_DIR=$tmpDir\n"
@@ -127,7 +126,6 @@ for file in $files
         -jar $jar SamToFastq \
         I=$file \
         F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        OUTPUT_PER_RG=true \
         INTERLEAVE=true \
         INCLUDE_NON_PF_READS=true \
         TMP_DIR=tmp
