@@ -81,8 +81,6 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Merge BAMs Script"
 
-cd $dataDir
-
 # Retrieve Files to Process
 files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.sam))
 

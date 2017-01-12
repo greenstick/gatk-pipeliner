@@ -64,7 +64,7 @@ recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$quali
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
 # 
-# Run BayesHammer
+# Run Bloocoo
 # 
 
 files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
@@ -126,8 +126,6 @@ printf "\n\nDone\n"
 #
 # Bloocoo Arguments
 #
-
-# Usage: /home/users/cordier/packages/bayes-hammer/SPAdes-3.9.0-Linux/bin/spades.py [options] -o <output_dir>
 
 # -file : the read file name, can be fasta, fastq, gzipped or not.
 # -kmer-size : the k-mer size (typically ~31)

@@ -96,11 +96,6 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Contamination Estimation & Mutect2 Script"
 
-echo "$recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam"
-
-cd $dataDir
-
-echo $(pwd)
 #
 # ContEst
 #

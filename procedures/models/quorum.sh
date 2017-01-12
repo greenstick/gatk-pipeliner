@@ -71,8 +71,6 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
-cd $dataDir
-
 # 
 # Run Quorum
 # 
@@ -83,7 +81,7 @@ files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
 
 if [ "$parameters" = "default" ]; then
     
-    printf "\n\nRunning BayesHammer - Default Parameters"
+    printf "\n\nRunning Quorum - Default Parameters"
     for file in $files
         # In Parallel
         do (
@@ -112,7 +110,7 @@ if [ "$parameters" = "default" ]; then
 
 elif [ "$parameters" = "custom" ]; then
     
-    printf "\n\nRunning BayesHammer - Custom Parameters"
+    printf "\n\nRunning Quorum - Custom Parameters"
     for file in $files
         # In Parallel
         do (

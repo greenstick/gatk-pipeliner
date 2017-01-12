@@ -95,8 +95,6 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Mark Duplicates Script"
 
-cd $dataDir
-
 # If Norealignment, Get Data From Download Directory & Skip Sorting
 if [ "$experiment" = "norealign" ]; then
 
