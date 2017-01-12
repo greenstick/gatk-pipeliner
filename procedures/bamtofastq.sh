@@ -96,7 +96,7 @@ printf "\n\nRunning BAM to FASTQ Script"
 #
 
 printf "\n\nShuffling & Splitting Merged BAM"
-printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -"
+printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
 samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -
 printf "\n\nShuffling & Splitting Merged BAM Complete"
 
@@ -112,7 +112,7 @@ for file in $files
     # In Parallel
     do ( 
         # Get Read Group to Process
-        suffix=$(echo "$file" | sed "s|downloaded/split/$fileprefix.$subset.$condition.||")
+        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
         readgroup=$(echo "$suffix" | sed "s|.bam$||")
         # Call Bam to FastQ
         printf "\n\nCommand:\njava -Xmx$memory \
@@ -121,14 +121,14 @@ for file in $files
         F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         INTERLEAVE=true \
         INCLUDE_NON_PF_READS=true \
-        TMP_DIR=tmp\n"
+        TMP_DIR=$tmpDir\n"
         java -Xmx$memory \
         -jar $jar SamToFastq \
         I=$dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam \
         F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         INTERLEAVE=true \
         INCLUDE_NON_PF_READS=true \
-        TMP_DIR=tmp
+        TMP_DIR=$tmpDir
     ) &
 done
 wait # Prevent Premature Exiting of Script
