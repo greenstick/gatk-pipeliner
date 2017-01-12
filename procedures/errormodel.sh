@@ -6,10 +6,6 @@ for i in "$@"
 
     # Standard Arguments
 
-        -r=*|--ref=*)
-        reference="${i#*=}"
-        shift # Reference Sequence Directory
-        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix
@@ -65,7 +61,7 @@ ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 
 printf "\nPARAMETERS:
-Reference Directory = $reference
+Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -108,8 +104,8 @@ case "$experiment" in
                 printf "\n\nRunning Picard Bam to FastQ"
                 # python $BAYESHAMMER
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/bayeshammer.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/bayeshammer.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
     ;;
@@ -129,8 +125,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # $BLESSEC
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/blessec.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/blessec.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -151,8 +147,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # $BLOOCOO
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/bloocoo.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/bloocoo.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -172,8 +168,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # $DECGPU
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/decgpu.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/decgpu.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -194,8 +190,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # $KARECT
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/karect.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/karect.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -217,8 +213,8 @@ case "$experiment" in
                 # java Xmx$memory -jar $ERIF
                 # java Xmx$memory -jar $KGEM
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/kgem.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/kgem.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -239,8 +235,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # $DECGPU
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/musket.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/musket.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -260,8 +256,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # $QUORUM
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/quorum.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/quorum.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -282,8 +278,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # perl $RCORRECTOR
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/rcorrector.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/rcorrector.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -304,8 +300,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # bash $SEECER
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/seecer.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/seecer.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -326,8 +322,8 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # python $SHORAH
                 printf "\n\nCommand:\n \
-                source $proceduresDir/models/shorah.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/shorah.sh -r=$reference -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
             ) &
         done
         wait # Prevent Premature Exiting of Script

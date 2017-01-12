@@ -6,10 +6,6 @@ for i in "$@"
 
     # Standard Arguments
 
-        -r=*|--ref=*)
-        reference="${i#*=}"
-        shift # Reference Sequence Directory
-        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix
@@ -81,7 +77,6 @@ align=${alignOpt:-$alignDef}
  
 printf "\n\nPARAMETERS: 
 Picard Directory    = $jar
-Reference Directory = $reference
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -110,8 +105,8 @@ printf "\n\nRunning BWA Script\n"
 
 if $index; then
     printf "\n\nBWA Index\n"
-    printf "\n\nCommand:\nbwa index -a bwtsw $reference/Homo_sapiens_assembly19.fasta\n"
-    bwa index -a bwtsw $reference/Homo_sapiens_assembly19.fasta
+    printf "\n\nCommand:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta\n"
+    bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
     printf "\n\nBWA Index Complete\n"
 fi
 
@@ -133,8 +128,8 @@ if [ "$align" = "mem" ]; then
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
             readgroup=$(echo "$suffix" | sed "s|.fastq$||")
             # BWA mem
-            printf "\n\nCommand:\nbwa mem -M -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align -M -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+            printf "\n\nCommand:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
+            bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
         ) &
     done
     wait # Prevent Premature Exiting of Script
@@ -151,8 +146,8 @@ elif [ "$align" = "bwasw" ]; then
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
             readgroup=$(echo "$suffix" | sed "s|.fastq$||")
             # BWA bwasw
-            printf "\n\nCommand:\nbwa $align -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+            printf "\n\nCommand:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
+            bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
         ) &
     done
     wait # Prevent Premature Exiting of Script
@@ -169,11 +164,11 @@ elif [ "$align" = "samse" ]; then
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
             readgroup=$(echo "$suffix" | sed "s|.fastq$||")
             # BWA aln
-            printf "\n\nCommand:\nbwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai\n"
-            bwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai
+            printf "\n\nCommand:\nbwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai\n"
+            bwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai
             # BWA samse
-            printf "\n\nCommand:\nbwa $align -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align $reference/Homo_sapiens_assembly19.fasta $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+            printf "\n\nCommand:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
+            bwa $align $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
         ) &
     done
     wait # Prevent Premature Exiting of Script
@@ -192,13 +187,13 @@ elif [ "$align" = "sampe" ]; then
             seqtk seq -l0 -1 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq
             seqtk seq -l0 -2 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq
             # BWA aln
-            printf "\n\nCommand:\nbwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
-            bwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai
-            printf "\n\nCommand:\nbwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
-            bwa aln -t $ncores $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai
+            printf "\n\nCommand:\nbwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
+            bwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai
+            printf "\n\nCommand:\nbwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
+            bwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai
             # BWA sampe
-            printf "\n\nCommand:\nbwa $align $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align $reference/Homo_sapiens_assembly19.fasta $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+            printf "\n\nCommand:\nbwa $align $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
+            bwa $align $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
         ) &
     done
     wait # Prevent Premature Exiting of Script

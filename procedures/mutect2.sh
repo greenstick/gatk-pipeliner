@@ -6,10 +6,6 @@ for i in "$@"
 
     # Standard Arguments
 
-        -r=*|--ref=*)
-        reference="${i#*=}"
-        shift # Reference Sequence Directory
-        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix
@@ -80,7 +76,6 @@ contest=${contestOpt:-$contestDef}
 printf "\nPARAMETERS:
 GATK Directory      = $jar
 Run ContEst         = $contest
-Reference Directory = $reference
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -116,10 +111,10 @@ if [ "$contest" = "true" ]; then
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar -T ContEst \
     --precision 0.001 \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
     -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-    -pf $reference/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
+    -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
     -isr INTERSECTION \
     --population ALL \
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
@@ -127,10 +122,10 @@ if [ "$contest" = "true" ]; then
     java -Xmx$memory \
     -jar $jar -T ContEst \
     --precision 0.001 \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
     -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-    -pf $reference/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
+    -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
     -isr INTERSECTION \
     --population ALL \
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
@@ -146,11 +141,11 @@ fi
 printf "\n\nMuTect2 Start"
 printf "\n\nCommand:\njava -Xmx$memory \
 -jar $jar -T MuTect2 \
--R $reference/Homo_sapiens_assembly19.fasta \
+-R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
 -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
 -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
---dbsnp $reference/dbsnp_138.hg19_modified.vcf \
---cosmic $reference/b37_cosmic_v54_120711_modified.vcf \
+--dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+--cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
 --tumor_lod 10.0 \
 --contamination_fraction_to_filter 0.01 \
 -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
@@ -158,11 +153,11 @@ printf "\n\nCommand:\njava -Xmx$memory \
 -nct $ncores\n"
 java -Xmx$memory \
 -jar $jar -T MuTect2 \
--R $reference/Homo_sapiens_assembly19.fasta \
+-R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
 -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
 -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
---dbsnp $reference/dbsnp_138.hg19_modified.vcf \
---cosmic $reference/b37_cosmic_v54_120711_modified.vcf \
+--dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+--cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
 --tumor_lod 10.0 \
 --contamination_fraction_to_filter 0.01 \
 -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \

@@ -6,10 +6,6 @@ for i in "$@"
 
     # Standard Arguments
 
-        -r=*|--ref=*)
-        reference="${i#*=}"
-        shift # Reference Sequence Directory
-        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix

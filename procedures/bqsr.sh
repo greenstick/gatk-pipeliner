@@ -6,10 +6,6 @@ for i in "$@"
 
     # Standard Arguments
 
-        -r=*|--ref=*)
-        reference="${i#*=}"
-        shift # Reference Sequence Directory
-        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix
@@ -73,7 +69,7 @@ ncores=${ncoresOpt:-$ncoresDef}
 
 printf "\nPARAMETERS:
 GATK Directory      = $jar
-Reference Directory = $reference
+Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -118,19 +114,19 @@ if [ "$qualitymodel" = "bqsr" ]; then
     printf "\n\nBQSR - Step 1 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar -T BaseRecalibrator \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $reference/dbsnp_138.hg19_modified.vcf \
-    -knownSites $reference/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
     -o $recalDir/logs/bqsr/recal_data_$condition.table \
     --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
     -nct $ncores\n"
     java -Xmx$memory \
     -jar $jar -T BaseRecalibrator \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $reference/dbsnp_138.hg19_modified.vcf \
-    -knownSites $reference/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
     -o $recalDir/logs/bqsr/recal_data_$condition.table \
     --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
     -nct $ncores
@@ -143,20 +139,20 @@ if [ "$qualitymodel" = "bqsr" ]; then
     printf "\n\nBQSR - Step 2 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar -T BaseRecalibrator \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $reference/dbsnp_138.hg19_modified.vcf \
-    -knownSites $reference/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
     -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
     -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
     --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
     -nct $ncores\n"
     java -Xmx$memory \
     -jar $jar -T BaseRecalibrator \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $reference/dbsnp_138.hg19_modified.vcf \
-    -knownSites $reference/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
     -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
     -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
     --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
@@ -170,14 +166,14 @@ if [ "$qualitymodel" = "bqsr" ]; then
     printf "\n\nBQSR - Step 3 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar -T AnalyzeCovariates \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -before $recalDir/logs/bqsr/recal_data_$condition.table \
     -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
     -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
     --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt\n"
     java -Xmx$memory \
     -jar $jar -T AnalyzeCovariates \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -before $recalDir/logs/bqsr/recal_data_$condition.table \
     -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
     -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
@@ -191,7 +187,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     printf "\n\nBQSR - Step 4 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
     -jar $jar -T PrintReads \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
     -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
@@ -199,7 +195,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     -nct $ncores\n"
     java -Xmx$memory \
     -jar $jar -T PrintReads \
-    -R $reference/Homo_sapiens_assembly19.fasta \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
     -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
     -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \

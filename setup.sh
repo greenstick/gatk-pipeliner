@@ -24,31 +24,91 @@
 
 
 #
-# References
+# References / Locations
 #
 
-printf "\nSetting References...\n"
+printf "\nSetting Pipeline Variables...\n"
 
-# Set Root Directory Reference
+# Set File System Root Directory
 root_dir=/home/exacloud/lustre1
 
-# Set Pipeline Directory Reference
-pipeline_dir=MRD_aml/data/dream-synthetic/pipeline
+# Set User Directory
+user_dir=/home/users/cordier
+
+# Set Pipeline Directory
+pipeline_dir=$root_dir/MRD_aml/ForBackup/pipeline
+
+# Set Reference Genome Directory/File
+reference_dir=$root_dir/MRD_aml/ForBackup/pipeline/reference/hg19
+
+# Set Output Directory
+output_dir=$user_dir/io # Set to home directory off lustre FS for FTP access
+
+# Set Logging Directory
+logging_dir=$pipeline_dir/logs
 
 #
 # Exports
 #
 
 while true; do
-    read -p "Write pipeline home directory export to ~/.bash_profile (default is yes)?" yn
+    IFS= read -p "Write pipeline exports to ~/.bash_profile (default is yes)? " yn
     case $yn in
-        [Yy]* ) (printf "\nExporting Locations...\n"
-            # Write Pipeline Home Directory to ~/.bash_profile
-            echo "export PIPELINE_HOME=$root_dir/$pipeline_dir" >> ~/.bash_profile
-            # Set Pipeline Home Directory
-            export PIPELINE_HOME=$root_dir/$pipeline_dir
-            ); break;;
-        [Nn]* ) break;;
+        [Yy]* ) (
+                printf "\nExporting Directory Locations...\n"
+
+                # Write Pipeline Home Directory to ~/.bash_profile
+                echo "export PIPELINE_HOME=$pipeline_dir" >> ~/.bash_profile
+                # Set Pipeline Home Directory
+                export PIPELINE_HOME=$pipeline_dir
+
+                # Write Pipeline Output Directory to ~/.bash_profile
+                echo "export PIPELINE_OUT=$output_dir" >> ~/.bash_profile
+                # Set Pipeline Output Directory
+                export PIPELINE_OUT=$output_dir
+                
+                # Write Pipeline Reference Directory to ~/.bash_profile
+                echo "export PIPELINE_REF=$reference_dir" >> ~/.bash_profile
+                # Set Pipeline Reference Directory
+                export PIPELINE_REF=$reference_dir
+                
+                # Write Pipeline Logging Directory to ~/.bash_profile
+                echo "export PIPELINE_LOG=$logging_dir" >> ~/.bash_profile
+                # Set Pipeline Logging Directory
+                export PIPELINE_LOG=$logging_dir
+
+            )
+            break
+            ;;
+        [Nn]* ) 
+            break
+            ;;
+        * ) echo "Please answer yes [y] or no [n].";;
+    esac
+done
+
+#
+# Logging Management
+#
+
+while true; do
+    IFS= read -p "Enforce TMUX session logging via ~/.bash_profile (default is yes)? " yn
+    case $yn in
+        [Yy]* ) ( # Inject Logging Automation Script to ~/.bash_profile
+            echo 'if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then
+    # Prompt User / Read Input
+    IFS= read -p "Enter job logging name: " name
+    mkdir $PIPELINE_HOME/logs 2> /dev/null
+    logname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"
+    script -f $PIPELINE_HOME/logs/${logname}
+    exit
+fi' >> ~/.bash_profile
+            )
+            break
+            ;;
+        [Nn]* ) 
+            break
+            ;;
         * ) echo "Please answer yes [y] or no [n].";;
     esac
 done

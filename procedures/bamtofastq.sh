@@ -6,10 +6,6 @@ for i in "$@"
 
     # Standard Arguments
 
-        -r=*|--ref=*)
-        reference="${i#*=}"
-        shift # Reference Sequence Directory
-        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix
@@ -71,7 +67,7 @@ memory=${memoryOpt:-$memoryDef}
 
 printf "\nPARAMETERS:
 Picard Directory    = $jar
-Reference Directory = $reference
+Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
