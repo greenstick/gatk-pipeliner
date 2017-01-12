@@ -57,6 +57,13 @@ while true; do
         [Yy]* ) (
                 printf "\nExporting Directory Locations...\n"
 
+                # Header for Bash Profile
+                echo '
+#
+# Pipeline Management
+#
+' >> ~/.bash_profile
+
                 # Write Pipeline Home Directory to ~/.bash_profile
                 echo "export PIPELINE_HOME=$pipeline_dir" >> ~/.bash_profile
                 # Set Pipeline Home Directory
@@ -95,7 +102,8 @@ while true; do
     IFS= read -p "Enforce TMUX session logging via ~/.bash_profile (default is yes)? " yn
     case $yn in
         [Yy]* ) ( # Inject Logging Automation Script to ~/.bash_profile
-            echo 'if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then
+            echo '# Pipeline Logging Management
+if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then
     # Prompt User / Read Input
     IFS= read -p "Enter job logging name: " name
     mkdir $PIPELINE_HOME/logs 2> /dev/null
