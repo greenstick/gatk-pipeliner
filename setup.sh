@@ -58,29 +58,25 @@ while true; do
                 printf "\nExporting Directory Locations...\n"
 
                 # Header for Bash Profile
-                echo '
-#
-# Pipeline Management
-#
-' >> ~/.bash_profile
+                echo -e '\n#\n# Pipeline Management\n#' >> ~/.bash_profile
 
                 # Write Pipeline Home Directory to ~/.bash_profile
-                echo "export PIPELINE_HOME=$pipeline_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> ~/.bash_profile
                 # Set Pipeline Home Directory
                 export PIPELINE_HOME=$pipeline_dir
 
                 # Write Pipeline Output Directory to ~/.bash_profile
-                echo "export PIPELINE_OUT=$output_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_OUT=$output_dir" >> ~/.bash_profile
                 # Set Pipeline Output Directory
                 export PIPELINE_OUT=$output_dir
                 
                 # Write Pipeline Reference Directory to ~/.bash_profile
-                echo "export PIPELINE_REF=$reference_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_REF=$reference_dir" >> ~/.bash_profile
                 # Set Pipeline Reference Directory
                 export PIPELINE_REF=$reference_dir
                 
                 # Write Pipeline Logging Directory to ~/.bash_profile
-                echo "export PIPELINE_LOG=$logging_dir" >> ~/.bash_profile
+                echo -e "\nexport PIPELINE_LOG=$logging_dir" >> ~/.bash_profile
                 # Set Pipeline Logging Directory
                 export PIPELINE_LOG=$logging_dir
 
@@ -101,17 +97,9 @@ done
 while true; do
     IFS= read -p "Enforce TMUX session logging via ~/.bash_profile (default is yes)? " yn
     case $yn in
-        [Yy]* ) ( # Inject Logging Automation Script to ~/.bash_profile
-            echo '# Pipeline Logging Management
-if [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then
-    # Prompt User / Read Input
-    IFS= read -p "Enter job logging name: " name
-    mkdir $PIPELINE_HOME/logs 2> /dev/null
-    logname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"
-    script -f $PIPELINE_HOME/logs/${logname}
-    exit
-fi' >> ~/.bash_profile
-            )
+        [Yy]* )  
+            # Inject Logging Automation Script to ~/.bash_profile
+            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_HOME/logs/${logname}\n\texit\nfi' >> ~/.bash_profile
             break
             ;;
         [Nn]* ) 
