@@ -64,7 +64,7 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-memoryDef="20G"
+memoryDef="6G"
 
 # Set Optional Values
 memory=${memoryOpt:-$memoryDef}
@@ -96,8 +96,8 @@ printf "\n\nRunning BAM to FASTQ Script"
 #
 
 printf "\n\nShuffling & Splitting Merged BAM"
-printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/split/$fileprefix.$subset.$condition.%!.bam -"
-samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/split/$fileprefix.$subset.$condition.%!.bam -
+printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -"
+samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -
 printf "\n\nShuffling & Splitting Merged BAM Complete"
 
 #
@@ -105,26 +105,26 @@ printf "\n\nShuffling & Splitting Merged BAM Complete"
 #
 
 # Retrieve Files
-files=$(echo $(ls $dataDir/split/$fileprefix.$subset.$condition.*.bam))
+files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
 
 printf "\n\nRunning Picard Bam to FastQ"
 for file in $files
     # In Parallel
     do ( 
         # Get Read Group to Process
-        suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-        readgroup=$(echo "$suffix" | sed "s/.bam$//")
+        suffix=$(echo "$file" | sed "s|downloaded/split/$fileprefix.$subset.$condition.||")
+        readgroup=$(echo "$suffix" | sed "s|.bam$||")
         # Call Bam to FastQ
         printf "\n\nCommand:\njava -Xmx$memory \
         -jar $jar SamToFastq \
-        I=$file \
+        I=$dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam \
         F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         INTERLEAVE=true \
         INCLUDE_NON_PF_READS=true \
-        TMP_DIR=$tmpDir\n"
+        TMP_DIR=tmp\n"
         java -Xmx$memory \
         -jar $jar SamToFastq \
-        I=$file \
+        I=$dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam \
         F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         INTERLEAVE=true \
         INCLUDE_NON_PF_READS=true \

@@ -49,7 +49,7 @@ while true; do
             export PIPELINE_HOME=$root_dir/$pipeline_dir
             ); break;;
         [Nn]* ) break;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer yes [y] or no [n].";;
     esac
 done
 
@@ -69,7 +69,7 @@ mkdir -p set{1..6}/model/{bayeshammer,bless,karect,kgem,quorum,seecer,shorah,nom
 mkdir -p set{1..6}/model/{bayeshammer,bless,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
 mkdir -p set{1..6}/model/{bayeshammer,bless,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
 mkdir -p set{1..6}/{fastq,downloaded,tmp}
-mkdir -p set{1..6}/downloaded/{intervals,metrics,original}
+mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
 mkdir -p tmp
 
