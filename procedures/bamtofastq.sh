@@ -123,20 +123,8 @@ for file in $files
         suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
         readgroup=$(echo "$suffix" | sed "s|.bam$||")
         # Call Bam to FastQ
-        printf "\n\nCommand:\njava -Xmx$memory \
-        -jar $jar SamToFastq \
-        I=$dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam \
-        F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        INTERLEAVE=true \
-        INCLUDE_NON_PF_READS=true \
-        TMP_DIR=$tmpDir\n"
-        java -Xmx$memory \
-        -jar $jar SamToFastq \
-        I=$dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam \
-        F=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        INTERLEAVE=true \
-        INCLUDE_NON_PF_READS=true \
-        TMP_DIR=$tmpDir
+        printf "\n\nCommand:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq\n"
+        samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
     ) &
 done
 wait # Prevent Premature Exiting of Script
