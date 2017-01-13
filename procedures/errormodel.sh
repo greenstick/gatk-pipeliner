@@ -1,5 +1,8 @@
 #! /usr/bin/bash
 
+# Exit on First Error
+set -o errexit
+
 # Assign Arguments
 for i in "$@"
     do case $i in

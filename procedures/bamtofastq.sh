@@ -1,5 +1,8 @@
 #! /usr/bin/bash
 
+# Exit on First Error
+set -o errexit
+
 # Assign Arguments
 for i in "$@"
     do case $i in
@@ -37,6 +40,10 @@ for i in "$@"
         jar="${i#*=}"
         shift
         ;;
+        -b=*|--splitbam=*)
+        splitbamOpt="${i#*=}"
+        shift
+        ;;        
 
     # Optional Arguments With Defaults
 
@@ -61,9 +68,11 @@ done
 
 # Defaults if No Arguments Passed
 memoryDef="6G"
+splitbamDef=true
 
 # Set Optional Values
 memory=${memoryOpt:-$memoryDef}
+splitbam=${splitbamOpt:-$splitbamDef}
 
 printf "\nPARAMETERS:
 Picard Directory    = $jar
@@ -74,6 +83,7 @@ Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
+Split BAM           = $splitbam
 Memory              = $memory
 \n\n"
 
@@ -91,10 +101,12 @@ printf "\n\nRunning BAM to FASTQ Script"
 # Shuffle & Split BAM
 #
 
-printf "\n\nShuffling & Splitting Merged BAM"
-printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
-samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -
-printf "\n\nShuffling & Splitting Merged BAM Complete"
+if [ "$splitbam" = "true" ]; then
+    printf "\n\nShuffling & Splitting Merged BAM"
+    printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
+    samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -
+    printf "\n\nShuffling & Splitting Merged BAM Complete"
+fi
 
 #
 # Bam to FastQ

@@ -1,5 +1,8 @@
 #! /usr/bin/bash
 
+# Exit on First Error
+set -o errexit
+
 # Assign Arguments
 for i in "$@"
     do case $i in
@@ -62,8 +65,6 @@ modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
-
-cd $dataDir
 
 # 
 # Run BayesHammer

@@ -1,5 +1,8 @@
 #! /usr/bin/bash
 
+# Exit on First Error
+set -o errexit
+
 # Assign Arguments
 for i in "$@"
     do case $i in
@@ -103,7 +106,7 @@ printf "\n\nRunning BWA Script\n"
 # BWA Index
 #
 
-if $index; then
+if [ "$index" = "true" ]; then
     printf "\n\nBWA Index\n"
     printf "\n\nCommand:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta\n"
     bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
