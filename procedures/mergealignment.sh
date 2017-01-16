@@ -84,16 +84,40 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Merge BAMs Script"
 
+# 
+# Inserting Read Groups
+# 
+
+printf "\n\nSamtools AddReplaceRG"
 # Retrieve Files to Process
-files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.sam))
+files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
+
+for file in $files
+    # In Parallel
+    do (
+        # Get Read Group to Process
+        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
+        readgroup=$(echo "$suffix" | sed "s|.bam$||")
+        # Get Read Group Arguments to Pass to Samtools
+        rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-]*|-r '&'|g")
+        printf "\n\nCommand:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
+        # Insert Read Groups into New BAM
+        samtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam
+    ) &
+done
+wait # Prevent Premature Exiting of Script
+printf "\n\nSamtools AddReplaceRG Complete"
 
 # 
 # Merge BAMs to Single BAM
 # 
+
+# Retrieve Files to Process
+files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.bam))
 
 printf "\n\nSamtools Merge"
 printf "\n\nCommand:\nsamtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
 samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
 printf "\n\nSamtools Merge Complete"
 
-printf "\n\nDone\n"
+# printf "\n\nDone\n"

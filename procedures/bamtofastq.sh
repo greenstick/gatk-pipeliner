@@ -104,7 +104,7 @@ printf "\n\nRunning BAM to FASTQ Script"
 if [ "$splitbam" = "true" ]; then
     printf "\n\nShuffling & Splitting Merged BAM"
     printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
-    samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.bam -
+    samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -l $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
     printf "\n\nShuffling & Splitting Merged BAM Complete"
 fi
 
