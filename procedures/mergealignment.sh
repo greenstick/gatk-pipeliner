@@ -101,8 +101,8 @@ for file in $files
         # Get Read Group Arguments to Pass to Samtools
         rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-]*|-r '&'|g")
         printf "\n\nCommand:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
-        # Insert Read Groups into New BAM
-        samtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam
+        # Insert Read Groups into New BAM - WARNING USES EVAL
+        eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
     ) &
 done
 wait # Prevent Premature Exiting of Script
