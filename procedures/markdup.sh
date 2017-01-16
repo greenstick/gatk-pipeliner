@@ -40,13 +40,13 @@ for i in "$@"
         jar="${i#*=}"
         shift
         ;;
+        -b=*|--sortbam=*)
+        sortbamOpt="${i#*=}"
+        shift # Build BAM Index?
+        ;;
 
     # Optional Arguments With Defaults
 
-        -b=*|--buildindex=*)
-        indexOpt="${i#*=}"
-        shift # Build BAM Index?
-        ;;
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
         shift # Number of Cores to Use
@@ -69,12 +69,12 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="12"
 memoryDef="6G"
-indexDef=true
+sortbamDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-index=${indexOpt:-$indexDef}
+sortbam=${sortbamOpt:-$sortbamDef}
 
 printf "\nPARAMETERS:
 Picard Directory    = $jar
@@ -83,7 +83,7 @@ Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
-Build BAM Index     = $index
+Sort BAM?           = $sortbam
 Recalibration Model = $qualitymodel
 Memory              = $memory
 \n\n"
@@ -134,23 +134,27 @@ if [ "$experiment" = "norealign" ]; then
 # Otherwise, Grab Data From Merged Alignment Directory & Sort
 else
 
-    # 
-    # Sort BAM
-    # 
+    if [ "$sortbam" = "true" ]; then
+    
+        # 
+        # Sort BAM
+        # 
 
-    printf "\n\nSorting BAM"
-    printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
-    samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
-    printf "\n\nSorting Complete"
+        printf "\n\nSorting BAM"
+        printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
+        samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
+        printf "\n\nSorting Complete"
 
-    #
-    # Create New BAM Index
-    #
+        #
+        # Create New BAM Index
+        #
 
-    printf "\n\nIndexing BAM Output"
-    printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
-    samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
-    printf "\n\nBAM Indexing Complete"
+        printf "\n\nIndexing BAM Output"
+        printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
+        samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
+        printf "\n\nBAM Indexing Complete"
+
+    fi
 
     #
     # Mark Duplicates
