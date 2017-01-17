@@ -58,6 +58,19 @@ for i in "$@"
     esac
 done
 
+# Defaults if No Arguments Passed
+ncoresDef="10"
+memoryDef="8G"
+
+# Set Optional Values
+ncores=${ncoresOpt:-$ncoresDef}
+memory=${memoryOpt:-$memoryDef}
+
+# Get Max Allowable Memory
+allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
+allocSize=$(echo "$memory" | sed "s|[0-9]*||")
+maxMemory=$(($allocMemory * $ncores))$allocSize
+
 # Set Directories
 proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset

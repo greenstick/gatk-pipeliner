@@ -67,14 +67,19 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="8"
+ncoresDef="10"
 memoryDef="8G"
-contestDef="true"
+contestDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 contest=${contestOpt:-$contestDef}
+
+# Get Max Allowable Memory
+allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
+allocSize=$(echo "$memory" | sed "s|[0-9]*||")
+maxMemory=$(($allocMemory * $ncores))$allocSize
  
 printf "\nPARAMETERS:
 GATK Directory      = $jar
@@ -87,6 +92,7 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
+Max Memory          = $maxMemory
 \n\n"
 
 # Set Directories
@@ -106,7 +112,7 @@ printf "\n\nRunning Contamination Estimation & Mutect2 Script"
 if [ "$contest" = "true" ]; then
 
     printf "\n\nContEst Start"
-    printf "\n\nCommand:\njava -Xmx$memory \
+    printf "\n\nCommand:\njava -Xmx$maxMemory \
     -jar $jar -T ContEst \
     --precision 0.001 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \

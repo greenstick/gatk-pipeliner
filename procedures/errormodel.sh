@@ -56,12 +56,18 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="4"
-memoryDef="8G"
+ncoresDef="12"
+memoryDef="6G"
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
+ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
+
+# Get Max Allowable Memory
+allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
+allocSize=$(echo "$memory" | sed "s|[0-9]*||")
+maxMemory=$(($allocMemory * $ncores))$allocSize
 
 printf "\nPARAMETERS:
 Reference Directory = $PIPELINE_REF
@@ -73,6 +79,7 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
+Max Memory          = $maxMemory
 \n\n"
 
 # Set Directories

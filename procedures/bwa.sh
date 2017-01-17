@@ -67,8 +67,8 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="4"
-memoryDef="8G"
+ncoresDef="20"
+memoryDef="4G"
 indexDef=false
 alignDef="mem"
 
@@ -77,6 +77,11 @@ ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 index=${indexOpt:-$indexDef}
 align=${alignOpt:-$alignDef}
+
+# Get Max Allowable Memory
+allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
+allocSize=$(echo "$memory" | sed "s|[0-9]*||")
+maxMemory=$(($allocMemory * $ncores))$allocSize
  
 printf "\n\nPARAMETERS: 
 Picard Directory    = $jar
@@ -88,8 +93,9 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Build BWA Index?    = $index
 BWA Alignment       = $align
-Cores               = $ncores
 Memory              = $memory
+Cores               = $ncores
+Max Memory          = $maxMemory
 \n"
 
 # Set Directories
@@ -132,7 +138,7 @@ if [ "$align" = "mem" ]; then
             readgroup=$(echo "$suffix" | sed "s|.fastq$||")
             # BWA mem
             printf "\n\nCommand:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+            bwa $align -M -t -R $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
         ) &
     done
     wait # Prevent Premature Exiting of Script

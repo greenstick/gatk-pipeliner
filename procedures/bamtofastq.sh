@@ -67,12 +67,19 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
+ncoresDef="12"
 memoryDef="6G"
 splitbamDef=true
 
 # Set Optional Values
+ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 splitbam=${splitbamOpt:-$splitbamDef}
+
+# Get Max Allowable Memory
+allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
+allocSize=$(echo "$memory" | sed "s|[0-9]*||")
+maxMemory=$(($allocMemory * $ncores))$allocSize
 
 printf "\nPARAMETERS:
 Picard Directory    = $jar
@@ -85,6 +92,8 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Split BAM           = $splitbam
 Memory              = $memory
+Cores               = $ncores
+Max Memory          = $maxMemory
 \n\n"
 
 # Set Directories

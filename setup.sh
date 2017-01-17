@@ -48,6 +48,22 @@ output_dir=$user_dir/io # Set to home directory off lustre FS for FTP access
 logging_dir=$pipeline_dir/logs
 
 #
+# Dependency Locations
+#
+
+# Location of Picard Tools
+picard_dir=/home/users/cordier/packages/picard/picard.jar
+
+# Location of GATK
+gatk_dir=/home/users/cordier/packages/gatk/GenomeAnalysisTK.jar
+
+# Location of Samtools
+# samtools_dir=
+
+# Location of BAMUtils
+# bamutils_dir=
+
+#
 # Exports
 #
 

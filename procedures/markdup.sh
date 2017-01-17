@@ -76,6 +76,11 @@ ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 sortbam=${sortbamOpt:-$sortbamDef}
 
+# Get Max Allowable Memory
+allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
+allocSize=$(echo "$memory" | sed "s|[0-9]*||")
+maxMemory=$(($allocMemory * $ncores))$allocSize
+
 printf "\nPARAMETERS:
 Picard Directory    = $jar
 Data File Prefix    = $fileprefix
@@ -86,6 +91,8 @@ Parameter Set       = $parameters
 Sort BAM?           = $sortbam
 Recalibration Model = $qualitymodel
 Memory              = $memory
+Cores               = $ncores
+Max Memory          = $maxMemory
 \n\n"
 
 # Set Directories
@@ -106,7 +113,7 @@ if [ "$experiment" = "norealign" ]; then
     #
 
     printf "\n\nMarkDuplicates Start"
-    printf "\n\nCommand:\njava -Xmx$memory \
+    printf "\n\nCommand:\njava -Xmx$maxMemory \
     -jar $jar MarkDuplicates \
     I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
     O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
