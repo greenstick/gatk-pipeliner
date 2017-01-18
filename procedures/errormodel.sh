@@ -29,10 +29,6 @@ for i in "$@"
         parameters="${i#*=}"
         shift # Access & Write Files With This Parameter Set
         ;;
-        -q=*|--qualitymodel=*)
-        qualitymodel="${i#*=}"
-        shift # Access & Write Files With This Quality Model
-        ;;
 
     # Optional Arguments With Defaults
 
@@ -76,7 +72,6 @@ Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
-Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
@@ -85,10 +80,7 @@ Max Memory          = $maxMemory
 # Set Directories
 proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
-modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
-recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
-tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Error Model Script"
 
@@ -119,8 +111,8 @@ if [ $? != 0 ]; then
                     printf "\n\nRunning Picard Bam to FastQ"
                     # python $BAYESHAMMER
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                     
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -147,8 +139,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # $BLESSEC
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                     
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -174,8 +166,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # $BLOOCOO
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -200,8 +192,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # $DECGPU
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -227,8 +219,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # $KARECT
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -255,8 +247,8 @@ if [ $? != 0 ]; then
                     # java Xmx$memory -jar $ERIF
                     # java Xmx$memory -jar $KGEM
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -282,8 +274,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # $DECGPU
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -308,8 +300,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # $QUORUM
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -335,8 +327,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # perl $RCORRECTOR
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -362,8 +354,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # bash $SEECER
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
@@ -389,8 +381,8 @@ if [ $? != 0 ]; then
                     readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                     # python $SHORAH
                     printf "\n\nCommand:\n \
-                    source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                    source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
                     if [ $? != 0 ]; then

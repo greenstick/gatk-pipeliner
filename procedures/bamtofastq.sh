@@ -21,18 +21,6 @@ for i in "$@"
         condition="${i#*=}"
         shift # Access & Write Files With This Condition
         ;;
-        -x=*|--experiment=*)
-        experiment="${i#*=}"
-        shift # Access & Write Files With This Experiment
-        ;;
-        -p=*|--parameters=*)
-        parameters="${i#*=}"
-        shift # Access & Write Files With This Parameter Set
-        ;;
-        -q=*|--qualitymodel=*)
-        qualitymodel="${i#*=}"
-        shift # Access & Write Files With This Quality Model
-        ;;
    
     # Optional Arguments With Defaults
 
@@ -69,24 +57,16 @@ allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
 printf "\nPARAMETERS:
-Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
-Experiment          = $experiment
-Parameter Set       = $parameters
-Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
 \n\n"
 
 # Set Directories
-proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
-modelDir=$PIPELINE_HOME/$subset/model/$experiment
-paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
-recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning BAM to FASTQ Script"

@@ -29,10 +29,6 @@ for i in "$@"
         parameters="${i#*=}"
         shift # Access & Write Files With This Parameter Set
         ;;
-        -q=*|--qualitymodel=*)
-        qualitymodel="${i#*=}"
-        shift # Access & Write Files With This Quality Model
-        ;;
 
     # Optional Arguments With Defaults
 
@@ -75,18 +71,14 @@ Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
-Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
 \n\n"
 
 # Set Directories
-proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
-modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
-recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Mark Duplicates Script"

@@ -29,10 +29,6 @@ for i in "$@"
         parameters="${i#*=}"
         shift # Access & Write Files With This Parameter Set
         ;;
-        -q=*|--qualitymodel=*)
-        qualitymodel="${i#*=}"
-        shift # Access & Write Files With This Quality Model
-        ;;
         -g=*|--readgroup=*)
         readgroup="${i#*=}"
         shift # Access & Write Files With This Read Group
@@ -72,12 +68,8 @@ allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
 # Set Directories
-proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
-modelDir=$PIPELINE_HOME/$subset/model/$experiment
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
-recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
-tmpDir=$PIPELINE_HOME/$subset/tmp
 
 # 
 # Run Bloocoo
