@@ -109,7 +109,10 @@ printf "\n\nRunning Contamination Estimation & Mutect2 Script"
 # ContEst
 #
 
-if [ "$contest" = "true" ]; then
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
 
     printf "\n\nContEst Start"
     printf "\n\nCommand:\njava -Xmx$maxMemory \
@@ -134,7 +137,16 @@ if [ "$contest" = "true" ]; then
     --population ALL \
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt
-    printf "\n\nContEst Complete"
+    
+    # Update State on Exit
+    exitcode=$?
+    if [ $exitcode = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nContEst Complete"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1"
+    fi
 
 fi
 
@@ -142,41 +154,74 @@ fi
 # Mutect2
 #
 
-printf "\n\nMuTect2 Start"
-printf "\n\nCommand:\njava -Xmx$memory \
--jar $jar -T MuTect2 \
--R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
--I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
--I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
---dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
---cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
---tumor_lod 10.0 \
---contamination_fraction_to_filter 0.01 \
--o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
---log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
--nct $ncores\n"
-java -Xmx$memory \
--jar $jar -T MuTect2 \
--R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
--I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
--I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
---dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
---cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
---tumor_lod 10.0 \
---contamination_fraction_to_filter 0.01 \
--o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
---log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
---graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
--nct $ncores
-printf "\n\nMuTect2 Complete"
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
+
+    printf "\n\nMuTect2 Start"
+    printf "\n\nCommand:\njava -Xmx$memory \
+    -jar $jar -T MuTect2 \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+    -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+    -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+    --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+    --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
+    --tumor_lod 10.0 \
+    --contamination_fraction_to_filter 0.01 \
+    -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
+    --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+    -nct $ncores\n"
+    java -Xmx$memory \
+    -jar $jar -T MuTect2 \
+    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+    -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+    -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+    --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+    --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
+    --tumor_lod 10.0 \
+    --contamination_fraction_to_filter 0.01 \
+    -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
+    --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+    --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
+    -nct $ncores
+
+    # Update State on Exit
+    exitcode=$?
+    if [ $exitcode = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nMuTect2 Complete"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2"
+    fi
+
+fi
 
 # 
 # Copy VCFS to User I/O Directory
 # 
 
-printf "\n\nCopying VCFs to I/O Directory..."
-cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/
-printf "\n\nDone"
+
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
+
+    printf "\n\nCopying VCFs to I/O Directory..."
+    cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/
+
+    # Update State on Exit
+    exitcode=$?
+    if [ $exitcode = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nVCFs Copied to I/O Directory"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3"
+    fi
+
+fi
 
 printf "\n\nDone\n"
 

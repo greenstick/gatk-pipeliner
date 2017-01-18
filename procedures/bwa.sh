@@ -112,105 +112,110 @@ printf "\n\nRunning BWA Script\n"
 # BWA Index
 #
 
-if [ "$index" = "true" ]; then
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:1" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
+
     printf "\n\nBWA Index\n"
     printf "\n\nCommand:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta\n"
     bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
-    printf "\n\nBWA Index Complete\n"
+    
+    # Update State on Exit
+    exitcode=$?
+    if [ $exitcode = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:1" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nBWA Index Complete\n"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:1"
+    fi
+
 fi
 
 #
-# BWA
+# BWA - mem or bwasw
 #
 
-# Retrieve Files
-files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.*.fastq))
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
 
-# Mem
-if [ "$align" = "mem" ]; then
+    # Retrieve Files
+    files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.*.fastq))
 
-    printf "\n\nBWA $align\n"
-    for file in $files
-        # In Parallel
-        do (
-            # Extract Read Group to Pass to BWA mem
-            suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
-            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-            # BWA mem
-            printf "\n\nCommand:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align -M -t -R $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
-    printf "\n\nBWA $align Complete\n"
+    # Mem
+    if [ "$align" = "mem" ]; then
 
-# BWASW
-elif [ "$align" = "bwasw" ]; then
+        failures=0
+        printf "\n\nBWA $align\n"
+        for file in $files
+            # In Parallel
+            do (
+                # Extract Read Group to Pass to BWA mem
+                suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
+                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                # BWA mem
+                printf "\n\nCommand:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
+                bwa $align -M -t -R $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+            
+                # Check for failed parallel call
+                subcode=$?
+                if [ $subcode != 0]; then
+                    failures=$((failures + 1))
+                fi
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
 
-    printf "\n\nBWA $align\n"
-    for file in $files
-        # In Parallel
-        do (
-            # Extract Read Group to Pass to BWA bwasw
-            suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
-            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-            # BWA bwasw
-            printf "\n\nCommand:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
-    printf "\n\nBWA $align Complete\n"  
+        # Update State on Exit
+        if [ $failures = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBWA $align Complete\n"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+        fi
 
-# SAMPE / SAMSE (Backtrack)
-elif [ "$align" = "samse" ]; then
+    # BWASW
+    elif [ "$align" = "bwasw" ]; then
 
-    printf "\n\nBWA $align\n"
-    for file in $files
-        # In Parallel
-        do (
-            # Extract Read Group to Pass to BWA aln then samse or sampe
-            suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
-            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-            # BWA aln
-            printf "\n\nCommand:\nbwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai\n"
-            bwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai
-            # BWA samse
-            printf "\n\nCommand:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sai $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
-    printf "\n\nBWA $align Complete\n"
+        failures=0
+        printf "\n\nBWA $align\n"
+        for file in $files
+            # In Parallel
+            do (
+                # Extract Read Group to Pass to BWA bwasw
+                suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
+                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                # BWA bwasw
+                printf "\n\nCommand:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
+                bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+                
+                # Check for failed parallel call
+                subcode=$?
+                if [ $subcode != 0]; then
+                    failures=$((failures + 1))
+                fi
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
 
-elif [ "$align" = "sampe" ]; then
+        # Update State on Exit
+        if [ $failures = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBWA $align Complete\n"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+        fi
 
-    printf "\n\nBWA $align\n"
-    for file in $files
-        # In Parallel
-        do (
-            # Extract Read Group to Pass to BWA aln then samse or sampe
-            suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
-            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-            # Split Paired End FastQ Files
-            seqtk seq -l0 -1 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq
-            seqtk seq -l0 -2 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq
-            # BWA aln
-            printf "\n\nCommand:\nbwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
-            bwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai
-            printf "\n\nCommand:\nbwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai\n"
-            bwa aln -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai
-            # BWA sampe
-            printf "\n\nCommand:\nbwa $align $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-            bwa $align $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.sai $paramDir/modeled/indexes/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.sai $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.1.fastq $paramDir/modeled/pairs/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.2.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
-    printf "\n\nBWA $align Complete\n"
+    else
 
-else
+        printf "\n\nInvalid BWA algorithm parameter: $align\n"
 
-    printf "\n\nInvalid BWA algorithm parameter: $align\n"
+    fi
 
 fi
 

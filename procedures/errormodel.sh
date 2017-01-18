@@ -96,276 +96,367 @@ printf "\n\nRunning Error Model Script"
 # Delegate Args & Call Experiment Script
 #
 
-case "$experiment" in
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
 
-    "bayeshammer")
+    failures=0
+    case "$experiment" in
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Bayes Hammer"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                printf "\n\nRunning Picard Bam to FastQ"
-                # python $BAYESHAMMER
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-    ;;
+        "bayeshammer")
 
-    "blessec")
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Bayes Hammer"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    printf "\n\nRunning Picard Bam to FastQ"
+                    # python $BAYESHAMMER
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Bless-EC"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # $BLESSEC
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "bloocoo")
+        "blessec")
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Bloocoo"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # $BLOOCOO
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
-    "decgpu")
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Bless-EC"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # $BLESSEC
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                    
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Dec-GPU"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # $DECGPU
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+        "bloocoo")
 
-    "karect")
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Bloocoo"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # $BLOOCOO
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
+        "decgpu")
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Karect"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # $KARECT
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Dec-GPU"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # $DECGPU
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "kgem")
+        "karect")
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning KGEM"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # java Xmx$memory -jar $ERIF
-                # java Xmx$memory -jar $KGEM
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Karect"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # $KARECT
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "musket")
+        "kgem")
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Musket"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # $DECGPU
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning KGEM"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # java Xmx$memory -jar $ERIF
+                    # java Xmx$memory -jar $KGEM
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "quorum")
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Quorum"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # $QUORUM
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+        "musket")
 
-    "rcorrector")
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Musket"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # $DECGPU
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Rcorrector"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # perl $RCORRECTOR
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+        "quorum")
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Quorum"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # $QUORUM
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "seecer")
+        "rcorrector")
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning Seecer"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # bash $SEECER
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Rcorrector"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # perl $RCORRECTOR
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "shorah")
+        "seecer")
 
-        printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
-        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
-        printf "\n\nRunning SHoRAH"
-        # Retrieve Files to Process
-        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # python $SHORAH
-                printf "\n\nCommand:\n \
-                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
-                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning Seecer"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # bash $SEECER
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    "nomodel")
-        printf "\n\nNo Model Selected"
-        printf "\n\nMoving FastQ to Modeled Directory...\n"
-        files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
-        for file in $files
-            # In Parallel
-            do (
-                # Extract Read Group to Pass Through
-                suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
-    ;;
+        "shorah")
 
-    "norealign")
-        printf "\n\nNo Realignment Selected"
-        printf "\n\nNothing to do...Exiting"
-    ;;
+            printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            printf "\n\nRunning SHoRAH"
+            # Retrieve Files to Process
+            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    # python $SHORAH
+                    printf "\n\nCommand:\n \
+                    source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory\n"
+                    source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    # Catch Any Invalid Error Models & Output Error
-    *)
+        "nomodel")
+            printf "\n\nNo Model Selected"
+            printf "\n\nMoving FastQ to Modeled Directory...\n"
+            files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
+            for file in $files
+                # In Parallel
+                do (
+                    # Extract Read Group to Pass Through
+                    suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
+                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                    cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
+                
+                    # Check for failed parallel call
+                    subcode=$?
+                    if [ $subcode != 0]; then
+                        failures=$((failures + 1))
+                    fi
+                ) &
+            done
+            wait # Prevent Premature Exiting of Script
+        ;;
 
-    printf "\n\nInvalid Experiment (Error Model) Parameter: $experiment"
-    ;;
+        "norealign")
+            printf "\n\nNo Realignment Selected"
+            printf "\n\nNothing to do...Exiting"
+        ;;
 
-esac
+        # Catch Any Invalid Error Models & Output Error
+        *)
+
+        printf "\n\nInvalid Experiment (Error Model) Parameter: $experiment"
+        ;;
+
+    esac
+
+    # Update State on Exit
+    if [ $failures = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nError Model Complete"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
+    fi
+
+fi
 
 printf "\n\nDone\n"

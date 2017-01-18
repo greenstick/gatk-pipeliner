@@ -110,35 +110,71 @@ printf "\n\nRunning BAM to FASTQ Script"
 # Shuffle & Split BAM
 #
 
-if [ "$splitbam" = "true" ]; then
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
+
     printf "\n\nShuffling & Splitting Merged BAM"
     printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
     samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -l $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
-    printf "\n\nShuffling & Splitting Merged BAM Complete"
+    
+    # Update State on Exit
+    exitcode=$?
+    if [ $exitcode = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nShuffling & Splitting Merged BAM Complete"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1"
+    fi
+
 fi
 
 #
 # Bam to FastQ
 #
 
-# Retrieve Files
-files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
+# Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" $PIPELINE_HOME/pipeline.state
+state=$?
+if [ $state != 0 ]; then
 
-printf "\n\nRunning Picard Bam to FastQ"
-for file in $files
-    # In Parallel
-    do ( 
-        # Get Read Group to Process
-        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
-        readgroup=$(echo "$suffix" | sed "s|.bam$||")
-        # Call Bam to FastQ
-        printf "\n\nCommand:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq\n"
-        samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
-    ) &
-done
-wait # Prevent Premature Exiting of Script
+    printf "\n\nRunning Picard Bam to FastQ"
+    # Retrieve Files
+    files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
+    failures=0
 
-printf "\n\nBam to FastQ Complete"
+    for file in $files
+        # In Parallel
+        do ( 
+            # Get Read Group to Process
+            suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.bam$||")
+            # Call Bam to FastQ
+            printf "\n\nCommand:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq\n"
+            samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+            
+            # Check for failed parallel call
+            subcode=$?
+            if [ $subcode != 0]; then
+                failures=$((failures + 1))
+            fi
+        ) &
+
+    done
+    wait # Prevent Premature Exiting of Script
+
+    # Update State on Exit
+    if [ $failures = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nBam to FastQ Complete"
+    else
+        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
+    fi
+
+fi
 
 printf "\n\nDone\n"
 

@@ -77,7 +77,7 @@ allocSize=$(echo "$memory" | sed "s|[0-9]*||")
 maxMemory=$(($allocMemory * $ncores))$allocSize
 
 printf "\nPARAMETERS:
-GATK Directory      = $jar
+GATK Directory      = $GATK
 Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
@@ -106,12 +106,47 @@ printf "\n\nRunning BQSR Script"
 
 if [ "$qualitymodel" = "nobqsr" ]; then
 
-    printf "\n\nCopying BAM & BAI Files to Model Directory...\n"
-    cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir
-    # Rename to Maintain Consistency
-    mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
-    mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
-    printf "\n\nDone"
+    #
+    # No BQSR - Step 1
+    #
+
+    # Run Block if it Has Not Already Been Executed Successfully
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" $PIPELINE_HOME/pipeline.state
+    state=$?
+    if [ $state != 0 ]; then
+
+        failures=0
+        printf "\n\nCopying BAM & BAI Files to Model Directory...\n"
+        cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir
+        # Check for failed command
+        subcode=$?
+        if [ $subcode != 0]; then
+            failures=$((failures + 1))
+        fi
+        # Rename to Maintain Consistency
+        mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
+        # Check for failed command
+        subcode=$?
+        if [ $subcode != 0]; then
+            failures=$((failures + 1))
+        fi
+        mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
+        # Check for failed command
+        subcode=$?
+        if [ $subcode != 0]; then
+            failures=$((failures + 1))
+        fi
+        
+        # Update State on Exit
+        if [ $failures = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nDone"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1"
+        fi
+
+    fi
 
 fi
 
@@ -121,107 +156,187 @@ if [ "$qualitymodel" = "bqsr" ]; then
     # BQSR - Step 1
     #
 
-    printf "\n\nBQSR - Step 1 Start"
-    printf "\n\nCommand:\njava -Xmx$memory \
-    -jar $jar -T BaseRecalibrator \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
-    -o $recalDir/logs/bqsr/recal_data_$condition.table \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
-    -nct $ncores\n"
-    java -Xmx$memory \
-    -jar $jar -T BaseRecalibrator \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
-    -o $recalDir/logs/bqsr/recal_data_$condition.table \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
-    -nct $ncores
-    printf "\n\nBQSR - Step 1 Complete"
+    # Run Block if it Has Not Already Been Executed Successfully
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1" $PIPELINE_HOME/pipeline.state
+    state=$?
+    if [ $state != 0 ]; then
+
+        printf "\n\nBQSR - Step 1 Start"
+        printf "\n\nCommand:\njava -Xmx$memory \
+        -jar $GATK -T BaseRecalibrator \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+        -o $recalDir/logs/bqsr/recal_data_$condition.table \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
+        -nct $ncores\n"
+        java -Xmx$memory \
+        -jar $GATK -T BaseRecalibrator \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+        -o $recalDir/logs/bqsr/recal_data_$condition.table \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
+        -nct $ncores
+
+        # Update State on Exit
+        exitcode=$?
+        if [ $exitcode = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBQSR - Step 1 Complete"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1"
+        fi
+
+    fi
 
     #
     # BQSR - Step 2
     #
 
-    printf "\n\nBQSR - Step 2 Start"
-    printf "\n\nCommand:\njava -Xmx$memory \
-    -jar $jar -T BaseRecalibrator \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
-    -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
-    -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
-    -nct $ncores\n"
-    java -Xmx$memory \
-    -jar $jar -T BaseRecalibrator \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-    -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
-    -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
-    -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
-    -nct $ncores
-    printf "\n\nBQSR - Step 2 Complete"
+    # Run Block if it Has Not Already Been Executed Successfully
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2" $PIPELINE_HOME/pipeline.state
+    state=$?
+    if [ $state != 0 ]; then
+
+        printf "\n\nBQSR - Step 2 Start"
+        printf "\n\nCommand:\njava -Xmx$memory \
+        -jar $GATK -T BaseRecalibrator \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+        -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
+        -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
+        -nct $ncores\n"
+        java -Xmx$memory \
+        -jar $GATK -T BaseRecalibrator \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
+        -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
+        -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
+        -nct $ncores
+
+        # Update State on Exit
+        exitcode=$?
+        if [ $exitcode = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBQSR - Step 2 Complete"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2"
+        fi
+
+    fi
 
     #
     # BQSR - Step 3
     #
 
-    printf "\n\nBQSR - Step 3 Start"
-    printf "\n\nCommand:\njava -Xmx$maxMemory \
-    -jar $jar -T AnalyzeCovariates \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -before $recalDir/logs/bqsr/recal_data_$condition.table \
-    -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
-    -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt\n"
-    java -Xmx$memory \
-    -jar $jar -T AnalyzeCovariates \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -before $recalDir/logs/bqsr/recal_data_$condition.table \
-    -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
-    -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt
-    printf "\n\nBQSR - Step 3 Complete"
+    # Run Block if it Has Not Already Been Executed Successfully
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3" $PIPELINE_HOME/pipeline.state
+    state=$?
+    if [ $state != 0 ]; then
+
+        printf "\n\nBQSR - Step 3 Start"
+        printf "\n\nCommand:\njava -Xmx$maxMemory \
+        -jar $GATK -T AnalyzeCovariates \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -before $recalDir/logs/bqsr/recal_data_$condition.table \
+        -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
+        -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt\n"
+        java -Xmx$memory \
+        -jar $GATK -T AnalyzeCovariates \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -before $recalDir/logs/bqsr/recal_data_$condition.table \
+        -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
+        -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt
+
+        # Update State on Exit
+        exitcode=$?
+        if [ $exitcode = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBQSR - Step 3 Complete"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3"
+        fi
+
+    fi
 
     #
     # BQSR - Step 4
     #
 
-    printf "\n\nBQSR - Step 4 Start"
-    printf "\n\nCommand:\njava -Xmx$memory \
-    -jar $jar -T PrintReads \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
-    -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
-    -nct $ncores\n"
-    java -Xmx$memory \
-    -jar $jar -T PrintReads \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-    -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
-    -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
-    --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
-    -nct $ncores
-    printf "\n\nBQSR - Step 4 Complete"
+    # Run Block if it Has Not Already Been Executed Successfully
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4" $PIPELINE_HOME/pipeline.state
+    state=$?
+    if [ $state != 0 ]; then
+
+        printf "\n\nBQSR - Step 4 Start"
+        printf "\n\nCommand:\njava -Xmx$memory \
+        -jar $GATK -T PrintReads \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
+        -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
+        -nct $ncores\n"
+        java -Xmx$memory \
+        -jar $GATK -T PrintReads \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
+        -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
+        --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
+        -nct $ncores
+
+        # Update State on Exit
+        exitcode=$?
+        if [ $exitcode = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBQSR - Step 4 Complete"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4"
+        fi
+
+    fi
 
     #
     # Create New BAM Index (Not Strictly Neccessary, Could Rename the Old One, but Does Appear to Prevent Downstream Errors)
     #
 
-    printf "\n\nIndexing BAM Output"
-    printf "\n\nCommand:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam\n"
-    samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
-    rm $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai
-    printf "\n\nBAM Indexing Complete"
+    # Run Block if it Has Not Already Been Executed Successfully
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5" $PIPELINE_HOME/pipeline.state
+    state=$?
+    if [ $state != 0 ]; then
+
+        printf "\n\nIndexing BAM Output"
+        rm $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai
+        printf "\n\nCommand:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam\n"
+        samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
+
+        # Update State on Exit
+        exitcode=$?
+        if [ $exitcode = 0 ]; then
+            # Export Pipeline State
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5" >> $PIPELINE_HOME/pipeline.state
+            printf "\n\nBAM Indexing Complete"
+        else
+            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5"
+        fi
+
+    fi
 
 fi
 
