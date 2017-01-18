@@ -17,10 +17,6 @@ for i in "$@"
         subset="${i#*=}"
         shift # Access & Write Files With This Subset
         ;;
-        -c=*|--condition=*)
-        condition="${i#*=}"
-        shift # Access & Write Files With This Condition
-        ;;
         -x=*|--experiment=*)
         experiment="${i#*=}"
         shift # Access & Write Files With This Experiment
@@ -72,7 +68,6 @@ printf "\nPARAMETERS:
 GATK Directory      = $GATK
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
-Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
@@ -96,7 +91,7 @@ printf "\n\nRunning Contamination Estimation & Mutect2 Script"
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:1" $PIPELINE_HOME/pipeline.state
+grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1" $PIPELINE_HOME/pipeline.state
 if [ $? != 0 ]; then
 
     printf "\n\nContEst Start"
@@ -127,10 +122,10 @@ if [ $? != 0 ]; then
     statuscode=$?
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:1" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nContEst Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
     fi
 
 fi
@@ -140,7 +135,7 @@ fi
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:2" $PIPELINE_HOME/pipeline.state
+grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2" $PIPELINE_HOME/pipeline.state
 if [ $? != 0 ]; then
 
     printf "\n\nMuTect2 Start"
@@ -174,10 +169,10 @@ if [ $? != 0 ]; then
     statuscode=$?
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:2" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nMuTect2 Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:2"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
     fi
 
 fi
@@ -188,7 +183,7 @@ fi
 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:3" $PIPELINE_HOME/pipeline.state
+grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3" $PIPELINE_HOME/pipeline.state
 if [ $? != 0 ]; then
 
     printf "\n\nCopying VCFs to I/O Directory..."
@@ -198,10 +193,10 @@ if [ $? != 0 ]; then
     statuscode=$?
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:3" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nVCFs Copied to I/O Directory"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:MUTECT2:3"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
     fi
 
 fi
