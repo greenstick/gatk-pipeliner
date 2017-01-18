@@ -83,69 +83,104 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 # Run BayesHammer
 # 
 
-files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAYESHAMMER:1" $PIPELINE_HOME/pipeline.state
+if [ $? != 0 ]; then
 
-if [ "$parameters" = "default" ]; then
-    
-    printf "\n\nRunning BayesHammer - Default Parameters"
-    for file in $files
-        # In Parallel
-        do (
-            # Get Read Group to Process
-            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-            readgroup=$(echo "$suffix" | sed "s/.bam$//")
-            # Call Error Model
-            printf "\n\nCommand:\n
-            python $BAYESHAMMER \
-            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            --threads $ncores \
-            --memory $memory \
-            --only-error-correction \
-            --no-discard \
-            --debug"
-            python $BAYESHAMMER \
-            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            --threads $ncores \
-            --memory $memory \
-            --only-error-correction \
-            --no-discard \
-            --debug
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
+    # Retrieve Files
+    files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
+    failures=0
 
-elif [ "$parameters" = "custom" ]; then
-    
-    printf "\n\nRunning BayesHammer - Custom Parameters"
-    for file in $files
-        # In Parallel
-        do (
-            # Get Read Group to Process
-            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-            readgroup=$(echo "$suffix" | sed "s/.bam$//")
-            # Call Error Model
-            printf "\n\nCommand:\n
-            python $BAYESHAMMER \
-            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            --threads $ncores \
-            --memory $memory \
-            --only-error-correction \
-            --no-discard \
-            --debug"
-            python $BAYESHAMMER \
-            -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-            --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            --threads $ncores \
-            --memory $memory \
-            --only-error-correction \
-            --no-discard \
-            --debug
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
+    if [ "$parameters" = "default" ]; then
+        
+        #
+        # Default Parameters
+        #
+
+        printf "\n\nRunning BayesHammer - Default Parameters"
+        for file in $files
+            # In Parallel
+            do (
+                # Get Read Group to Process
+                suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+                readgroup=$(echo "$suffix" | sed "s/.bam$//")
+                # Call Error Model
+                printf "\n\nCommand:\n
+                python $BAYESHAMMER \
+                -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+                --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                --threads $ncores \
+                --memory $memory \
+                --only-error-correction \
+                --no-discard \
+                --debug"
+                python $BAYESHAMMER \
+                -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+                --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                --threads $ncores \
+                --memory $memory \
+                --only-error-correction \
+                --no-discard \
+                --debug
+
+                # Check for failed parallel call
+                if [ $? != 0 ]; then
+                    failures=$((failures + 1))
+                fi
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
+
+    elif [ "$parameters" = "custom" ]; then
+
+        #
+        # Custom Parameters
+        #
+
+        printf "\n\nRunning BayesHammer - Custom Parameters"
+        for file in $files
+            # In Parallel
+            do (
+                # Get Read Group to Process
+                suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+                readgroup=$(echo "$suffix" | sed "s/.bam$//")
+                # Call Error Model
+                printf "\n\nCommand:\n
+                python $BAYESHAMMER \
+                -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+                --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                --threads $ncores \
+                --memory $memory \
+                --only-error-correction \
+                --no-discard \
+                --debug"
+                python $BAYESHAMMER \
+                -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+                --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                --threads $ncores \
+                --memory $memory \
+                --only-error-correction \
+                --no-discard \
+                --debug
+
+                # Check for failed parallel call
+                if [ $? != 0 ]; then
+                    failures=$((failures + 1))
+                fi
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
+
+    fi
+
+    # Update State on Exit
+    if [ $failures = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAYESHAMMER:1" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nBayesHammer Complete"
+    else
+        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BAYESHAMMER:1"
+    fi
 
 fi
 

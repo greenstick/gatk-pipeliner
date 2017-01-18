@@ -83,57 +83,98 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 # Run Bloocoo
 # 
 
-files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:1" $PIPELINE_HOME/pipeline.state
+if [ $? != 0 ]; then
 
-if [ "$parameters" = "default" ]; then
-    
-    printf "\n\nRunning Bloocoo - Default Parameters"
-    for file in $files
-        # In Parallel
-        do (
-            # Get Read Group to Process
-            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-            readgroup=$(echo "$suffix" | sed "s/.bam$//")
-            # Call Error Model
-            printf "\n\nCommand:\n
-            $BLOOCOO \
-            -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            -nb-cores $ncores"
-            $BLOOCOO \
-            -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            -nb-cores $ncores
-            # Move File to Output Directory
-            mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup_corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq  
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
+    # Retrieve Files
+    files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
+    failures=0
 
-elif [ "$parameters" = "custom" ]; then
-    
-    printf "\n\nRunning Bloocoo - Custom Parameters"
-    for file in $files
-        # In Parallel
-        do (
-            # Get Read Group to Process
-            suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-            readgroup=$(echo "$suffix" | sed "s/.bam$//")
-            # Call Error Model
-            printf "\n\nCommand:\n
-            $BLOOCOO \
-            -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            -nb-cores $ncores \
-            -slow \
-            -high-precision"
-            $BLOOCOO \
-            -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-            -nb-cores $ncores \
-            -slow \
-            -high-precision
-            # Move File to Output Directory
-            mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup_corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq   
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
+    if [ "$parameters" = "default" ]; then
+        
+        printf "\n\nRunning Bloocoo - Default Parameters"
+        for file in $files
+            # In Parallel
+            do (
+                # Get Read Group to Process
+                suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+                readgroup=$(echo "$suffix" | sed "s/.bam$//")
+                # Call Error Model
+                printf "\n\nCommand:\n
+                $BLOOCOO \
+                -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                -nb-cores $ncores"
+                $BLOOCOO \
+                -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                -nb-cores $ncores
+
+                # Check for failed parallel call
+                if [ $? != 0 ]; then
+                    failures=$((failures + 1))
+                fi
+
+                # Move File to Output Directory
+                mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup_corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq  
+                
+                # Check for failed parallel call
+                if [ $? != 0 ]; then
+                    failures=$((failures + 1))
+                fi
+
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
+
+    elif [ "$parameters" = "custom" ]; then
+        
+        printf "\n\nRunning Bloocoo - Custom Parameters"
+        for file in $files
+            # In Parallel
+            do (
+                # Get Read Group to Process
+                suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
+                readgroup=$(echo "$suffix" | sed "s/.bam$//")
+                # Call Error Model
+                printf "\n\nCommand:\n
+                $BLOOCOO \
+                -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                -nb-cores $ncores \
+                -slow \
+                -high-precision"
+                $BLOOCOO \
+                -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+                -nb-cores $ncores \
+                -slow \
+                -high-precision
+
+                # Check for failed parallel call
+                if [ $? != 0 ]; then
+                    failures=$((failures + 1))
+                fi
+
+                # Move File to Output Directory
+                mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup_corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq   
+                
+                # Check for failed parallel call
+                if [ $? != 0 ]; then
+                    failures=$((failures + 1))
+                fi
+
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
+
+    fi
+
+    # Update State on Exit
+    if [ $failures = 0 ]; then
+        # Export Pipeline State
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:1" >> $PIPELINE_HOME/pipeline.state
+        printf "\n\nBloocoo Complete"
+    else
+        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:1"
+    fi
 
 fi
 

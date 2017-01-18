@@ -153,10 +153,10 @@ if [ $? != 0 ]; then
     statuscode=$?
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nSamtools Merge Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2"
     fi
 
 fi
