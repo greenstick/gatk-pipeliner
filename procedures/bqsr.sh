@@ -36,10 +36,6 @@ for i in "$@"
 
     # Additional Arguments
 
-        -j=*|--jar=*)
-        jar="${i#*=}"
-        shift
-        ;;
 
     # Optional Arguments With Defaults
 
@@ -119,23 +115,23 @@ if [ "$qualitymodel" = "nobqsr" ]; then
         printf "\n\nCopying BAM & BAI Files to Model Directory...\n"
         cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir
         # Check for failed command
-        subcode=$?
-        if [ $subcode != 0]; then
-            failures=$((failures + 1))
-        fi
+        # subcode=$?
+        # if [ $subcode != 0]; then
+        #     failures=$((failures + 1))
+        # fi
         # Rename to Maintain Consistency
         mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
         # Check for failed command
-        subcode=$?
-        if [ $subcode != 0]; then
-            failures=$((failures + 1))
-        fi
+        # subcode=$?
+        # if [ $subcode != 0]; then
+        #     failures=$((failures + 1))
+        # fi
         mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
         # Check for failed command
-        subcode=$?
-        if [ $subcode != 0]; then
-            failures=$((failures + 1))
-        fi
+        # subcode=$?
+        # if [ $subcode != 0]; then
+        #     failures=$((failures + 1))
+        # fi
         
         # Update State on Exit
         if [ $failures = 0 ]; then
