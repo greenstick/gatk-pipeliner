@@ -94,10 +94,9 @@ printf "\n\nRunning Merge BAMs Script"
 # Inserting Read Groups
 # 
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nSamtools AddReplaceRG"
     # Retrieve Files to Process
@@ -117,8 +116,7 @@ if [ $state != 0 ]; then
             eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
         
             # Check for failed parallel call
-            subcode=$?
-            if [ $subcode != 0]; then
+            if [ $? != 0]; then
                 failures=$((failures + 1))
             fi
         ) &
@@ -131,7 +129,7 @@ if [ $state != 0 ]; then
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nSamtools AddReplaceRG Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
+        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
     fi
 
 fi
@@ -140,10 +138,9 @@ fi
 # Merge BAMs to Single BAM
 # 
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     # Retrieve Files to Process
     files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.bam))

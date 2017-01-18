@@ -109,10 +109,9 @@ printf "\n\nRunning Contamination Estimation & Mutect2 Script"
 # ContEst
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nContEst Start"
     printf "\n\nCommand:\njava -Xmx$maxMemory \
@@ -154,10 +153,9 @@ fi
 # Mutect2
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nMuTect2 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
@@ -203,10 +201,9 @@ fi
 # 
 
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nCopying VCFs to I/O Directory..."
     cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/

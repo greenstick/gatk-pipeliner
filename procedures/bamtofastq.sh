@@ -110,10 +110,9 @@ printf "\n\nRunning BAM to FASTQ Script"
 # Shuffle & Split BAM
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nShuffling & Splitting Merged BAM"
     printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
@@ -135,10 +134,9 @@ fi
 # Bam to FastQ
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nRunning Picard Bam to FastQ"
     # Retrieve Files
@@ -156,8 +154,7 @@ if [ $state != 0 ]; then
             samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
             
             # Check for failed parallel call
-            subcode=$?
-            if [ $subcode != 0]; then
+            if [ $? != 0]; then
                 failures=$((failures + 1))
             fi
         ) &
@@ -171,7 +168,7 @@ if [ $state != 0 ]; then
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nBam to FastQ Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
+        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
     fi
 
 fi

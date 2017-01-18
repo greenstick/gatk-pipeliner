@@ -96,10 +96,9 @@ printf "\n\nRunning Error Model Script"
 # Delegate Args & Call Experiment Script
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     failures=0
     case "$experiment" in
@@ -124,8 +123,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                     
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -153,8 +151,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                     
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -181,8 +178,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -208,8 +204,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -236,8 +231,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -265,8 +259,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -293,8 +286,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -320,8 +312,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -348,8 +339,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -376,8 +366,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -404,8 +393,7 @@ if [ $state != 0 ]; then
                     source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -q=$qualitymodel -n=$ncores -m=$memory
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -426,8 +414,7 @@ if [ $state != 0 ]; then
                     cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
                 
                     # Check for failed parallel call
-                    subcode=$?
-                    if [ $subcode != 0]; then
+                    if [ $? != 0 ]; then
                         failures=$((failures + 1))
                     fi
                 ) &
@@ -454,7 +441,7 @@ if [ $state != 0 ]; then
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nError Model Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
+        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
     fi
 
 fi

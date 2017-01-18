@@ -112,10 +112,9 @@ if [ "$experiment" = "norealign" ]; then
     # Mark Duplicates
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nMarkDuplicates Start"
         printf "\n\nCommand:\njava -Xmx$maxMemory \
@@ -149,10 +148,9 @@ if [ "$experiment" = "norealign" ]; then
     # Create New BAM Index
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nIndexing BAM"
         printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
@@ -177,10 +175,9 @@ else
     # Sort BAM
     # 
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nSorting BAM"
         printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
@@ -202,10 +199,9 @@ else
     # Create New BAM Index
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nIndexing BAM Output"
         printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
@@ -227,10 +223,9 @@ else
     # Mark Duplicates
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nMarkDuplicates Start"
         printf "\n\nCommand:\njava -Xmx$memory \
@@ -264,10 +259,9 @@ else
     # Create New BAM Index
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nIndexing BAM Output"
         printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"

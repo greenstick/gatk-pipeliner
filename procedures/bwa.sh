@@ -112,10 +112,9 @@ printf "\n\nRunning BWA Script\n"
 # BWA Index
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:1" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     printf "\n\nBWA Index\n"
     printf "\n\nCommand:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta\n"
@@ -137,10 +136,9 @@ fi
 # BWA - mem or bwasw
 #
 
-# Run Block if it Has Not Already Been Executed Successfully
+# State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" $PIPELINE_HOME/pipeline.state
-state=$?
-if [ $state != 0 ]; then
+if [ $? != 0 ]; then
 
     # Retrieve Files
     files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.*.fastq))
@@ -161,8 +159,7 @@ if [ $state != 0 ]; then
                 bwa $align -M -t -R $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
             
                 # Check for failed parallel call
-                subcode=$?
-                if [ $subcode != 0]; then
+                if [ $? != 0 ]; then
                     failures=$((failures + 1))
                 fi
             ) &
@@ -175,7 +172,7 @@ if [ $state != 0 ]; then
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBWA $align Complete\n"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
         fi
 
     # BWASW
@@ -194,8 +191,7 @@ if [ $state != 0 ]; then
                 bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
                 
                 # Check for failed parallel call
-                subcode=$?
-                if [ $subcode != 0]; then
+                if [ $? != 0 ]; then
                     failures=$((failures + 1))
                 fi
             ) &
@@ -208,7 +204,7 @@ if [ $state != 0 ]; then
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBWA $align Complete\n"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
         fi
 
     else

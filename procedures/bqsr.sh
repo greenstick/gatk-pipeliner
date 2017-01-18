@@ -106,30 +106,26 @@ if [ "$qualitymodel" = "nobqsr" ]; then
     # No BQSR - Step 1
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         failures=0
         printf "\n\nCopying BAM & BAI Files to Model Directory...\n"
         cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir
         # Check for failed command
-        subcode=$?
-        if [ $subcode != 0]; then
+        if [ $? != 0 ]; then
             failures=$((failures + 1))
         fi
         # Rename to Maintain Consistency
         mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
         # Check for failed command
-        subcode=$?
-        if [ $subcode != 0]; then
+        if [ $? != 0 ]; then
             failures=$((failures + 1))
         fi
         mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
         # Check for failed command
-        subcode=$?
-        if [ $subcode != 0]; then
+        if [ $? != 0 ]; then
             failures=$((failures + 1))
         fi
         
@@ -139,7 +135,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nDone"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1"
+            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1"
         fi
 
     fi
@@ -152,10 +148,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
     # BQSR - Step 1
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 1 Start"
         printf "\n\nCommand:\njava -Xmx$memory \
@@ -193,10 +188,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
     # BQSR - Step 2
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 2 Start"
         printf "\n\nCommand:\njava -Xmx$memory \
@@ -236,10 +230,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
     # BQSR - Step 3
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 3 Start"
         printf "\n\nCommand:\njava -Xmx$maxMemory \
@@ -273,10 +266,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
     # BQSR - Step 4
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 4 Start"
         printf "\n\nCommand:\njava -Xmx$memory \
@@ -312,10 +304,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
     # Create New BAM Index (Not Strictly Neccessary, Could Rename the Old One, but Does Appear to Prevent Downstream Errors)
     #
 
-    # Run Block if it Has Not Already Been Executed Successfully
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
     grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5" $PIPELINE_HOME/pipeline.state
-    state=$?
-    if [ $state != 0 ]; then
+    if [ $? != 0 ]; then
 
         printf "\n\nIndexing BAM Output"
         rm $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai
