@@ -81,7 +81,7 @@ if [ $? != 0 ]; then
 
     printf "\n\nShuffling & Splitting Merged BAM"
     printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
-    samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -l $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
+    samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -L $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
     
     # Update State on Exit
     statuscode=$?
