@@ -134,13 +134,13 @@ if [ "$experiment" = "norealign" ]; then
         TMP_DIR=$tmpDir
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nMark Duplicates Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
         fi
 
     fi
@@ -159,13 +159,13 @@ if [ "$experiment" = "norealign" ]; then
         samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
         
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBAM Indexing Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
         fi
 
     fi
@@ -187,13 +187,13 @@ else
         samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
         
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nSort BAM Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
         fi
 
     fi
@@ -212,13 +212,13 @@ else
         samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBAM Indexing Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
         fi
 
     fi
@@ -249,13 +249,13 @@ else
         TMP_DIR=$tmpDir
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nMark Duplicates Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
         fi
 
     fi
@@ -274,13 +274,13 @@ else
         samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBAM Indexing Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
         fi
 
     fi

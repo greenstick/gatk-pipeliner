@@ -122,13 +122,13 @@ if [ $state != 0 ]; then
     bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
     
     # Update State on Exit
-    exitcode=$?
-    if [ $exitcode = 0 ]; then
-        # Export Pipeline State
+    statuscode=$?
+    if [ $statuscode = 0 ]; then
+        # Export Pipeline
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nBWA Index Complete\n"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:1"
     fi
 
 fi
@@ -171,11 +171,11 @@ if [ $state != 0 ]; then
 
         # Update State on Exit
         if [ $failures = 0 ]; then
-            # Export Pipeline State
+            # Export Pipeline
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBWA $align Complete\n"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
         fi
 
     # BWASW
@@ -204,11 +204,11 @@ if [ $state != 0 ]; then
 
         # Update State on Exit
         if [ $failures = 0 ]; then
-            # Export Pipeline State
+            # Export Pipeline
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBWA $align Complete\n"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
         fi
 
     else

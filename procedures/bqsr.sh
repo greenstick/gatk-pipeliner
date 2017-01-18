@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 # Exit on First Error
-set -o errexit
+# set -o errexit
 
 # Assign Arguments
 for i in "$@"
@@ -115,23 +115,23 @@ if [ "$qualitymodel" = "nobqsr" ]; then
         printf "\n\nCopying BAM & BAI Files to Model Directory...\n"
         cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir
         # Check for failed command
-        # subcode=$?
-        # if [ $subcode != 0]; then
-        #     failures=$((failures + 1))
-        # fi
+        subcode=$?
+        if [ $subcode != 0]; then
+            failures=$((failures + 1))
+        fi
         # Rename to Maintain Consistency
         mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
         # Check for failed command
-        # subcode=$?
-        # if [ $subcode != 0]; then
-        #     failures=$((failures + 1))
-        # fi
+        subcode=$?
+        if [ $subcode != 0]; then
+            failures=$((failures + 1))
+        fi
         mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
         # Check for failed command
-        # subcode=$?
-        # if [ $subcode != 0]; then
-        #     failures=$((failures + 1))
-        # fi
+        subcode=$?
+        if [ $subcode != 0]; then
+            failures=$((failures + 1))
+        fi
         
         # Update State on Exit
         if [ $failures = 0 ]; then
@@ -139,7 +139,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nDone"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1"
         fi
 
     fi
@@ -178,13 +178,13 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 1 Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1"
         fi
 
     fi
@@ -221,13 +221,13 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 2 Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2"
         fi
 
     fi
@@ -258,13 +258,13 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 3 Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3"
         fi
 
     fi
@@ -297,13 +297,13 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 4 Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4"
         fi
 
     fi
@@ -323,13 +323,13 @@ if [ "$qualitymodel" = "bqsr" ]; then
         samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
 
         # Update State on Exit
-        exitcode=$?
-        if [ $exitcode = 0 ]; then
+        statuscode=$?
+        if [ $statuscode = 0 ]; then
             # Export Pipeline State
             echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBAM Indexing Complete"
         else
-            printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5"
         fi
 
     fi

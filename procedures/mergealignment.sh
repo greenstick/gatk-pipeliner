@@ -131,7 +131,7 @@ if [ $state != 0 ]; then
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nSamtools AddReplaceRG Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
     fi
 
 fi
@@ -153,13 +153,13 @@ if [ $state != 0 ]; then
     samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
     
     # Update State on Exit
-    exitcode=$?
-    if [ $exitcode = 0 ]; then
+    statuscode=$?
+    if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nSamtools Merge Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
     fi
 
 fi

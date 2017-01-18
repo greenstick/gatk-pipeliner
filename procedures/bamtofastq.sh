@@ -120,13 +120,13 @@ if [ $state != 0 ]; then
     samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -l $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
     
     # Update State on Exit
-    exitcode=$?
-    if [ $exitcode = 0 ]; then
+    statuscode=$?
+    if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nShuffling & Splitting Merged BAM Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1"
     fi
 
 fi
@@ -171,7 +171,7 @@ if [ $state != 0 ]; then
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nBam to FastQ Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
     fi
 
 fi

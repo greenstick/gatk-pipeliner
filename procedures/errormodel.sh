@@ -454,7 +454,7 @@ if [ $state != 0 ]; then
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nError Model Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
     fi
 
 fi

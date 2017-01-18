@@ -139,13 +139,13 @@ if [ $state != 0 ]; then
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt
     
     # Update State on Exit
-    exitcode=$?
-    if [ $exitcode = 0 ]; then
+    statuscode=$?
+    if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nContEst Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:1"
     fi
 
 fi
@@ -187,13 +187,13 @@ if [ $state != 0 ]; then
     -nct $ncores
 
     # Update State on Exit
-    exitcode=$?
-    if [ $exitcode = 0 ]; then
+    statuscode=$?
+    if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nMuTect2 Complete"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:2"
     fi
 
 fi
@@ -212,13 +212,13 @@ if [ $state != 0 ]; then
     cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/
 
     # Update State on Exit
-    exitcode=$?
-    if [ $exitcode = 0 ]; then
+    statuscode=$?
+    if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nVCFs Copied to I/O Directory"
     else
-        printf "\n\nUnexpected Exit $exitcode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MUTECT2:3"
     fi
 
 fi
