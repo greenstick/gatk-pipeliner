@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 # Exit on First Error
-set -o errexit
+# set -o errexit
 
 # Assign Arguments
 for i in "$@"
@@ -107,7 +107,7 @@ if [ $? != 0 ]; then
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt\n"
     java -Xmx$memory \
-    -jar $jar -T ContEst \
+    -jar $GATK -T ContEst \
     --precision 0.001 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
@@ -152,7 +152,7 @@ if [ $? != 0 ]; then
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
     -nct $ncores\n"
     java -Xmx$memory \
-    -jar $jar -T MuTect2 \
+    -jar $GATK -T MuTect2 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
     -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
@@ -180,7 +180,6 @@ fi
 # 
 # Copy VCFS to User I/O Directory
 # 
-
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3" $PIPELINE_HOME/pipeline.state
