@@ -111,7 +111,7 @@ printf "\n\nRunning BAM to FASTQ Script"
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1" $PIPELINE_HOME/pipeline.state
+grep -q "$fileprefix.$subset.$condition:BAMTOFASTQ:1" $PIPELINE_HOME/pipeline.state
 if [ $? != 0 ]; then
 
     printf "\n\nShuffling & Splitting Merged BAM"
@@ -122,10 +122,10 @@ if [ $? != 0 ]; then
     statuscode=$?
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix.$subset.$condition:BAMTOFASTQ:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nShuffling & Splitting Merged BAM Complete"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition:BAMTOFASTQ:1"
     fi
 
 fi
@@ -135,7 +135,7 @@ fi
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" $PIPELINE_HOME/pipeline.state
+grep -q "$fileprefix.$subset.$condition:BAMTOFASTQ:2" $PIPELINE_HOME/pipeline.state
 if [ $? != 0 ]; then
 
     printf "\n\nRunning Picard Bam to FastQ"
@@ -165,10 +165,10 @@ if [ $? != 0 ]; then
     # Update State on Exit
     if [ $failures = 0 ]; then
         # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix.$subset.$condition:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nBam to FastQ Complete"
     else
-        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BAMTOFASTQ:2"
+        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition:BAMTOFASTQ:2"
     fi
 
 fi

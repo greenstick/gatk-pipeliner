@@ -107,7 +107,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" $PIPELINE_HOME/pipeline.state
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1" $PIPELINE_HOME/pipeline.state
     if [ $? != 0 ]; then
 
         failures=0
@@ -132,10 +132,10 @@ if [ "$qualitymodel" = "nobqsr" ]; then
         # Update State on Exit
         if [ $failures = 0 ]; then
             # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1" >> $PIPELINE_HOME/pipeline.state
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nDone"
         else
-            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:NOBQSR:1"
+            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1"
         fi
 
     fi
@@ -149,7 +149,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1" $PIPELINE_HOME/pipeline.state
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1" $PIPELINE_HOME/pipeline.state
     if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 1 Start"
@@ -176,10 +176,10 @@ if [ "$qualitymodel" = "bqsr" ]; then
         statuscode=$?
         if [ $statuscode = 0 ]; then
             # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1" >> $PIPELINE_HOME/pipeline.state
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 1 Complete"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:1"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1"
         fi
 
     fi
@@ -189,7 +189,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2" $PIPELINE_HOME/pipeline.state
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2" $PIPELINE_HOME/pipeline.state
     if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 2 Start"
@@ -218,10 +218,10 @@ if [ "$qualitymodel" = "bqsr" ]; then
         statuscode=$?
         if [ $statuscode = 0 ]; then
             # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2" >> $PIPELINE_HOME/pipeline.state
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 2 Complete"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:2"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2"
         fi
 
     fi
@@ -231,7 +231,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3" $PIPELINE_HOME/pipeline.state
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3" $PIPELINE_HOME/pipeline.state
     if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 3 Start"
@@ -254,10 +254,10 @@ if [ "$qualitymodel" = "bqsr" ]; then
         statuscode=$?
         if [ $statuscode = 0 ]; then
             # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3" >> $PIPELINE_HOME/pipeline.state
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 3 Complete"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:3"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3"
         fi
 
     fi
@@ -267,7 +267,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4" $PIPELINE_HOME/pipeline.state
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4" $PIPELINE_HOME/pipeline.state
     if [ $? != 0 ]; then
 
         printf "\n\nBQSR - Step 4 Start"
@@ -292,10 +292,10 @@ if [ "$qualitymodel" = "bqsr" ]; then
         statuscode=$?
         if [ $statuscode = 0 ]; then
             # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4" >> $PIPELINE_HOME/pipeline.state
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBQSR - Step 4 Complete"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:4"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4"
         fi
 
     fi
@@ -305,7 +305,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5" $PIPELINE_HOME/pipeline.state
+    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5" $PIPELINE_HOME/pipeline.state
     if [ $? != 0 ]; then
 
         printf "\n\nIndexing BAM Output"
@@ -317,10 +317,10 @@ if [ "$qualitymodel" = "bqsr" ]; then
         statuscode=$?
         if [ $statuscode = 0 ]; then
             # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5" >> $PIPELINE_HOME/pipeline.state
+            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5" >> $PIPELINE_HOME/pipeline.state
             printf "\n\nBAM Indexing Complete"
         else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BQSR:5"
+            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5"
         fi
 
     fi
