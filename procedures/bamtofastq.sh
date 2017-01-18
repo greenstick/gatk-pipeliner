@@ -119,7 +119,7 @@ if [ $? != 0 ]; then
             samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
             
             # Check for failed parallel call
-            if [ $? != 0]; then
+            if [ $? != 0 ]; then
                 failures=$((failures + 1))
             fi
         ) &
