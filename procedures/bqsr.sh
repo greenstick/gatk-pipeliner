@@ -34,9 +34,6 @@ for i in "$@"
         shift # Access & Write Files With This Quality Model
         ;;
 
-    # Additional Arguments
-
-
     # Optional Arguments With Defaults
 
         -n=*|--ncores=*)
@@ -65,12 +62,11 @@ memoryDef="6G"
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-ncores=${ncoresOpt:-$ncoresDef}
 
 # Get Max Allowable Memory
-allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
-allocSize=$(echo "$memory" | sed "s|[0-9]*||")
-maxMemory=$(($allocMemory * $ncores))$allocSize
+allocMemory=${memory//[GgMmKk]/}
+allocSize=${memory//[0-9]/}
+maxMemory=$((allocMemory * ncores))$allocSize
 
 printf "\nPARAMETERS:
 GATK Directory      = $GATK

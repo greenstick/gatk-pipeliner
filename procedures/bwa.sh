@@ -36,10 +36,6 @@ for i in "$@"
 
     # Additional Arguments
 
-        -i=*|--index=*)
-        indexOpt="${i#*=}"
-        shift
-        ;;
         -a=*|--align=*)
         alignOpt="${i#*=}"
         shift
@@ -69,29 +65,25 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="20"
 memoryDef="4G"
-indexDef=false
 alignDef="mem"
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-index=${indexOpt:-$indexDef}
 align=${alignOpt:-$alignDef}
 
 # Get Max Allowable Memory
-allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
-allocSize=$(echo "$memory" | sed "s|[0-9]*||")
-maxMemory=$(($allocMemory * $ncores))$allocSize
+allocMemory=${memory//[GgMmKk]/}
+allocSize=${memory//[0-9]/}
+maxMemory=$((allocMemory * ncores))$allocSize
  
 printf "\n\nPARAMETERS: 
-Picard Directory    = $jar
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
-Build BWA Index?    = $index
 BWA Alignment       = $align
 Memory              = $memory
 Cores               = $ncores
@@ -113,7 +105,7 @@ printf "\n\nRunning BWA Script\n"
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:1" $PIPELINE_HOME/pipeline.state
+grep -q "$fileprefix:BWA:1" $PIPELINE_HOME/pipeline.state
 if [ $? != 0 ]; then
 
     printf "\n\nBWA Index\n"
@@ -124,10 +116,10 @@ if [ $? != 0 ]; then
     statuscode=$?
     if [ $statuscode = 0 ]; then
         # Export Pipeline
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:1" >> $PIPELINE_HOME/pipeline.state
+        echo "$fileprefix:BWA:1" >> $PIPELINE_HOME/pipeline.state
         printf "\n\nBWA Index Complete\n"
     else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:1"
+        printf "\n\nUnexpected Exit $statuscode - $fileprefix:BWA:1"
     fi
 
 fi

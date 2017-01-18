@@ -65,9 +65,9 @@ ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 
 # Get Max Allowable Memory
-allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
-allocSize=$(echo "$memory" | sed "s|[0-9]*||")
-maxMemory=$(($allocMemory * $ncores))$allocSize
+allocMemory=${memory//[GgMmKk]/}
+allocSize=${memory//[0-9]/}
+maxMemory=$((allocMemory * ncores))$allocSize
 
 printf "\nPARAMETERS:
 Reference Directory = $PIPELINE_REF

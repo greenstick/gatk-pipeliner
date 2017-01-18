@@ -34,17 +34,6 @@ for i in "$@"
         shift # Access & Write Files With This Quality Model
         ;;
 
-    # Additional Arguments
-
-        -j=*|--jar=*)
-        jar="${i#*=}"
-        shift
-        ;;
-        -b=*|--sortbam=*)
-        sortbamOpt="${i#*=}"
-        shift # Build BAM Index?
-        ;;
-
     # Optional Arguments With Defaults
 
         -n=*|--ncores=*)
@@ -69,26 +58,23 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="12"
 memoryDef="6G"
-sortbamDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-sortbam=${sortbamOpt:-$sortbamDef}
 
 # Get Max Allowable Memory
-allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
-allocSize=$(echo "$memory" | sed "s|[0-9]*||")
-maxMemory=$(($allocMemory * $ncores))$allocSize
+allocMemory=${memory//[GgMmKk]/}
+allocSize=${memory//[0-9]/}
+maxMemory=$((allocMemory * ncores))$allocSize
 
 printf "\nPARAMETERS:
-Picard Directory    = $jar
+Picard Directory    = $PICARD
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
-Sort BAM?           = $sortbam
 Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
@@ -118,14 +104,14 @@ if [ "$experiment" = "norealign" ]; then
 
         printf "\n\nMarkDuplicates Start"
         printf "\n\nCommand:\njava -Xmx$maxMemory \
-        -jar $jar MarkDuplicates \
+        -jar $PICARD MarkDuplicates \
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         PG=null \
         TMP_DIR=$tmpDir\n"
         java -Xmx$memory \
-        -jar $jar MarkDuplicates \
+        -jar $PICARD MarkDuplicates \
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
@@ -229,14 +215,14 @@ else
 
         printf "\n\nMarkDuplicates Start"
         printf "\n\nCommand:\njava -Xmx$memory \
-        -jar $jar MarkDuplicates \
+        -jar $PICARD MarkDuplicates \
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         PG=null \
         TMP_DIR=$tmpDir\n"
         java -Xmx$memory \
-        -jar $jar MarkDuplicates \
+        -jar $PICARD MarkDuplicates \
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \

@@ -34,17 +34,6 @@ for i in "$@"
         shift # Access & Write Files With This Quality Model
         ;;
 
-    # Additional Arguments
-
-        -j=*|--jar=*)
-        jar="${i#*=}"
-        shift
-        ;;
-        -e=*|--contest=*)
-        contestOpt="${i#*=}"
-        shift # Run ContEst (0 or 1)
-        ;;
-
     # Optional Arguments With Defaults
 
         -n=*|--ncores=*)
@@ -69,21 +58,18 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="10"
 memoryDef="8G"
-contestDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-contest=${contestOpt:-$contestDef}
 
 # Get Max Allowable Memory
-allocMemory=$(echo "$memory" | sed "s|[GMKgmk]||")
-allocSize=$(echo "$memory" | sed "s|[0-9]*||")
-maxMemory=$(($allocMemory * $ncores))$allocSize
+allocMemory=${memory//[GgMmKk]/}
+allocSize=${memory//[0-9]/}
+maxMemory=$((allocMemory * ncores))$allocSize
  
 printf "\nPARAMETERS:
-GATK Directory      = $jar
-Run ContEst         = $contest
+GATK Directory      = $GATK
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -115,7 +101,7 @@ if [ $? != 0 ]; then
 
     printf "\n\nContEst Start"
     printf "\n\nCommand:\njava -Xmx$maxMemory \
-    -jar $jar -T ContEst \
+    -jar $GATK -T ContEst \
     --precision 0.001 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
@@ -159,7 +145,7 @@ if [ $? != 0 ]; then
 
     printf "\n\nMuTect2 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
-    -jar $jar -T MuTect2 \
+    -jar $GATK -T MuTect2 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
     -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
