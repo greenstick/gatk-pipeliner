@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
-# Exit on First Error
-# set -o errexit
+# Exit on First Error - to Prevent Invalid File Modifications
+set -o errexit
 
 # Assign Arguments
 for i in "$@"
