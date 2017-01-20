@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 # Exit on First Error - to Prevent Invalid File Modifications
-set -o errexit
+# set -o errexit
 
 # Assign Arguments
 for i in "$@"
@@ -148,7 +148,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         printf "\n\nCommand:\njava -Xmx$memory \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
@@ -188,7 +188,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         printf "\n\nCommand:\njava -Xmx$memory \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
@@ -266,7 +266,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         printf "\n\nCommand:\njava -Xmx$memory \
         -jar $GATK -T PrintReads \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
@@ -301,7 +301,6 @@ if [ "$qualitymodel" = "bqsr" ]; then
     if [ $? != 0 ]; then
 
         printf "\n\nIndexing BAM Output"
-        rm $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai
         printf "\n\nCommand:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam\n"
         samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
 

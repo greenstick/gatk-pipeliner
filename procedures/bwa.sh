@@ -1,7 +1,7 @@
 #! /usr/bin/bash
 
 # Exit on First Error - to Prevent Invalid File Modifications
-set -o errexit
+# set -o errexit
 
 # Assign Arguments
 for i in "$@"
@@ -138,7 +138,7 @@ if [ $? != 0 ]; then
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # BWA mem
                 printf "\n\nCommand:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-                bwa $align -M -t -R $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+                bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
             
                 # Check for failed parallel call
                 if [ $? != 0 ]; then
