@@ -107,7 +107,7 @@ if [ $? != 0 ]; then
             eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
         
             # Check for failed parallel call
-            if [ $? != 0]; then
+            if [ $? != 0 ]; then
                 failures=$((failures + 1))
             fi
         ) &
