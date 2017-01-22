@@ -96,13 +96,15 @@ if [ "$experiment" = "norealign" ]; then
 
         printf "\n\nMarkDuplicates Start"
         printf "\n\nCommand:\njava -Xmx$maxMemory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         PG=null \
         TMP_DIR=$tmpDir\n"
-        java -Xmx$memory \
+        java -Xmx$maxMemory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -207,6 +209,7 @@ else
 
         printf "\n\nMarkDuplicates Start"
         printf "\n\nCommand:\njava -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -214,6 +217,7 @@ else
         PG=null \
         TMP_DIR=$tmpDir\n"
         java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \

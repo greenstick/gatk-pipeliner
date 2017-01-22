@@ -78,6 +78,7 @@ Max Memory          = $maxMemory
 
 # Set Directories
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
+tmpDir=$PIPELINE_HOME/$subset/tmp
 
 printf "\n\nRunning Contamination Estimation & Mutect2 Script"
 
@@ -91,6 +92,7 @@ if [ $? != 0 ]; then
 
     printf "\n\nContEst Start"
     printf "\n\nCommand:\njava -Xmx$maxMemory \
+    -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
     --precision 0.001 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -102,6 +104,7 @@ if [ $? != 0 ]; then
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt\n"
     java -Xmx$memory \
+    -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
     --precision 0.001 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -135,6 +138,7 @@ if [ $? != 0 ]; then
 
     printf "\n\nMuTect2 Start"
     printf "\n\nCommand:\njava -Xmx$memory \
+    -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T MuTect2 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
@@ -147,6 +151,7 @@ if [ $? != 0 ]; then
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
     -nct $ncores\n"
     java -Xmx$memory \
+    -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T MuTect2 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
     -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \

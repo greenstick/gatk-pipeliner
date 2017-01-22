@@ -85,6 +85,7 @@ Max Memory          = $maxMemory
 # Set Directories
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
+tmpDir=$PIPELINE_HOME/$subset/tmp
 
 # 
 # Run BQSR
@@ -146,6 +147,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
         printf "\n\nBQSR - Step 1 Start"
         printf "\n\nCommand:\njava -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -155,6 +157,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
         -nct $ncores\n"
         java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -186,6 +189,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
         printf "\n\nBQSR - Step 2 Start"
         printf "\n\nCommand:\njava -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -196,6 +200,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
         -nct $ncores\n"
         java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -228,6 +233,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
         printf "\n\nBQSR - Step 3 Start"
         printf "\n\nCommand:\njava -Xmx$maxMemory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T AnalyzeCovariates \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -before $recalDir/logs/bqsr/recal_data_$condition.table \
@@ -235,6 +241,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt\n"
         java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T AnalyzeCovariates \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -before $recalDir/logs/bqsr/recal_data_$condition.table \
@@ -264,6 +271,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
         printf "\n\nBQSR - Step 4 Start"
         printf "\n\nCommand:\njava -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
@@ -272,6 +280,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
         -nct $ncores\n"
         java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
