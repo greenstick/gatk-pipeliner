@@ -138,7 +138,7 @@ if [ $? != 0 ]; then
 
     printf "\n\nSamtools Merge"
     printf "\n\nCommand:\nsamtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
-    samtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
+    samtools merge -r -f $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
     
     # Update State on Exit
     statuscode=$?
