@@ -6,13 +6,13 @@
 
 # Register State to State File
 register_state () {
-    local statuscode=$0
-    local state=$1
+    local statuscode=$1
+    local state=$2
     # Update State on Exit
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$state" >> $PIPELINE_HOME/core/pipeline.state
-        echo "\n\nState Registered: $state"
+        printf "\n\nState Registered: $state"
     else
         printf "\n\nError $statuscode; exiting - $state"
         exit $statuscode
@@ -20,14 +20,15 @@ register_state () {
 }
 
 # Return State of Current Step
-state_is_registered () {
-    local state=$0
+state_registered () {
+    local state=$1
     grep -q "$state" $PIPELINE_HOME/core/pipeline.state
-    echo $?
+    return $?
 }
 
 # Emit Status With Consistent Spacing
-emit_status () {
-    local status=$0
-    echo "\n$status\n"
+format_status () {
+    local status=$1
+    printf "\n\n$status"
+    return $?
 }
