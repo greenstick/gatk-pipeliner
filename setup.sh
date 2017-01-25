@@ -77,6 +77,9 @@ mkdir -p set{1..6}/{fastq,downloaded,tmp}
 mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
 
+# Create pipeline.state Write File
+touch $pipeline_dir/core/pipeline.state
+
 #
 # Exports
 #
