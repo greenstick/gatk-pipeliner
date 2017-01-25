@@ -76,7 +76,7 @@ grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1" $PIPEL
 if [ $? != 0 ]; then
 
     # Retrieve Files
-    files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.bam))
+    files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
     failures=0
 
     if [ "$parameters" = "default" ]; then
