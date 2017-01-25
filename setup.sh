@@ -8,20 +8,31 @@
 # Seqtk         1.2-r94
 
 # Processing Steps:
-# 
-# Step      File        Function        Output Directory
-# 1.        bam         -- bamtofastq   -> fastq/split
-# 2.        fastq       -- fastqc       -> fastq/split
-# 3.        fastq       -- errormodel*  -> model/{}/param/{}/modeled
-# 4.        fastq       -- fastqc*      -> model/{}/param/{}/pre-align
-# 5.        fastq       -- bwa          -> model/{}/param/{}/post-align
-# 6.        fastq       -- mergealign   -> model/{}/param/{}/merged
-# 7.        bam         -- fastqc       -> model/{}/param/{}/post-align
-# 9.        bam         -- markdup      -> model/{}/param/{}/post-align
-# 9.        bam         -- recal*       -> model/{}/param/{}/recal/{}/log/bqsr
-# 10.       bam         -- contest      -> model/{}/param/{}/recal/{}/log/contest
-# 11.       bam         -- mutect2      -> model/{}/param/{}/recal/{}/log/mutect2
-
+#
+# Step    Procedure           State               Input       Output      
+# 1       bamtofastq.sh       BAMTOFASTQ:1        bam         bam
+# 2       bamtofastq.sh       BAMTOFASTQ:2        bam         fastq
+# 3       errormodel.sh       ERRORMODEL:1        fastq       fastq
+# 4       errormodel.sh       BAYESHAMMER:1       fastq       fastq
+# 5       errormodel.sh       BLOOCOO:1           fastq       fastq
+# 6       errormodel.sh       QUORUM:1            fastq       fastq
+# 7       bwa.sh              BWA:1               fastq       fai
+# 8       bwa.sh              BWA:2               fastq       bam
+# 9       mergealignment.sh   MERGEALIGNMENT:1    bam         bam
+# 10      mergealignment.sh   MERGEALIGNMENT:2    bam         bam
+# 11      markduplicates.sh   MARKDUPLICATES:1    bam         bam
+# 12      markduplicates.sh   MARKDUPLICATES:2    bam         bam
+# 13      markduplicates.sh   MARKDUPLICATES:3    bam         bam
+# 14      markduplicates.sh   MARKDUPLICATES:4    bam         bam
+# 15      bqsr.sh             NOBQSR:1            bam         bam
+# 16      bqsr.sh             BQSR:1              bam         table
+# 17      bqsr.sh             BQSR:2              bam         table
+# 18      bqsr.sh             BQSR:3              bam         pdf
+# 19      bqsr.sh             BQSR:4              bam         bam
+# 20      bqsr.sh             BQSR:5              bam         bai
+# 21      mutect2.sh          MUTECT2:1           bam         txt
+# 22      mutect2.sh          MUTECT2:2           bam         vcf
+# 23      mutect2.sh          MUTECT2:3           vcf         vcf
 
 #
 # References / Locations
@@ -48,20 +59,23 @@ output_dir=$user_dir/io # Set to home directory off lustre FS for FTP access
 logging_dir=$pipeline_dir/logs
 
 #
-# Dependency Locations
+# Scaffolding
 #
 
-# Location of Picard Tools
-picard_dir=/home/users/cordier/packages/picard/picard.jar
+printf "\nScaffolding Directories...\n"
 
-# Location of GATK
-gatk_dir=/home/users/cordier/packages/gatk/GenomeAnalysisTK.jar
+# Scaffold Pipeline Directory & Change Directory
+cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir
 
-# Location of Samtools
-# samtools_dir=
-
-# Location of BAMUtils
-# bamutils_dir=
+# Pipeline Scaffolding
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
+mkdir -p set{1..6}/{fastq,downloaded,tmp}
+mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
+mkdir -p set{1..6}/fastq/{fastqc,split}
 
 #
 # Exports
@@ -132,24 +146,5 @@ while true; do
         * ) echo "Please answer yes [y] or no [n].";;
     esac
 done
-
-#
-# Scaffolding
-#
-
-printf "\nScaffolding Directories...\n"
-
-# Scaffold Pipeline Directory & Change Directory
-cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir
-
-# Pipeline Scaffolding
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
-mkdir -p set{1..6}/{fastq,downloaded,tmp}
-mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
-mkdir -p set{1..6}/fastq/{fastqc,split}
 
 printf "\nDone\n"
