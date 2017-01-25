@@ -102,7 +102,6 @@ if [ $? != 0 ]; then
             # Check for failed copy
             if [ $? != 0 ]; then
                 failures=$((failures + 1))
-                break
             fi
             printf "\n\nRunning Bayes Hammer"
             # Retrieve Files to Process
@@ -122,7 +121,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
 
@@ -156,7 +154,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
             done
@@ -189,7 +186,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
             done
@@ -221,7 +217,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
             done
@@ -254,7 +249,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
             done
@@ -288,7 +282,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
             done
@@ -321,7 +314,6 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
-                        break
                     fi
                 ) &
             done
@@ -500,6 +492,7 @@ if [ $? != 0 ]; then
         printf "\n\nError Model Complete"
     else
         printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
+        exit 1
     fi
 
 fi

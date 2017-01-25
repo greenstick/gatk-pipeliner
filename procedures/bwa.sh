@@ -110,6 +110,7 @@ if [ $? != 0 ]; then
         printf "\n\nBWA Index Complete\n"
     else
         printf "\n\nUnexpected Exit $statuscode - $fileprefix:BWA:1"
+        exit $statuscode
     fi
 
 fi
@@ -155,6 +156,7 @@ if [ $? != 0 ]; then
             printf "\n\nBWA $align Complete\n"
         else
             printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+            exit 1
         fi
 
     # BWASW
@@ -187,6 +189,7 @@ if [ $? != 0 ]; then
             printf "\n\nBWA $align Complete\n"
         else
             printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+            exit 1
         fi
 
     else

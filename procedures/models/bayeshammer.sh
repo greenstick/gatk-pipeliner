@@ -168,6 +168,7 @@ if [ $? != 0 ]; then
         printf "\n\nBayesHammer Complete"
     else
         printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BAYESHAMMER:1"
+        exit 1
     fi
 
 fi

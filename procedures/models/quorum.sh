@@ -156,6 +156,7 @@ if [ $? != 0 ]; then
         printf "\n\nQuorum Complete"
     else
         printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
+        exit 1
     fi
 
 fi

@@ -124,6 +124,7 @@ if [ $? != 0 ]; then
         printf "\n\nContEst Complete"
     else
         printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
+        exit $statuscode
     fi
 
 fi
@@ -173,6 +174,7 @@ if [ $? != 0 ]; then
         printf "\n\nMuTect2 Complete"
     else
         printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
+        exit $statuscode
     fi
 
 fi
@@ -196,6 +198,7 @@ if [ $? != 0 ]; then
         printf "\n\nVCFs Copied to I/O Directory"
     else
         printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
+        exit $statuscode
     fi
 
 fi

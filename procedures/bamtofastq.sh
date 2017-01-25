@@ -91,6 +91,7 @@ if [ $? != 0 ]; then
         printf "\n\nShuffling & Splitting Merged BAM Complete"
     else
         printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition:BAMTOFASTQ:1"
+        exit $statuscode
     fi
 
 fi
@@ -134,6 +135,7 @@ if [ $? != 0 ]; then
         printf "\n\nBam to FastQ Complete"
     else
         printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition:BAMTOFASTQ:2"
+        exit 1
     fi
 
 fi

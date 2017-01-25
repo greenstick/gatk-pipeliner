@@ -121,6 +121,7 @@ if [ $? != 0 ]; then
         printf "\n\nSamtools AddReplaceRG Complete"
     else
         printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
+        exit 1
     fi
 
 fi
@@ -148,6 +149,7 @@ if [ $? != 0 ]; then
         printf "\n\nSamtools Merge Complete"
     else
         printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2"
+        exit 1
     fi
 
 fi

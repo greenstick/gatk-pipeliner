@@ -129,6 +129,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
             printf "\n\nDone"
         else
             printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1"
+            exit 1
         fi
 
     fi
@@ -175,6 +176,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
             printf "\n\nBQSR - Step 1 Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1"
+            exit $statuscode
         fi
 
     fi
@@ -219,6 +221,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
             printf "\n\nBQSR - Step 2 Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2"
+            exit $statuscode
         fi
 
     fi
@@ -257,6 +260,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
             printf "\n\nBQSR - Step 3 Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3"
+            exit $statuscode
         fi
 
     fi
@@ -297,6 +301,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
             printf "\n\nBQSR - Step 4 Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4"
+            exit $statuscode
         fi
 
     fi
@@ -321,6 +326,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
             printf "\n\nBAM Indexing Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5"
+            exit $statuscode
         fi
 
     fi

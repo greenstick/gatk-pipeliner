@@ -120,6 +120,7 @@ if [ "$experiment" = "norealign" ]; then
             printf "\n\nMark Duplicates Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
+            exit $statuscode
         fi
 
     fi
@@ -144,6 +145,7 @@ if [ "$experiment" = "norealign" ]; then
             printf "\n\nBAM Indexing Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
+            exit $statuscode
         fi
 
     fi
@@ -171,6 +173,7 @@ else
             printf "\n\nSort BAM Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
+            exit $statuscode
         fi
 
     fi
@@ -195,6 +198,7 @@ else
             printf "\n\nBAM Indexing Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
+            exit $statuscode
         fi
 
     fi
@@ -233,6 +237,7 @@ else
             printf "\n\nMark Duplicates Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+            exit $statuscode
         fi
 
     fi
@@ -257,6 +262,7 @@ else
             printf "\n\nBAM Indexing Complete"
         else
             printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
+            exit $statuscode
         fi
 
     fi

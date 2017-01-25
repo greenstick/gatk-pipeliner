@@ -109,7 +109,6 @@ if [ $? != 0 ]; then
                 if [ $? != 0 ]; then
                     failures=$((failures + 1))
                 fi
-
             ) &
         done
         wait # Prevent Premature Exiting of Script
@@ -162,6 +161,7 @@ if [ $? != 0 ]; then
         printf "\n\nBloocoo Complete"
     else
         printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:1"
+        exit 1
     fi
 
 fi
