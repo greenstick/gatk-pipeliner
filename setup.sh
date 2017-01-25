@@ -151,6 +151,5 @@ mkdir -p set{1..6}/model/{bayeshammer,bless,karect,kgem,quorum,seecer,shorah,nom
 mkdir -p set{1..6}/{fastq,downloaded,tmp}
 mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
-mkdir -p tmp
 
 printf "\nDone\n"
