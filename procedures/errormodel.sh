@@ -98,7 +98,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
     echo "meow"
 
     state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
-    if state_registered $state; then
+    if (state_registered $state); then
         echo "moo"
 
         if [ "$experiment" = "nomodel" ]; then
@@ -116,7 +116,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:1"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
 
                         format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
                         cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
@@ -151,7 +151,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:2"
-if state_registered $state; then
+if (state_registered $state); then
 
     case "$experiment" in
 
@@ -169,7 +169,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
 
                         format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
@@ -198,7 +198,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         format_status "Command:\nsource $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                     
@@ -225,7 +225,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         format_status "Command:\nsource $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
@@ -251,7 +251,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         format_status "Command:\nsource $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                 
@@ -278,7 +278,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         format_status "Command:\nsource $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                         
@@ -305,7 +305,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         # java Xmx$memory -jar $ERIF
                         # java Xmx$memory -jar $KGEM
                         format_status "Command:\nsource $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
@@ -334,7 +334,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         format_status "Command:\nsource $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                         
@@ -361,7 +361,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         format_status "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                         
@@ -388,7 +388,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         # perl $RCORRECTOR
                         format_status "Command:\nsource $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
@@ -416,7 +416,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         # source $SEECER
                         format_status "Command:\nsource $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
@@ -444,7 +444,7 @@ if state_registered $state; then
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
                     
                     # Run Command
-                    if state_registered $substate; then
+                    if (state_registered $substate); then
                         # python $SHORAH
                         format_status "Command:\n \
                         source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
