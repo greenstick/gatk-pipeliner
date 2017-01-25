@@ -76,7 +76,7 @@ format_status "Running BAM to FASTQ Script"
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition:BAMTOFASTQ:1"
-if state_registered $state; then
+if !(state_registered $state); then
 
     format_status "Shuffling & Splitting Merged BAM"
     format_status "Command:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
@@ -94,7 +94,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition:BAMTOFASTQ:2"
-if state_registered $state; then
+if !(state_registered $state); then
 
     format_status "Running Picard BAM to FASTQ"
     # Retrieve Files
@@ -109,7 +109,7 @@ if state_registered $state; then
             substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:2"
             
             # Run Command
-            if state_registered $substate; then
+            if !(state_registered $substate); then
                 
                 # Call Bam to FastQ
                 format_status "Command:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"

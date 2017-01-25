@@ -73,7 +73,7 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
-if state_registered $state; then
+if !(state_registered $state); then
 
     if [ "$parameters" = "default" ]; then
 

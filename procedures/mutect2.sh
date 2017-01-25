@@ -87,7 +87,7 @@ format_status "Running Contamination Estimation & Mutect2 Script"
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
-if state_registered $state; then
+if !(state_registered $state); then
 
     format_status "ContEst Start"
     format_status "Command:\njava -Xmx$maxMemory \
@@ -127,7 +127,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
-if state_registered $state; then
+if !(state_registered $state); then
 
     format_status "MuTect2 Start"
     format_status "Command:\njava -Xmx$memory \
@@ -171,7 +171,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
-if state_registered $state; then
+if !(state_registered $state); then
 
     format_status "Copying VCFs to I/O Directory"
     cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/

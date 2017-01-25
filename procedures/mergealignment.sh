@@ -86,7 +86,7 @@ format_status "Running Merge BAMs Script"
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state"$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
-if [ (state_registered $state) != 0 ]; then
+if !(state_registered $state); then
 
     format_status "Samtools AddReplaceRG"
     # Retrieve Files to Process
@@ -101,7 +101,7 @@ if [ (state_registered $state) != 0 ]; then
             substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:MERGEALIGNMENT:1"
             
             # Run Command
-            if [ (state_registered $substate) != 0 ]; then
+            if !(state_registered $substate); then
                 # Get Read Group Arguments to Pass to Samtools
                 rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$6,$7,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-\:]*|-r &|g")
                 
@@ -132,7 +132,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state"$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2"
-if [ (state_registered $state) != 0 ]; then
+if !(state_registered $state); then
 
     # Retrieve Files to Process
     files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.bam))
