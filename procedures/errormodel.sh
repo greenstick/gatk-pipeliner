@@ -85,21 +85,24 @@ format_status "Running Error Model Script"
 
 # A Really Long & Dirty Conditional
 if  [ "$experiment" = "bayeshammer" ] || \
-    [ "$experiment" = "blessec" ] || \
-    [ "$experiment" = "bloocoo" ] || \
-    [ "$experiment" = "decgpu" ] || \
-    [ "$experiment" = "karect" ] || \
-    [ "$experiment" = "kgem" ] || \
-    [ "$experiment" = "musket" ] || \
-    [ "$experiment" = "quorum" ] || \
-    [ "$experiment" = "rcorrector" ] || \
-    [ "$experiment" = "seecer" ] || \
+    [ "$experiment" = "blessec" ]     || \
+    [ "$experiment" = "bloocoo" ]     || \
+    [ "$experiment" = "decgpu" ]      || \
+    [ "$experiment" = "karect" ]      || \
+    [ "$experiment" = "kgem" ]        || \
+    [ "$experiment" = "musket" ]      || \
+    [ "$experiment" = "quorum" ]      || \
+    [ "$experiment" = "rcorrector" ]  || \
+    [ "$experiment" = "seecer" ]      || \
     [ "$experiment" = "nomodel" ]; then 
+    echo "meow"
 
     state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
     if state_registered $state; then
+        echo "moo"
 
         if [ "$experiment" = "nomodel" ]; then
+            echo "bark"
 
             format_status "Copying Read FASTQ Files to Modeled Directory..."
             files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
@@ -128,6 +131,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
 
         else
 
+            echo "oink"
             format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
             format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
