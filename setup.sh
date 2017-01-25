@@ -133,7 +133,7 @@ done
 
 while true; do
     echo
-    IFS= read -p "\nEnforce TMUX session logging via ~/.bash_profile & ~/.bashrc? " yn
+    IFS= read -p "Enforce TMUX session logging via ~/.bash_profile & ~/.bashrc? " yn
     case $yn in
         [Yy]* )  
             # Inject Logging Automation Script to ~/.bash_profile
@@ -154,12 +154,13 @@ done
 
 while true; do
     echo
-    IFS= read -p "\nSetup pipeline state manager? " yn
+    IFS= read -p "Setup pipeline state manager? " yn
     case $yn in
         [Yy]* )  
             # Inject State Manager Link to ~/.bash_profile
             echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nelse\n\techo "Unable to source $PIPELINE_HOME/core/pipeline.core"\nfi' >> ~/.bash_profile
             echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nelse\n\techo "Unable to source $PIPELINE_HOME/core/pipeline.core"\nfi' >> ~/.bashrc
+            break
             ;;
         [Nn]* ) 
             break

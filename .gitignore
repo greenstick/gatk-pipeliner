@@ -6,5 +6,5 @@ legacy/
 reference/
 logs/
 validation/
-core/pipeline.state
-pipeline.state
+core/*.state
+*.state
