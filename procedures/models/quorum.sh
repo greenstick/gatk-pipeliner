@@ -54,10 +54,6 @@ for i in "$@"
     esac
 done
 
-# Defaults if No Arguments Passed
-ncoresDef="10"
-memoryDef="8G"
-
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}

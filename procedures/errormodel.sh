@@ -52,8 +52,8 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="12"
-memoryDef="6G"
+ncoresDef="10"
+memoryDef="8G"
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
@@ -99,6 +99,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Bayes Hammer"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -117,6 +122,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
 
@@ -128,6 +134,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Bless-EC"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -145,6 +156,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -155,6 +167,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Bloocoo"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -172,6 +189,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -181,6 +199,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Dec-GPU"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -198,6 +221,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -208,6 +232,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Karect"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -225,6 +254,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -235,6 +265,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning KGEM"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -253,6 +288,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -263,6 +299,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Musket"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -280,6 +321,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -289,6 +331,11 @@ if [ $? != 0 ]; then
         "quorum")
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Quorum"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -306,6 +353,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -316,6 +364,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Rcorrector"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -333,6 +386,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -343,6 +397,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning Seecer"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -360,6 +419,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
@@ -370,6 +430,11 @@ if [ $? != 0 ]; then
 
             printf "\n\nCopying Raw FastQ Files to Error Model Directory\n"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Check for failed copy
+            if [ $? != 0 ]; then
+                failures=$((failures + 1))
+                break
+            fi
             printf "\n\nRunning SHoRAH"
             # Retrieve Files to Process
             files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
@@ -387,6 +452,7 @@ if [ $? != 0 ]; then
                     # Check for failed parallel call
                     if [ $? != 0 ]; then
                         failures=$((failures + 1))
+                        break
                     fi
                 ) &
             done
