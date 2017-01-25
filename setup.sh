@@ -69,7 +69,7 @@ gatk_dir=/home/users/cordier/packages/gatk/GenomeAnalysisTK.jar
 
 while true; do
     echo
-    IFS= read -p "Write pipeline exports to ~/.bash_profile & ~/.bashrc(default is yes)? " yn
+    IFS= read -p "Write pipeline exports to ~/.bash_profile & ~/.bashrc (default is yes)? " yn
     case $yn in
         [Yy]* ) (
                 printf "Exporting Directory Locations...\n"
