@@ -91,7 +91,7 @@ if [ "$experiment" = "norealign" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
-    if [ (state_registered $state) != 0 ]; then
+    if state_registered $state; then
 
         format_status "MarkDuplicates Start"
         format_status "Command:\njava -Xmx$maxMemory \
@@ -123,7 +123,7 @@ if [ "$experiment" = "norealign" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-    if [ (state_registered $state) != 0 ]; then
+    if state_registered $state; then
 
         format_status "Indexing BAM"
         format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
@@ -144,7 +144,7 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
-    if [ (state_registered $state) != 0 ]; then
+    if state_registered $state; then
 
         format_status "Sorting BAM"
         format_status "Command:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
@@ -162,7 +162,7 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-    if [ (state_registered $state) != 0 ]; then
+    if state_registered $state; then
 
         format_status "Indexing BAM Output"
         format_status "Command:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
@@ -180,7 +180,7 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
-    if [ (state_registered $state) != 0 ]; then
+    if state_registered $state; then
 
         format_status "MarkDuplicates Start"
         format_status "Command:\njava -Xmx$memory \
@@ -212,7 +212,7 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
-    if [ (state_registered $state) != 0 ]; then
+    if state_registered $state; then
 
         format_status "Indexing BAM Output"
         format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"

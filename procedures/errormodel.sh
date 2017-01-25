@@ -84,22 +84,22 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 format_status "Running Error Model Script"
 
 # A Really Long & Dirty Conditional
-if  [[ "$experiment" = "bayeshammer" ]] || \
-    [[ "$experiment" = "blessec" ]] || \
-    [[ "$experiment" = "bloocoo" ]] || \
-    [[ "$experiment" = "decgpu" ]] || \
-    [[ "$experiment" = "karect" ]] || \
-    [[ "$experiment" = "kgem" ]] || \
-    [[ "$experiment" = "musket" ]] || \
-    [[ "$experiment" = "quorum" ]] || \
-    [[ "$experiment" = "rcorrector" ]] || \
-    [[ "$experiment" = "seecer" ]] || \
-    [[ "$experiment" = "nomodel" ]]; then 
+if  [ "$experiment" = "bayeshammer" ] || \
+    [ "$experiment" = "blessec" ] || \
+    [ "$experiment" = "bloocoo" ] || \
+    [ "$experiment" = "decgpu" ] || \
+    [ "$experiment" = "karect" ] || \
+    [ "$experiment" = "kgem" ] || \
+    [ "$experiment" = "musket" ] || \
+    [ "$experiment" = "quorum" ] || \
+    [ "$experiment" = "rcorrector" ] || \
+    [ "$experiment" = "seecer" ] || \
+    [ "$experiment" = "nomodel" ]; then 
 
     state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
     if state_registered $state; then
 
-        if [[ "$experiment" = "nomodel"]]; then
+        if [ "$experiment" = "nomodel" ]; then
 
             format_status "Copying Read FASTQ Files to Modeled Directory..."
             files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
@@ -113,7 +113,7 @@ if  [[ "$experiment" = "bayeshammer" ]] || \
                     substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:1"
                     
                     # Run Command
-                    if [ (state_registered $substate) != 0 ]; then
+                    if state_registered $substate; then
 
                         format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
                         cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
