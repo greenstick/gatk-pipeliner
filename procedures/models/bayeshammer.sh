@@ -90,8 +90,8 @@ if [ $? != 0 ]; then
             # In Parallel
             do (
                 # Get Read Group to Process
-                suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-                readgroup=$(echo "$suffix" | sed "s/.bam$//")
+                suffix=$(echo "$file" | sed "s|$dataDir/split/$fileprefix.$subset.$condition.||")
+                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Call Error Model
                 printf "\n\nCommand:\n
                 python $BAYESHAMMER \
@@ -130,8 +130,8 @@ if [ $? != 0 ]; then
             # In Parallel
             do (
                 # Get Read Group to Process
-                suffix=$(echo "$file" | sed "s/split\/$fileprefix\.$subset\.$condition\.//")
-                readgroup=$(echo "$suffix" | sed "s/.bam$//")
+                suffix=$(echo "$file" | sed "s|$dataDir/split/$fileprefix.$subset.$condition.||")
+                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Call Error Model
                 printf "\n\nCommand:\n
                 python $BAYESHAMMER \

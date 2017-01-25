@@ -83,9 +83,10 @@ mkdir -p set{1..6}/fastq/{fastqc,split}
 
 while true; do
     echo
-    IFS= read -p "Write pipeline exports to ~/.bash_profile & ~/.bashrc (default is yes)? " yn
+    IFS= read -p "Write pipeline exports to ~/.bash_profile & ~/.bashrc? " yn
     case $yn in
         [Yy]* ) (
+
                 printf "Exporting Directory Locations...\n"
 
                 # Header for Bash Profile
@@ -132,7 +133,7 @@ done
 
 while true; do
     echo
-    IFS= read -p "\nEnforce TMUX session logging via ~/.bash_profile & ~/.bashrc (default is yes)? " yn
+    IFS= read -p "\nEnforce TMUX session logging via ~/.bash_profile & ~/.bashrc? " yn
     case $yn in
         [Yy]* )  
             # Inject Logging Automation Script to ~/.bash_profile
@@ -147,4 +148,22 @@ while true; do
     esac
 done
 
-printf "\nDone\n"
+#
+# State Management
+#
+
+while true; do
+    echo
+    IFS= read -p "\nSetup pipeline state manager? " yn
+    case $yn in
+        [Yy]* )  
+            # Inject State Manager Link to ~/.bash_profile
+            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nelse\n\techo "Unable to source $PIPELINE_HOME/core/pipeline.core"\nfi' >> ~/.bash_profile
+            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nelse\n\techo "Unable to source $PIPELINE_HOME/core/pipeline.core"\nfi' >> ~/.bashrc
+            ;;
+        [Nn]* ) 
+            break
+            ;;
+        * ) echo "Please answer yes [y] or no [n].";;
+    esac
+done
