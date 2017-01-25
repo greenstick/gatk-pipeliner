@@ -158,8 +158,8 @@ while true; do
     case $yn in
         [Yy]* )  
             # Inject State Manager Link to ~/.bash_profile
-            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nelse\n\techo "Unable to source $PIPELINE_HOME/core/pipeline.core"\nfi' >> ~/.bash_profile
-            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nelse\n\techo "Unable to source $PIPELINE_HOME/core/pipeline.core"\nfi' >> ~/.bashrc
+            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> ~/.bash_profile
+            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> ~/.bashrc
             break
             ;;
         [Nn]* ) 
