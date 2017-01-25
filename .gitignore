@@ -7,4 +7,6 @@ reference/
 logs/
 validation/
 core/*.state
+core/*.config
 *.state
+*.config

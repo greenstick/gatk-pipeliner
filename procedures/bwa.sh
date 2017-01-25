@@ -52,7 +52,7 @@ for i in "$@"
 
         *)
         # invalid option
-        printf "\nInvalid/Unused Parameter: $i\n"
+        printf "Invalid/Unused Parameter: $i"
         ;;
         
     esac
@@ -73,7 +73,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
  
-printf "\n\nPARAMETERS: 
+format_status "PARAMETERS: 
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -82,36 +82,28 @@ Parameter Set       = $parameters
 BWA Alignment       = $align
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory
-\n"
+Max Memory          = $maxMemory"
 
 # Set Directories
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
-printf "\n\nRunning BWA Script\n"
+format_status "Running BWA Script"
 
 #
 # BWA Index
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix:BWA:1" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix:BWA:1"
+if [ (state_registered $state) != 0 ]; then
 
-    printf "\n\nBWA Index\n"
-    printf "\n\nCommand:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta\n"
+    format_status "BWA Index"
+    format_status "Command:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta"
     bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
     
     # Update State on Exit
-    statuscode=$?
-    if [ $statuscode = 0 ]; then
-        # Export Pipeline
-        echo "$fileprefix:BWA:1" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nBWA Index Complete\n"
-    else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix:BWA:1"
-        exit $statuscode
-    fi
+    register_state $? $state
+    format_status "BWA Index Complete"
 
 fi
 
@@ -120,81 +112,76 @@ fi
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
+if [ (state_registered $state) != 0 ]; then
 
+    format_status "Running BWA $align"
     # Retrieve Files
     files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.*.fastq))
 
     # Mem
     if [ "$align" = "mem" ]; then
 
-        failures=0
-        printf "\n\nBWA $align\n"
         for file in $files
             # In Parallel
             do (
                 # Extract Read Group to Pass to BWA mem
                 suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # BWA mem
-                printf "\n\nCommand:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-                bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-            
-                # Check for failed parallel call
-                if [ $? != 0 ]; then
-                    failures=$((failures + 1))
+                substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
+                
+                # Run Command
+                if [ (state_registered $substate) != 0 ]; then
+
+                    # Call BWA mem
+                    format_status "Command:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
+                    bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+                    
+                    # Check for failed parallel call
+                    register_state $? $substate
+
                 fi
             ) &
         done
         wait # Prevent Premature Exiting of Script
 
         # Update State on Exit
-        if [ $failures = 0 ]; then
-            # Export Pipeline
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBWA $align Complete\n"
-        else
-            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
-            exit 1
-        fi
+        register_state $? $state
+        format_status "BWA $align Complete"
 
     # BWASW
     elif [ "$align" = "bwasw" ]; then
 
-        failures=0
-        printf "\n\nBWA $align\n"
         for file in $files
             # In Parallel
             do (
-                # Extract Read Group to Pass to BWA bwasw
+                # Extract Read Group to Pass to BWA mem
                 suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # BWA bwasw
-                printf "\n\nCommand:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam\n"
-                bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+                substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
                 
-                # Check for failed parallel call
-                if [ $? != 0 ]; then
-                    failures=$((failures + 1))
+                # Run Command
+                if [ (state_registered $substate) != 0 ]; then
+
+                    # BWA bwasw
+                    format_status "Command:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
+                    bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+                
+                    # Check for failed parallel call
+                    register_state $? $substate
+
                 fi
             ) &
         done
         wait # Prevent Premature Exiting of Script
 
         # Update State on Exit
-        if [ $failures = 0 ]; then
-            # Export Pipeline
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBWA $align Complete\n"
-        else
-            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
-            exit 1
-        fi
+        register_state $? $state
+        format_status "BWA $align Complete"
 
     else
 
-        printf "\n\nInvalid BWA algorithm parameter: $align\n"
+        format_status "Invalid BWA algorithm parameter: $align"
 
     fi
 
@@ -202,4 +189,4 @@ fi
 
 # Backtrack
 
-printf "\n\nDone\n"
+format_status "Done"

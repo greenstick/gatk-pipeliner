@@ -56,43 +56,35 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
-printf "\nPARAMETERS:
+format_status "PARAMETERS:
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory
-\n\n"
+Max Memory          = $maxMemory"
 
 # Set Directories
 dataDir=$PIPELINE_HOME/$subset
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
-printf "\n\nRunning BAM to FASTQ Script"
+format_status "Running BAM to FASTQ Script"
 
 #
 # Shuffle & Split BAM
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition:BAMTOFASTQ:1" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix.$subset.$condition:BAMTOFASTQ:1"
+if [ (state_registered $state) != 0 ]; then
 
-    printf "\n\nShuffling & Splitting Merged BAM"
-    printf "\n\nCommand:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
+    format_status "Shuffling & Splitting Merged BAM"
+    format_status "Command:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
     samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -L $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
     
     # Update State on Exit
-    statuscode=$?
-    if [ $statuscode = 0 ]; then
-        # Export Pipeline State
-        echo "$fileprefix.$subset.$condition:BAMTOFASTQ:1" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nShuffling & Splitting Merged BAM Complete"
-    else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition:BAMTOFASTQ:1"
-        exit $statuscode
-    fi
+    register_state $? $state
+    format_status "Shuffling & Splitting Merged BAM Complete"
 
 fi
 
@@ -101,13 +93,12 @@ fi
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition:BAMTOFASTQ:2" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix.$subset.$condition:BAMTOFASTQ:2"
+if [ (state_registered $state) != 0 ]; then
 
-    printf "\n\nRunning Picard Bam to FastQ"
+    format_status "Running Picard BAM to FASTQ"
     # Retrieve Files
     files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
-    failures=0
 
     for file in $files
         # In Parallel
@@ -115,13 +106,18 @@ if [ $? != 0 ]; then
             # Get Read Group to Process
             suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
             readgroup=$(echo "$suffix" | sed "s|.bam$||")
-            # Call Bam to FastQ
-            printf "\n\nCommand:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq\n"
-            samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+            substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:2"
             
-            # Check for failed parallel call
-            if [ $? != 0 ]; then
-                failures=$((failures + 1))
+            # Run Command
+            if [ (state_registered $substate) != 0 ]; then
+                
+                # Call Bam to FastQ
+                format_status "Command:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+                samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+            
+                # Check for failed parallel call
+                register_state $? $substate
+
             fi
         ) &
 
@@ -129,16 +125,10 @@ if [ $? != 0 ]; then
     wait # Prevent Premature Exiting of Script
 
     # Update State on Exit
-    if [ $failures = 0 ]; then
-        # Export Pipeline State
-        echo "$fileprefix.$subset.$condition:BAMTOFASTQ:2" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nBam to FastQ Complete"
-    else
-        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition:BAMTOFASTQ:2"
-        exit 1
-    fi
+    register_state $? $state
+    format_status "BAM to FASTQ Complete"
 
 fi
 
-printf "\n\nDone\n"
+format_status "Done"
 

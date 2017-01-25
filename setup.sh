@@ -80,43 +80,41 @@ mkdir -p set{1..6}/fastq/{fastqc,split}
 # Create pipeline.state Write File
 touch $pipeline_dir/core/pipeline.state
 
+# Create pipeline.config File
+touch $pipeline_dir/core/pipeline.config
+
 #
 # Exports
 #
 
 while true; do
     echo
-    IFS= read -p "Write pipeline exports to ~/.bash_profile & ~/.bashrc? " yn
+    IFS= read -p "Write default pipeline exports to pipeline.config? " yn
     case $yn in
         [Yy]* ) (
 
                 printf "Exporting Directory Locations...\n"
 
                 # Header for Bash Profile
-                echo -e '\n#\n# Pipeline Management\n#' >> ~/.bash_profile
-                echo -e '\n#\n# Pipeline Management\n#' >> ~/.bashrc
+                echo -e '\n#\n# Pipeline Management\n#' >> $pipeline_dir/core/pipeline.config
 
-                # Write Pipeline Home Directory to ~/.bash_profile
-                echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> ~/.bash_profile
-                echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> ~/.bashrc
+                # Write Pipeline Home Directory to pipeline.config
+                echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> $pipeline_dir/core/pipeline.config
                 # Set Pipeline Home Directory
                 export PIPELINE_HOME=$pipeline_dir
 
-                # Write Pipeline Output Directory to ~/.bash_profile
-                echo -e "\nexport PIPELINE_OUT=$output_dir" >> ~/.bash_profile
-                echo -e "\nexport PIPELINE_OUT=$output_dir" >> ~/.bashrc
+                # Write Pipeline Output Directory to pipeline.config
+                echo -e "\nexport PIPELINE_OUT=$output_dir" >> $pipeline_dir/core/pipeline.config
                 # Set Pipeline Output Directory
                 export PIPELINE_OUT=$output_dir
                 
-                # Write Pipeline Reference Directory to ~/.bash_profile
-                echo -e "\nexport PIPELINE_REF=$reference_dir" >> ~/.bash_profile
-                echo -e "\nexport PIPELINE_REF=$reference_dir" >> ~/.bashrc
+                # Write Pipeline Reference Directory to pipeline.config
+                echo -e "\nexport PIPELINE_REF=$reference_dir" >> $pipeline_dir/core/pipeline.config
                 # Set Pipeline Reference Directory
                 export PIPELINE_REF=$reference_dir
                 
-                # Write Pipeline Logging Directory to ~/.bash_profile
-                echo -e "\nexport PIPELINE_LOG=$logging_dir" >> ~/.bash_profile
-                echo -e "\nexport PIPELINE_LOG=$logging_dir" >> ~/.bashrc
+                # Write Pipeline Logging Directory to pipeline.config
+                echo -e "\nexport PIPELINE_LOG=$logging_dir" >> $pipeline_dir/core/pipeline.config
                 # Set Pipeline Logging Directory
                 export PIPELINE_LOG=$logging_dir
 
@@ -136,12 +134,12 @@ done
 
 while true; do
     echo
-    IFS= read -p "Enforce TMUX session logging via ~/.bash_profile & ~/.bashrc? " yn
+    IFS= read -p "Enforce TMUX session logging via pipeline.config? " yn
     case $yn in
         [Yy]* )  
             # Inject Logging Automation Script to ~/.bash_profile
-            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tcd $PIPELINE_HOME/procedures\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> ~/.bash_profile
-            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tcd $PIPELINE_HOME/procedures\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> ~/.bashrc
+            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tcd $PIPELINE_HOME/procedures\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> $pipeline_dir/core/pipeline.config
+            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tcd $PIPELINE_HOME/procedures\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> $pipeline_dir/core/pipeline.config
             break
             ;;
         [Nn]* ) 
@@ -161,8 +159,8 @@ while true; do
     case $yn in
         [Yy]* )  
             # Inject State Manager Link to ~/.bash_profile
-            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> ~/.bash_profile
-            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> ~/.bashrc
+            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> $pipeline_dir/core/pipeline.config
+            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> $pipeline_dir/core/pipeline.config
             break
             ;;
         [Nn]* ) 
@@ -171,3 +169,11 @@ while true; do
         * ) echo "Please answer yes [y] or no [n].";;
     esac
 done
+
+#
+# Pipeline Config Inject
+#
+
+# Inject pipeline.config to ~/.bash_profile & ~/.bashrc
+echo -e '\n# Pipeline Config Link\nif [ -f $PIPELINE_HOME/core/pipeline.config ]; then\n\tsource $PIPELINE_HOME/core/pipeline.config\nfi' >> ~/.bash_profile
+echo -e '\n# Pipeline Config Link\nif [ -f $PIPELINE_HOME/core/pipeline.config ]; then\n\tsource $PIPELINE_HOME/core/pipeline.config\nfi' >> ~/.bashrc

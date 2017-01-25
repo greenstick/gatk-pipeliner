@@ -68,7 +68,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
-printf "\nPARAMETERS:
+format_status "PARAMETERS:
 GATK Directory      = $GATK
 Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
@@ -79,8 +79,7 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory
-\n\n"
+Max Memory          = $maxMemory"
 
 # Set Directories
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
@@ -91,7 +90,7 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 # Run BQSR
 # 
 
-printf "\n\nRunning BQSR Script"
+format_status "Running BQSR Script"
 
 if [ "$qualitymodel" = "nobqsr" ]; then
 
@@ -100,37 +99,21 @@ if [ "$qualitymodel" = "nobqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition:NOBQSR:1"
+    if [ (state_registered $state) != 0 ]; then
 
-        failures=0
-        printf "\n\nCopying BAM & BAI Files to Model Directory...\n"
-        cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir
-        # Check for failed command
-        if [ $? != 0 ]; then
-            failures=$((failures + 1))
-        fi
-        # Rename to Maintain Consistency
-        mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
-        # Check for failed command
-        if [ $? != 0 ]; then
-            failures=$((failures + 1))
-        fi
-        mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
-        # Check for failed command
-        if [ $? != 0 ]; then
-            failures=$((failures + 1))
-        fi
+        # Copy Files & Rename to Maintain Consistency
+        format_status "Copying BAM & BAI Files to Model Directory..."
+        format_status "Command:\ncp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir \
+        && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam && \
+        && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai"
+        cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir \
+        && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam && \
+        && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
         
         # Update State on Exit
-        if [ $failures = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nDone"
-        else
-            printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:NOBQSR:1"
-            exit 1
-        fi
+        register_state $? $state
+        format_status "BAM & BAI Copy Complete"
 
     fi
 
@@ -143,11 +126,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nBQSR - Step 1 Start"
-        printf "\n\nCommand:\njava -Xmx$memory \
+        format_status "BQSR - Step 1 Start"
+        format_status "Command:\njava -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -156,7 +139,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
-        -nct $ncores\n"
+        -nct $ncores"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -169,15 +152,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBQSR - Step 1 Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BQSR - Step 1 Complete"
 
     fi
 
@@ -186,11 +162,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nBQSR - Step 2 Start"
-        printf "\n\nCommand:\njava -Xmx$memory \
+        format_status "BQSR - Step 2 Start"
+        format_status "Command:\njava -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -200,7 +176,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
-        -nct $ncores\n"
+        -nct $ncores"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -214,15 +190,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBQSR - Step 2 Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BQSR - Step 2 Complete"
 
     fi
 
@@ -231,18 +200,18 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nBQSR - Step 3 Start"
-        printf "\n\nCommand:\njava -Xmx$maxMemory \
+        format_status "BQSR - Step 3 Start"
+        format_status "Command:\njava -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T AnalyzeCovariates \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -before $recalDir/logs/bqsr/recal_data_$condition.table \
         -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
         -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
-        --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt\n"
+        --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T AnalyzeCovariates \
@@ -253,15 +222,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBQSR - Step 3 Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BQSR - Step 3 Complete"
 
     fi
 
@@ -270,11 +232,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nBQSR - Step 4 Start"
-        printf "\n\nCommand:\njava -Xmx$memory \
+        format_status "BQSR - Step 4 Start"
+        format_status "Command:\njava -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -282,7 +244,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
-        -nct $ncores\n"
+        -nct $ncores"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
@@ -294,15 +256,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBQSR - Step 4 Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BQSR - Step 4 Complete"
 
     fi
 
@@ -311,26 +266,19 @@ if [ "$qualitymodel" = "bqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nIndexing BAM Output"
-        printf "\n\nCommand:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam\n"
+        format_status "Indexing BAM Output"
+        format_status "Command:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam"
         samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBAM Indexing Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BAM Indexing Complete"
 
     fi
 
 fi
 
-printf "\n\nDone\n"
+format_status "Done"

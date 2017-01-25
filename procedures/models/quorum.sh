@@ -72,96 +72,67 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
-
-    # Retrieve Files
-    files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
-    failures=0
+state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
+if [ (state_registered $state) != 0 ]; then
 
     if [ "$parameters" = "default" ]; then
-        
-        printf "\n\nRunning Quorum - Default Parameters"
-        for file in $files
-            # In Parallel
-            do (
-                # Get Read Group to Process
-                suffix=$(echo "$file" | sed "s|$dataDir/split/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # Call Error Model
-                printf "\n\nCommand:\n \
-                $QUORUM \
-                $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-                --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
-                -t $ncores \
-                --size 20G \
-                --no-discard \
-                --debug"
-                $QUORUM \
-                $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-                --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
-                -t $ncores \
-                --size 20G \
-                --no-discard \
-                --debug
 
-                # Check for failed parallel call
-                if [ $? != 0 ]; then
-                    failures=$((failures + 1))
-                fi
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
+        #
+        # Default Parameters
+        #
+        
+        format_status "Running Quorum - $parameters Parameters"
+        # Call Error Model
+        format_status "Command:\n \
+        $QUORUM \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -t $ncores \
+        --size 20G \
+        --no-discard \
+        --debug"
+        $QUORUM \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -t $ncores \
+        --size 20G \
+        --no-discard \
+        --debug
 
     elif [ "$parameters" = "custom" ]; then
-        
-        printf "\n\nRunning Quorum - Custom Parameters"
-        for file in $files
-            # In Parallel
-            do (
-                # Get Read Group to Process
-                suffix=$(echo "$file" | sed "s|$dataDir/split/$fileprefix.$subset.$condition.||")
-                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                # Call Error Model
-                printf "\n\nCommand:\n \
-                $QUORUM \
-                $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-                --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
-                -t $ncores \
-                --size 20G \
-                --no-discard \
-                --debug"
-                $QUORUM \
-                $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-                --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
-                -t $ncores \
-                --size 20G \
-                --no-discard \
-                --debug
 
-                # Check for failed parallel call
-                if [ $? != 0 ]; then
-                    failures=$((failures + 1))
-                fi
-            ) &
-        done
-        wait # Prevent Premature Exiting of Script
+        #
+        # Custom Parameters
+        #
+        
+        format_status "Running Quorum - $parameters Parameters"
+        # Call Error Model
+        format_status "Command:\n \
+        $QUORUM \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -t $ncores \
+        --size 20G \
+        --no-discard \
+        --debug"
+        $QUORUM \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -t $ncores \
+        --size 20G \
+        --no-discard \
+        --debug
 
     fi
 
     # Update State on Exit
-    if [ $failures = 0 ]; then
-        # Export Pipeline State
-        echo "$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nQuorum Complete"
-    else
-        printf "\n\n$failures Failures, Exiting - $fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
-        exit 1
-    fi
+    status=$?
+    register_state $status $state
+    format_status "BayesHammer ($parameters $readgroup) Complete"
+
+    return $status
 
 fi
-
-printf "\n\nDone\n"
 
 #
 # Quorum Arguments

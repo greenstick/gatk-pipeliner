@@ -64,7 +64,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
  
-printf "\nPARAMETERS:
+format_status "PARAMETERS:
 GATK Directory      = $GATK
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
@@ -73,25 +73,24 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory
-\n\n"
+Max Memory          = $maxMemory"
 
 # Set Directories
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
-printf "\n\nRunning Contamination Estimation & Mutect2 Script"
+format_status "Running Contamination Estimation & Mutect2 Script"
 
 #
 # ContEst
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
+if [ (state_registered $state) != 0 ]; then
 
-    printf "\n\nContEst Start"
-    printf "\n\nCommand:\njava -Xmx$maxMemory \
+    format_status "ContEst Start"
+    format_status "Command:\njava -Xmx$maxMemory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
     --precision 0.001 \
@@ -102,7 +101,7 @@ if [ $? != 0 ]; then
     -isr INTERSECTION \
     --population ALL \
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
-    -o $recalDir/logs/contest/cont_est_recal_$experiment.txt\n"
+    -o $recalDir/logs/contest/cont_est_recal_$experiment.txt"
     java -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
@@ -117,15 +116,8 @@ if [ $? != 0 ]; then
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt
     
     # Update State on Exit
-    statuscode=$?
-    if [ $statuscode = 0 ]; then
-        # Export Pipeline State
-        echo "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nContEst Complete"
-    else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
-        exit $statuscode
-    fi
+    register_state $? $state
+    format_status "ContEst Complete"
 
 fi
 
@@ -134,11 +126,11 @@ fi
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
+if [ (state_registered $state) != 0 ]; then
 
-    printf "\n\nMuTect2 Start"
-    printf "\n\nCommand:\njava -Xmx$memory \
+    format_status "MuTect2 Start"
+    format_status "Command:\njava -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T MuTect2 \
     -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -150,7 +142,7 @@ if [ $? != 0 ]; then
     --contamination_fraction_to_filter 0.01 \
     -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
-    -nct $ncores\n"
+    -nct $ncores"
     java -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T MuTect2 \
@@ -166,16 +158,10 @@ if [ $? != 0 ]; then
     --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
     -nct $ncores
 
+
     # Update State on Exit
-    statuscode=$?
-    if [ $statuscode = 0 ]; then
-        # Export Pipeline State
-        echo "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nMuTect2 Complete"
-    else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
-        exit $statuscode
-    fi
+    register_state $? $state
+    format_status "MuTect2 Complete"
 
 fi
 
@@ -184,24 +170,17 @@ fi
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-grep -q "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3" $PIPELINE_HOME/pipeline.state
-if [ $? != 0 ]; then
+state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
+if [ (state_registered $state) != 0 ]; then
 
-    printf "\n\nCopying VCFs to I/O Directory..."
+    format_status "Copying VCFs to I/O Directory"
     cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/
 
     # Update State on Exit
-    statuscode=$?
-    if [ $statuscode = 0 ]; then
-        # Export Pipeline State
-        echo "$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3" >> $PIPELINE_HOME/pipeline.state
-        printf "\n\nVCFs Copied to I/O Directory"
-    else
-        printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
-        exit $statuscode
-    fi
+    register_state $? $state
+    format_status "VCFs Copied to I/O Directory"
 
 fi
 
-printf "\n\nDone\n"
+format_status "Done"
 

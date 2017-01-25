@@ -1,6 +1,17 @@
 #! /usr/bin/bash
 
 #
+# String Formatting
+#
+
+# Emit Status With Consistent Spacing
+format_status () {
+    local status=$1
+    printf "\n$status\n"
+    return $?
+}
+
+#
 # Emit Status Code
 #
 
@@ -12,9 +23,9 @@ register_state () {
     if [ $statuscode = 0 ]; then
         # Export Pipeline State
         echo "$state" >> $PIPELINE_HOME/core/pipeline.state
-        printf "\n\nState Registered: $state"
+        format_status "State Registered: $state"
     else
-        printf "\n\nError $statuscode; exiting - $state"
+        format_status "Unexpected Error $statuscode; exiting - $state"
         exit $statuscode
     fi
 }
@@ -23,12 +34,9 @@ register_state () {
 state_registered () {
     local state=$1
     grep -q "$state" $PIPELINE_HOME/core/pipeline.state
-    return $?
-}
-
-# Emit Status With Consistent Spacing
-format_status () {
-    local status=$1
-    printf "\n\n$status"
-    return $?
+    status=$?
+    if [ $status != 0 ]; then
+        format_status "Skipping Step – $state"
+    fi
+    return $status
 }

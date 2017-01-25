@@ -64,7 +64,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
-printf "\nPARAMETERS:
+format_status "PARAMETERS:
 Picard Directory    = $PICARD
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
@@ -73,15 +73,14 @@ Experiment          = $experiment
 Parameter Set       = $parameters
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory
-\n\n"
+Max Memory          = $maxMemory"
 
 # Set Directories
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
-printf "\n\nRunning Mark Duplicates Script"
+format_status "Running Mark Duplicates Script"
 
 # If Norealignment, Get Data From Download Directory & Skip Sorting
 if [ "$experiment" = "norealign" ]; then
@@ -91,18 +90,18 @@ if [ "$experiment" = "norealign" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nMarkDuplicates Start"
-        printf "\n\nCommand:\njava -Xmx$maxMemory \
+        format_status "MarkDuplicates Start"
+        format_status "Command:\njava -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         PG=null \
-        TMP_DIR=$tmpDir\n"
+        TMP_DIR=$tmpDir"
         java -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
@@ -113,15 +112,8 @@ if [ "$experiment" = "norealign" ]; then
         TMP_DIR=$tmpDir
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nMark Duplicates Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "Mark Duplicates Complete"
 
     fi
 
@@ -130,23 +122,16 @@ if [ "$experiment" = "norealign" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nIndexing BAM"
-        printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
+        format_status "Indexing BAM"
+        format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
         samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
         
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBAM Indexing Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BAM Indexing Complete"
 
     fi
 
@@ -158,23 +143,16 @@ else
     # 
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nSorting BAM"
-        printf "\n\nCommand:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
+        format_status "Sorting BAM"
+        format_status "Command:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
         samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
         
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nSort BAM Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "Sort BAM Complete"
 
     fi
 
@@ -183,23 +161,16 @@ else
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nIndexing BAM Output"
-        printf "\n\nCommand:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam\n"
+        format_status "Indexing BAM Output"
+        format_status "Command:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
         samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBAM Indexing Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BAM Indexing Complete"
 
     fi
 
@@ -208,18 +179,18 @@ else
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nMarkDuplicates Start"
-        printf "\n\nCommand:\njava -Xmx$memory \
+        format_status "MarkDuplicates Start"
+        format_status "Command:\njava -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         PG=null \
-        TMP_DIR=$tmpDir\n"
+        TMP_DIR=$tmpDir"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
@@ -230,15 +201,8 @@ else
         TMP_DIR=$tmpDir
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nMark Duplicates Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "Mark Duplicates Complete"
 
     fi
 
@@ -247,27 +211,20 @@ else
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    grep -q "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4" $PIPELINE_HOME/pipeline.state
-    if [ $? != 0 ]; then
+    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
+    if [ (state_registered $state) != 0 ]; then
 
-        printf "\n\nIndexing BAM Output"
-        printf "\n\nCommand:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam\n"
+        format_status "Indexing BAM Output"
+        format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
         samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
 
         # Update State on Exit
-        statuscode=$?
-        if [ $statuscode = 0 ]; then
-            # Export Pipeline State
-            echo "$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4" >> $PIPELINE_HOME/pipeline.state
-            printf "\n\nBAM Indexing Complete"
-        else
-            printf "\n\nUnexpected Exit $statuscode - $fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
-            exit $statuscode
-        fi
+        register_state $? $state
+        format_status "BAM Indexing Complete"
 
     fi
 
 fi
 
-printf "\n\nDone\n"
+format_status "Done"
 
