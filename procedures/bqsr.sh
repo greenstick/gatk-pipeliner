@@ -68,6 +68,9 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
+# Max Reads in RAM
+maxReads$((allocMemory * 250000))
+
 format_status "PARAMETERS:
 GATK Directory      = $GATK
 Reference Directory = $PIPELINE_REF
@@ -140,7 +143,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
         -nct $ncores \
-        --lowMemoryMode"
+        --lowMemoryMode \
+        --read_buffer_size $maxReads"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -151,7 +155,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
         -nct $ncores \
-        --lowMemoryMode
+        --lowMemoryMode \
+        --read_buffer_size $maxReads
 
         # Update State on Exit
         put_state $? $state
@@ -179,7 +184,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
         -nct $ncores \
-        --lowMemoryMode"
+        --lowMemoryMode \
+        --read_buffer_size $maxReads"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -191,7 +197,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
         -nct $ncores \
-        --lowMemoryMode
+        --lowMemoryMode \
+        --read_buffer_size $maxReads
 
         # Update State on Exit
         put_state $? $state
@@ -248,7 +255,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
-        -nct $ncores"
+        -nct $ncores \
+        --read_buffer_size $maxReads"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
@@ -257,7 +265,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
-        -nct $ncores
+        -nct $ncores \
+        --read_buffer_size $maxReads
 
         # Update State on Exit
         put_state $? $state

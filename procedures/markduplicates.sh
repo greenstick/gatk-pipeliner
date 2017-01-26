@@ -64,6 +64,9 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
+# Max Reads in RAM
+maxReads$((allocMemory * 250000))
+
 format_status "PARAMETERS:
 Picard Directory    = $PICARD
 Data File Prefix    = $fileprefix
@@ -100,6 +103,7 @@ if [ "$experiment" = "norealign" ]; then
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
+        MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
         TMP_DIR=$tmpDir"
         java -Xmx$maxMemory \
@@ -108,6 +112,7 @@ if [ "$experiment" = "norealign" ]; then
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
+        MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
         TMP_DIR=$tmpDir
 
@@ -189,6 +194,7 @@ else
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
+        MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
         TMP_DIR=$tmpDir"
         java -Xmx$memory \
@@ -197,6 +203,7 @@ else
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
         O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
+        MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
         TMP_DIR=$tmpDir
 
