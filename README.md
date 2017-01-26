@@ -22,7 +22,7 @@ Finally, there is a basic state management system that, while imperfect, helps t
 To install:
 
     git clone https://github.com/greenstick/thesis-pipeline.git
-	  source setup.sh
+    source setup.sh
 
 To run a procedure, the general syntax is:
 
