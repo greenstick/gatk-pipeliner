@@ -91,7 +91,7 @@ if [ "$experiment" = "norealign" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "MarkDuplicates Start"
         format_status "Command:\njava -Xmx$maxMemory \
@@ -112,7 +112,7 @@ if [ "$experiment" = "norealign" ]; then
         TMP_DIR=$tmpDir
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "Mark Duplicates Complete"
 
     fi
@@ -123,14 +123,14 @@ if [ "$experiment" = "norealign" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "Indexing BAM"
         format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
         samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
         
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BAM Indexing Complete"
 
     fi
@@ -144,14 +144,14 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:1"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "Sorting BAM"
         format_status "Command:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
         samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
         
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "Sort BAM Complete"
 
     fi
@@ -162,14 +162,14 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "Indexing BAM Output"
         format_status "Command:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
         samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BAM Indexing Complete"
 
     fi
@@ -180,7 +180,7 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "MarkDuplicates Start"
         format_status "Command:\njava -Xmx$memory \
@@ -201,7 +201,7 @@ else
         TMP_DIR=$tmpDir
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "Mark Duplicates Complete"
 
     fi
@@ -212,14 +212,14 @@ else
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "Indexing BAM Output"
         format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
         samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BAM Indexing Complete"
 
     fi

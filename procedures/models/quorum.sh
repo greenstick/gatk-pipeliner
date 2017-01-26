@@ -73,7 +73,7 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     if [ "$parameters" = "default" ]; then
 
@@ -131,7 +131,7 @@ if !(state_registered $state); then
 
     # Update State on Exit
     status=$?
-    register_state $status $state
+    put_state $status $state
     format_status "BayesHammer ($parameters $readgroup) Complete"
 
     return $status

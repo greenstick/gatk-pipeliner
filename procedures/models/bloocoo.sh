@@ -77,7 +77,7 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:1"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     if [ "$parameters" = "default" ]; then
         
@@ -115,7 +115,7 @@ if !(state_registered $state); then
 
     # Update State on Exit
     status=$?
-    register_state $status $state
+    put_state $status $state
 
 fi
 
@@ -125,7 +125,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:2"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     format_status "Moving Output & Cleaning Up"
     format_status "Command:\n
@@ -141,7 +141,7 @@ if !(state_registered $state); then
 
     # Update State on Exit
     status=$?
-    register_state $status $state
+    put_state $status $state
 
     format_status "Bloocoo ($parameters $readgroup) Complete"
     return $status

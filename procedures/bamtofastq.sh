@@ -76,14 +76,14 @@ format_status "Running BAM to FASTQ Script"
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition:BAMTOFASTQ:1"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     format_status "Shuffling & Splitting Merged BAM"
     format_status "Command:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%%!.bam -"
     samtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmpDir | bam splitBam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition -v -L $PIPELINE_HOME/logs/splitbam_$fileprefix.$subset.$condition.log
     
     # Update State on Exit
-    register_state $? $state
+    put_state $? $state
     format_status "Shuffling & Splitting Merged BAM Complete"
 
 fi
@@ -94,7 +94,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition:BAMTOFASTQ:2"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     format_status "Running Picard BAM to FASTQ"
     # Retrieve Files
@@ -109,14 +109,14 @@ if !(state_registered $state); then
             substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:2"
             
             # Run Command
-            if !(state_registered $substate); then
+            if !(has_state $substate); then
                 
                 # Call Bam to FastQ
                 format_status "Command:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
                 samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
             
                 # Check for failed parallel call
-                register_state $? $substate
+                put_state $? $substate
 
             fi
         ) &
@@ -125,7 +125,7 @@ if !(state_registered $state); then
     wait # Prevent Premature Exiting of Script
 
     # Update State on Exit
-    register_state $? $state
+    put_state $? $state
     format_status "BAM to FASTQ Complete"
 
 fi

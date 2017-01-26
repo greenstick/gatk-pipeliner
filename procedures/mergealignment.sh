@@ -86,7 +86,7 @@ format_status "Running Merge BAMs Script"
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state"$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     format_status "Samtools AddReplaceRG"
     # Retrieve Files to Process
@@ -101,19 +101,19 @@ if !(state_registered $state); then
             substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:MERGEALIGNMENT:1"
             
             # Run Command
-            if !(state_registered $substate); then
+            if !(has_state $substate); then
                 # Get Read Group Arguments to Pass to Samtools
                 rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$6,$7,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-\:]*|-r &|g")
                 
                 # Check for failed parallel call
-                register_state $? $substate
+                put_state $? $substate
 
                 format_status "Command:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam" 
                 # Insert Read Groups into New BAM - WARNING USES EVAL
                 eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
             
                 # Check for failed parallel call
-                register_state $? $substate
+                put_state $? $substate
 
             fi
         ) &
@@ -121,7 +121,7 @@ if !(state_registered $state); then
     wait # Prevent Premature Exiting of Script
 
     # Update State on Exit
-    register_state $? $state
+    put_state $? $state
     format_status "Samtools AddReplaceRG Complete"
 
 fi
@@ -132,7 +132,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state"$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     # Retrieve Files to Process
     files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.bam))
@@ -142,7 +142,7 @@ if !(state_registered $state); then
     samtools merge -r -f $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
     
     # Update State on Exit
-    register_state $? $state
+    put_state $? $state
     format_status "Samtools Merge Complete"
 
 fi

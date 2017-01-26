@@ -95,14 +95,14 @@ format_status "Running BWA Script"
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix:BWA:1"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     format_status "BWA Index"
     format_status "Command:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta"
     bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
     
     # Update State on Exit
-    register_state $? $state
+    put_state $? $state
     format_status "BWA Index Complete"
 
 fi
@@ -113,7 +113,7 @@ fi
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters:BWA:2"
-if !(state_registered $state); then
+if !(has_state $state); then
 
     format_status "Running BWA $align"
     # Retrieve Files
@@ -131,14 +131,14 @@ if !(state_registered $state); then
                 substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
                 
                 # Run Command
-                if !(state_registered $substate); then
+                if !(has_state $substate); then
 
                     # Call BWA mem
                     format_status "Command:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
                     bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
                     
                     # Check for failed parallel call
-                    register_state $? $substate
+                    put_state $? $substate
 
                 fi
             ) &
@@ -146,7 +146,7 @@ if !(state_registered $state); then
         wait # Prevent Premature Exiting of Script
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BWA $align Complete"
 
     # BWASW
@@ -161,14 +161,14 @@ if !(state_registered $state); then
                 substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
                 
                 # Run Command
-                if !(state_registered $substate); then
+                if !(has_state $substate); then
 
                     # BWA bwasw
                     format_status "Command:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
                     bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
                 
                     # Check for failed parallel call
-                    register_state $? $substate
+                    put_state $? $substate
 
                 fi
             ) &
@@ -176,7 +176,7 @@ if !(state_registered $state); then
         wait # Prevent Premature Exiting of Script
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BWA $align Complete"
 
     else

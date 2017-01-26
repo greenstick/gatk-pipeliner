@@ -100,7 +100,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition:NOBQSR:1"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         # Copy Files & Rename to Maintain Consistency
         format_status "Copying BAM & BAI Files to Model Directory..."
@@ -112,7 +112,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
         && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
         
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BAM & BAI Copy Complete"
 
     fi
@@ -127,7 +127,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "BQSR - Step 1 Start"
         format_status "Command:\njava -Xmx$memory \
@@ -139,7 +139,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
-        -nct $ncores"
+        -nct $ncores \
+        --lowMemoryMode"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -149,10 +150,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
-        -nct $ncores
+        -nct $ncores \
+        --lowMemoryMode
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BQSR - Step 1 Complete"
 
     fi
@@ -163,7 +165,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:2"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "BQSR - Step 2 Start"
         format_status "Command:\njava -Xmx$memory \
@@ -176,7 +178,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
-        -nct $ncores"
+        -nct $ncores \
+        --lowMemoryMode"
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -187,10 +190,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
-        -nct $ncores
+        -nct $ncores \
+        --lowMemoryMode
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BQSR - Step 2 Complete"
 
     fi
@@ -201,7 +205,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:3"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "BQSR - Step 3 Start"
         format_status "Command:\njava -Xmx$maxMemory \
@@ -222,7 +226,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BQSR - Step 3 Complete"
 
     fi
@@ -233,7 +237,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:4"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "BQSR - Step 4 Start"
         format_status "Command:\njava -Xmx$memory \
@@ -256,7 +260,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BQSR - Step 4 Complete"
 
     fi
@@ -267,14 +271,14 @@ if [ "$qualitymodel" = "bqsr" ]; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:5"
-    if !(state_registered $state); then
+    if !(has_state $state); then
 
         format_status "Indexing BAM Output"
         format_status "Command:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam"
         samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
 
         # Update State on Exit
-        register_state $? $state
+        put_state $? $state
         format_status "BAM Indexing Complete"
 
     fi

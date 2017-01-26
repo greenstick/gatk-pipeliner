@@ -1,5 +1,11 @@
 #! /usr/bin/bash
 
+################
+
+# Pipeline Core Methods
+
+################
+
 #
 # String Formatting
 #
@@ -12,11 +18,11 @@ format_status () {
 }
 
 #
-# Emit Status Code
+# State Management Methods
 #
 
-# Register State to State File
-register_state () {
+# Write State to State File
+put_state () {
     local statuscode=$1
     local state=$2
     # Update State on Exit
@@ -30,8 +36,8 @@ register_state () {
     fi
 }
 
-# Return State of Current Step
-state_registered () {
+# Test: Has State Already Been Executed
+has_state () {
     local state=$1
     grep -q "$state" $PIPELINE_HOME/core/pipeline.state
     status=$?
