@@ -61,6 +61,7 @@ memory=${memoryOpt:-$memoryDef}
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
+allocMax=$((allocMemory * ncores))
 maxMemory=$((allocMemory * ncores))$allocSize
 
 # Set Directories
@@ -95,7 +96,7 @@ if !(state_registered $state); then
         -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
-        --memory $allocMemory \
+        --memory $allocMax \
         --only-error-correction \
         --debug
 
@@ -119,7 +120,7 @@ if !(state_registered $state); then
         -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
-        --memory $allocMemory \
+        --memory $allocMax \
         --only-error-correction \
         --debug
 
