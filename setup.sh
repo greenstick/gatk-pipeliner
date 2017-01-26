@@ -62,6 +62,29 @@ logging_dir=$pipeline_dir/logs
 # Scaffolding
 #
 
+while true; do
+    echo
+    IFS= read -p "Setup Development Data Directory ($pipeline_dir/dev)? " yn
+    case $yn in
+        [Yy]* )  
+            # Scaffold Development Directory
+            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
+            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
+            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
+            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
+            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
+            mkdir -p dev/{fastq,downloaded,tmp}
+            mkdir -p dev/downloaded/{intervals,metrics,original,split}
+            mkdir -p dev/fastq/{fastqc,split}
+            break
+            ;;
+        [Nn]* ) 
+            break
+            ;;
+        * ) echo "Please answer yes [y] or no [n].";;
+    esac
+done
+
 printf "\nScaffolding Directories...\n"
 
 # Scaffold Pipeline Directory & Change Directory
