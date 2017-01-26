@@ -129,13 +129,13 @@ if !(has_state $state); then
 
     format_status "Moving Output & Cleaning Up"
     format_status "Command:\n
-    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
+    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
     && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq
     && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
     "
-    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
+    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
     && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq
     && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
 

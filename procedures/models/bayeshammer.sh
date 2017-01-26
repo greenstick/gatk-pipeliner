@@ -86,14 +86,14 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         python $BAYESHAMMER \
-        -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $memory \
         --only-error-correction \
         --debug"
         python $BAYESHAMMER \
-        -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $allocMax \
@@ -110,14 +110,14 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         python $BAYESHAMMER \
-        -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $memory \
         --only-error-correction \
         --debug"
         python $BAYESHAMMER \
-        -o $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $allocMax \

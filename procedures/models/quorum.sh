@@ -86,7 +86,7 @@ if !(has_state $state); then
         format_status "Command:\n \
         $QUORUM \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
         --size 20G \
         --no-discard \
@@ -94,7 +94,7 @@ if !(has_state $state); then
         --debug"
         $QUORUM \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
         --size 20G \
         --no-discard \
@@ -112,7 +112,7 @@ if !(has_state $state); then
         format_status "Command:\n \
         $QUORUM \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
         --size 20G \
         --no-discard \
@@ -120,7 +120,7 @@ if !(has_state $state); then
         --debug"
         $QUORUM \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --prefix $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
         --size 20G \
         --no-discard \
@@ -132,7 +132,7 @@ if !(has_state $state); then
     # Update State on Exit
     status=$?
     put_state $status $state
-    format_status "BayesHammer ($parameters $readgroup) Complete"
+    format_status "Quorum ($parameters $readgroup) Complete"
 
     return $status
 
