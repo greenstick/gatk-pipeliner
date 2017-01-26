@@ -26,15 +26,15 @@ To install:
 
 To run a procedure, the general syntax is:
 
-	  source [some procedure] \
-	  -f=$prefix \
-	  -s=$dataset \
-	  -c=$condition \
-	  -x=$experiment \
-	  -p=$parameters \
-	  -q=$bqsr \
-	  -m=$memory_per_thread
-	  -n=$threads
+    source [some procedure] \
+    -f=$prefix \
+    -s=$dataset \
+    -c=$condition \
+    -x=$experiment \
+    -p=$parameters \
+    -q=$bqsr \
+    -m=$memory_per_thread
+    -n=$threads
     # Note not all parameters are accepted by all procedure scripts
     
 A more concrete example:
