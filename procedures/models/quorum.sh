@@ -90,6 +90,7 @@ if !(state_registered $state); then
         -t $ncores \
         --size 20G \
         --no-discard \
+        --min-q-char 33 \
         --debug"
         $QUORUM \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
@@ -97,6 +98,7 @@ if !(state_registered $state); then
         -t $ncores \
         --size 20G \
         --no-discard \
+        --min-q-char 33 \
         --debug
 
     elif [ "$parameters" = "custom" ]; then
@@ -114,6 +116,7 @@ if !(state_registered $state); then
         -t $ncores \
         --size 20G \
         --no-discard \
+        --min-q-char 33 \
         --debug"
         $QUORUM \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
@@ -121,6 +124,7 @@ if !(state_registered $state); then
         -t $ncores \
         --size 20G \
         --no-discard \
+        --min-q-char 33 \
         --debug
 
     fi
