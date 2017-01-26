@@ -63,7 +63,11 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
+# Workaround to Bloocoo's Funky Output Scheme (See State BLOOCOO:2)
+corrected="_corrected"
+
 # Set Directories
+proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
@@ -89,8 +93,7 @@ if !(state_registered $state); then
         -nb-cores $ncores"
         $BLOOCOO \
         -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -nb-cores $ncores \
-        && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup_corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq     
+        -nb-cores $ncores
 
     elif [ "$parameters" = "custom" ]; then
         
@@ -106,16 +109,41 @@ if !(state_registered $state); then
         -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -nb-cores $ncores \
         -slow \
-        -high-precision \
-        && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup_corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq   
+        -high-precision
 
     fi
 
-        # Update State on Exit
+    # Update State on Exit
     status=$?
     register_state $status $state
-    format_status "BayesHammer ($parameters $readgroup) Complete"
 
+fi
+
+#
+# Move Output & Cleanup Extra Files
+#
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:2"
+if !(state_registered $state); then
+
+    format_status "Moving Output & Cleaning Up"
+    format_status "Command:\n
+    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
+    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq
+    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
+    "
+    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
+    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$prefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
+    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq
+    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
+
+    # Update State on Exit
+    status=$?
+    register_state $status $state
+
+    format_status "Bloocoo ($parameters $readgroup) Complete"
     return $status
 
 fi
