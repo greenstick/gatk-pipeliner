@@ -82,7 +82,8 @@ Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory"
+Max Memory          = $maxMemory
+Max Reads in Memory = $maxReads"
 
 # Set Directories
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters

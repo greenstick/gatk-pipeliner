@@ -76,7 +76,8 @@ Experiment          = $experiment
 Parameter Set       = $parameters
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory"
+Max Memory          = $maxMemory
+Max Reads in Memory = $maxReads"
 
 # Set Directories
 dataDir=$PIPELINE_HOME/$subset
