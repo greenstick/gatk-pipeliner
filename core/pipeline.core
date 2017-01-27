@@ -12,8 +12,11 @@
 
 # Emit Status With Consistent Spacing
 format_status () {
-    local status=$1
-    printf "\n$status\n"
+    # Remove Extra Whitespace
+    local status=$(echo $1 | sed 's|\s+|\s|g')
+    echo
+    echo -e "$status"
+    echo
     return $?
 }
 

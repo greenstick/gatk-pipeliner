@@ -113,7 +113,7 @@ if !(has_state $state); then
         -fpr 0.001 \
         -max_mem $memory \
         -gzip"
-        $BLESSEC 
+        $BLESSEC \
         -prefix $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
@@ -139,7 +139,7 @@ if !(has_state $state); then
         -fpr 0.001 \
         -max_mem $memory \
         -gzip"
-        $BLESSEC 
+        $BLESSEC \
         -prefix $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
