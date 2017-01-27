@@ -62,6 +62,27 @@ logging_dir=$pipeline_dir/logs
 # Scaffolding
 #
 
+printf "\nScaffolding Directories...\n"
+
+# Scaffold Pipeline Directory & Change Directory
+cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir
+
+# Pipeline Scaffolding
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
+mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
+mkdir -p set{1..6}/{fastq,downloaded,tmp}
+mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
+mkdir -p set{1..6}/fastq/{fastqc,split}
+
+# Create pipeline.state Write File
+touch $pipeline_dir/core/pipeline.state
+
+# Create pipeline.config File
+touch $pipeline_dir/core/pipeline.config
+
 while true; do
     echo
     IFS= read -p "Setup Development Data Directory ($pipeline_dir/dev)? " yn
@@ -85,29 +106,8 @@ while true; do
     esac
 done
 
-printf "\nScaffolding Directories...\n"
-
-# Scaffold Pipeline Directory & Change Directory
-cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir
-
-# Pipeline Scaffolding
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
-mkdir -p set{1..6}/{fastq,downloaded,tmp}
-mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
-mkdir -p set{1..6}/fastq/{fastqc,split}
-
-# Create pipeline.state Write File
-touch $pipeline_dir/core/pipeline.state
-
-# Create pipeline.config File
-touch $pipeline_dir/core/pipeline.config
-
 #
-# Exports
+# Write Exports to pipeline.config
 #
 
 while true; do
@@ -152,7 +152,7 @@ while true; do
 done
 
 #
-# Logging Management
+# Write Logging Management to pipeline.config
 #
 
 while true; do
@@ -172,27 +172,7 @@ while true; do
 done
 
 #
-# State Management
-#
-
-while true; do
-    echo
-    IFS= read -p "Setup pipeline state manager? " yn
-    case $yn in
-        [Yy]* )  
-            # Inject State Manager Link to ~/.bash_profile
-            echo -e '\n# Pipeline State Manger Link\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi' >> $pipeline_dir/core/pipeline.config
-            break
-            ;;
-        [Nn]* ) 
-            break
-            ;;
-        * ) echo "Please answer yes [y] or no [n].";;
-    esac
-done
-
-#
-# Pipeline Config Inject
+# Inject Pipeline Config Import to ~/.bash_profile & ~/.bashrc
 #
 
 while true; do
