@@ -1,10 +1,8 @@
 #! /usr/bin/bash
 
-################
-
+#
 # Pipeline Core Methods
-
-################
+#
 
 #
 # String Formatting
