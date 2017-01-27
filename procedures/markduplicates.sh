@@ -64,8 +64,8 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
-# Max Reads in RAM
-maxReads=$((allocMemory * 250000))
+# Max Reads in RAM - 200,000 per GB
+maxReads=$((allocMemory * 200000))
 
 format_status "PARAMETERS:
 Picard Directory    = $PICARD
