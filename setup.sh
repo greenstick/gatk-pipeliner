@@ -80,9 +80,6 @@ mkdir -p set{1..6}/fastq/{fastqc,split}
 # Create pipeline.state Write File
 touch $pipeline_dir/core/pipeline.state
 
-# Create pipeline.config File
-touch $pipeline_dir/core/pipeline.config
-
 while true; do
     echo
     IFS= read -p "Setup Development Data Directory ($pipeline_dir/dev)? " yn
