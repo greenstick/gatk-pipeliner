@@ -78,15 +78,15 @@ mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
 
 # Clean Up Old pipeline.config
-if [ -f $PIPELINE_HOME/core/pipeline.config ]; then
-    rm $PIPELINE_HOME/core/pipeline.config
+if [ -f $pipeline_dir/core/pipeline.config ]; then
+    rm $pipeline_dir/core/pipeline.config
 fi
 
 # Create pipeline.state Write File
 touch $pipeline_dir/core/pipeline.state
 
 # Create pipeline.config File
-touch $pipeline_dire/core/pipeline.config
+touch $pipeline_dir/core/pipeline.config
 
 # Inject Import Script into pipeline.config
 echo -e "#! /usr/bin/bash\n\n#\n# Pipeline Core Import\n#\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi\n" >> $pipeline_dir/core/pipeline.config
