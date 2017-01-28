@@ -77,6 +77,11 @@ mkdir -p set{1..6}/{fastq,downloaded,tmp}
 mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
 
+# Clean Up Old pipeline.config
+if [ -f $PIPELINE_HOME/core/pipeline.config ]; then
+    rm $PIPELINE_HOME/core/pipeline.config
+fi
+
 # Create pipeline.state Write File
 touch $pipeline_dir/core/pipeline.state
 
