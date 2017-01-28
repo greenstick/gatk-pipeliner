@@ -85,8 +85,8 @@ fi
 # Create pipeline.state Write File
 touch $pipeline_dir/core/pipeline.state
 
-# Create pipeline.config File
-touch $pipeline_dir/core/pipeline.config
+# Create pipeline.config File & Insert Shbang
+touch $pipeline_dir/core/pipeline.config && echo -e "#! /usr/bin/bash\n" >> $pipeline_dir/core/pipeline.config
 
 while true; do
     echo
