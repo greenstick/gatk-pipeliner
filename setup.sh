@@ -88,9 +88,6 @@ touch $pipeline_dir/core/pipeline.state
 # Create pipeline.config File
 touch $pipeline_dir/core/pipeline.config
 
-# Inject Import Script into pipeline.config
-echo -e "#! /usr/bin/bash\n\n#\n# Pipeline Core Import\n#\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi\n" >> $pipeline_dir/core/pipeline.config
-
 while true; do
     echo
     IFS= read -p "Setup Development Data Directory ($pipeline_dir/dev)? " yn
@@ -169,7 +166,7 @@ while true; do
     case $yn in
         [Yy]* )  
             # Inject Logging Automation Script to ~/.bash_profile
-            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tcd $PIPELINE_HOME/procedures\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi' >> $pipeline_dir/core/pipeline.config
+            echo -e '\n# Pipeline Logging Management\nif [[ $TERM = "screen" ]] && [[ $(ps -p $PPID -o comm=) = "tmux" ]] && [[ $PWD/ = $PIPELINE_HOME/* ]]; then\n\t# Prompt User / Read Input\n\tcd $PIPELINE_HOME/procedures\n\tIFS= read -p "Enter job logging name: " name\n\tmkdir $PIPELINE_HOME/logs 2> /dev/null\n\tlogname="tmux.$name.$(date "+%d%m%Y%H%M%S").log"\n\tscript -f $PIPELINE_LOG/${logname}\n\texit\nfi\n' >> $pipeline_dir/core/pipeline.config
             break
             ;;
         [Nn]* ) 
@@ -199,3 +196,7 @@ while true; do
         * ) echo "Please answer yes [y] or no [n].";;
     esac
 done
+
+# Inject Import Script into pipeline.config
+echo -e "#! /usr/bin/bash\n\n#\n# Pipeline Core Import\n#\n\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi\n" >> $pipeline_dir/core/pipeline.config
+
