@@ -80,6 +80,12 @@ mkdir -p set{1..6}/fastq/{fastqc,split}
 # Create pipeline.state Write File
 touch $pipeline_dir/core/pipeline.state
 
+# Create pipeline.config File
+touch $pipeline_dire/core/pipeline.config
+
+# Inject Import Script into pipeline.config
+echo -e "#! /usr/bin/bash\n\n#\n# Pipeline Core Import\n#\nif [ -f $PIPELINE_HOME/core/pipeline.core ]; then\n\tsource $PIPELINE_HOME/core/pipeline.core\nfi\n" >> $pipeline_dir/core/pipeline.config
+
 while true; do
     echo
     IFS= read -p "Setup Development Data Directory ($pipeline_dir/dev)? " yn
