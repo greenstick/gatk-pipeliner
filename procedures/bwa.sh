@@ -73,7 +73,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
  
-format_status "PARAMETERS: 
+printf "\nPARAMETERS: 
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
@@ -82,7 +82,8 @@ Parameter Set       = $parameters
 BWA Alignment       = $align
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory"
+Max Memory          = $maxMemory
+\n"
 
 # Set Directories
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters

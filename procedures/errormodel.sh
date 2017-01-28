@@ -65,7 +65,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
-format_status "PARAMETERS:
+printf "\nPARAMETERS: 
 Reference Directory = $PIPELINE_REF
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
@@ -74,7 +74,8 @@ Experiment          = $experiment
 Parameter Set       = $parameters
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory"
+Max Memory          = $maxMemory
+\n"
 
 # Set Directories
 proceduresDir=$PIPELINE_HOME/procedures

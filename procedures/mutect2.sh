@@ -67,7 +67,7 @@ maxMemory=$((allocMemory * ncores))$allocSize
 # Max Reads in RAM - 200,000 per GB
 maxReads=$((allocMemory * 200000))
  
-format_status "PARAMETERS:
+printf "\nPARAMETERS:
 GATK Directory      = $GATK
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
@@ -77,7 +77,8 @@ Recalibration Model = $qualitymodel
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
-Max Reads in Memory = $maxReads"
+Max Reads in Memory = $maxReads
+\n"
 
 # Set Directories
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel

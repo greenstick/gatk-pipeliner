@@ -56,13 +56,14 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
-format_status "PARAMETERS:
+printf "\nPARAMETERS: 
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
 Condition           = $condition
 Memory              = $memory
 Cores               = $ncores
-Max Memory          = $maxMemory"
+Max Memory          = $maxMemory
+\n"
 
 # Set Directories
 dataDir=$PIPELINE_HOME/$subset

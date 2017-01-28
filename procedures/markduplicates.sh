@@ -67,7 +67,7 @@ maxMemory=$((allocMemory * ncores))$allocSize
 # Max Reads in RAM - 200,000 per GB
 maxReads=$((allocMemory * 200000))
 
-format_status "PARAMETERS:
+printf "\nPARAMETERS: 
 Picard Directory    = $PICARD
 Data File Prefix    = $fileprefix
 Data Subset         = $subset
@@ -77,7 +77,8 @@ Parameter Set       = $parameters
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
-Max Reads in Memory = $maxReads"
+Max Reads in Memory = $maxReads
+\n"
 
 # Set Directories
 dataDir=$PIPELINE_HOME/$subset
