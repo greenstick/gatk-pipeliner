@@ -6,7 +6,5 @@ legacy/
 reference/
 logs/
 validation/
-core/*.state
-core/*.config
-*.state
-*.config
+core/pipeline.state
+core/pipeline.config
