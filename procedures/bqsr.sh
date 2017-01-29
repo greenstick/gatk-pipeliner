@@ -62,7 +62,7 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="10"
 memoryDef="8G"
-readsDef=150
+readsDef=150000
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
