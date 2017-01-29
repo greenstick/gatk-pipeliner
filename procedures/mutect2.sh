@@ -32,6 +32,10 @@ for i in "$@"
 
     # Optional Arguments With Defaults
 
+        -r=*|--reads=*)
+        readsOpt="${i#*=}"
+        shift # n Reads Per GB or Memory
+        ;;
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
         shift # Number of Cores to Use
@@ -54,10 +58,12 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="10"
 memoryDef="8G"
+readsDef=150
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
+reads=${readsOpt:-$readsDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -65,7 +71,7 @@ allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
 
 # Max Reads in RAM - 200,000 per GB
-maxReads=$((allocMemory * 200000))
+maxReads=$((allocMemory * $reads))
  
 printf "\nPARAMETERS:
 GATK Directory      = $GATK
