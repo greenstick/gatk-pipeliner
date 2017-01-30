@@ -55,6 +55,9 @@ reference_dir=$root_dir/MRD_aml/ForBackup/pipeline/reference/hg19
 # Set Output Directory
 output_dir=$user_dir/io # Set to home directory off lustre FS for FTP access
 
+# Set Modules Directory
+modules_dir=$pipeline_dir/procedures
+
 # Set Logging Directory
 logging_dir=$pipeline_dir/logs
 
@@ -130,6 +133,11 @@ while true; do
                 echo -e "\nexport PIPELINE_HOME=$pipeline_dir" >> $pipeline_dir/core/pipeline.config
                 # Set Pipeline Home Directory
                 export PIPELINE_HOME=$pipeline_dir
+
+                # Write Pipeline Modules Directory to pipeline.config
+                echo -e "\nexport PIPELINE_MODS=$modules_dir" >> $pipeline_dir/core/pipeline.config
+                # Set Pipeline Modules Directory
+                export PIPELINE_MODS=$modules_dir
 
                 # Write Pipeline Output Directory to pipeline.config
                 echo -e "\nexport PIPELINE_OUT=$output_dir" >> $pipeline_dir/core/pipeline.config
