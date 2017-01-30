@@ -78,9 +78,8 @@ if !(has_state $state); then
 
      format_status "Unmerging Paired End FASTQ"
      # Call Error Model
-     format_status "Command:\n
-     fastqutils unmerge $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup -gz"
-     fastqutils unmerge $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup -gz
+     format_status "Command:\nfastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup"
+     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.split
 
      # Update State on Exit
      status=$?
@@ -106,17 +105,17 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         $BLESSEC \
-        -prefix $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
-        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
+        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
+        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
         -gzip"
         $BLESSEC \
-        -prefix $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
-        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
+        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
+        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
@@ -132,7 +131,7 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         $BLESSEC \
-        -prefix $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -kmerlength 31 \
@@ -140,13 +139,12 @@ if !(has_state $state); then
         -max_mem $memory \
         -gzip"
         $BLESSEC \
-        -prefix $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
-        -max_mem $memory \
-        -gzip
+        -max_mem $memory
 
     fi
     
