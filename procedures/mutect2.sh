@@ -98,12 +98,12 @@ recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$quali
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
 # Tool Specific Debugging - GATK
-monitorThreads=false
+monitorThreads=""
 performanceLog=false
 loggingLevel="INFO"
 
 if $debug; then 
-    monitorThreads=true
+    monitorThreads="--monitorThreadEfficiency"
     performanceLog=true
     loggingLevel="DEBUG"
 fi
@@ -147,7 +147,7 @@ if !(has_state $state); then
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
     --read_buffer_size $maxReads \
-    --monitorThreadEfficiency $monitorThreads \
+    $monitorThreads \
     --logging_level $loggingLevel
     
     # Update State on Exit
@@ -196,7 +196,7 @@ if !(has_state $state); then
     --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
     -nct $ncores \
     --read_buffer_size $maxReads \
-    --monitorThreadEfficiency $monitorThreads \
+    $monitorThreads \
     --logging_level $loggingLevel
 
 

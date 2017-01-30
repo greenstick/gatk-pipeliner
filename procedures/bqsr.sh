@@ -105,12 +105,12 @@ recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$quali
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
 # Tool Specific Debugging - GATK
-monitorThreads=false
+monitorThreads=""
 performanceLog=false
 loggingLevel="INFO"
 
 if $debug; then 
-    monitorThreads=true
+    monitorThreads="--monitorThreadEfficiency"
     performanceLog=true
     loggingLevel="DEBUG"
 fi
@@ -185,7 +185,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores \
         --lowMemoryMode \
         --read_buffer_size $maxReads \
-        --monitorThreadEfficiency $monitorThreads \
+        $monitorThreads \
         --logging_level $loggingLevel
 
         # Update State on Exit
@@ -231,7 +231,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores \
         --lowMemoryMode \
         --read_buffer_size $maxReads \
-        --monitorThreadEfficiency $monitorThreads \
+        $monitorThreads \
         --logging_level $loggingLevel
 
         # Update State on Exit
@@ -267,7 +267,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
         -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt \
-        --monitorThreadEfficiency $monitorThreads \
+        $monitorThreads \
         --logging_level $loggingLevel
 
         # Update State on Exit
@@ -307,7 +307,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
         -nct $ncores \
         --read_buffer_size $maxReads \
-        --monitorThreadEfficiency $monitorThreads \
+        $monitorThreads
         --logging_level $loggingLevel
 
         # Update State on Exit
