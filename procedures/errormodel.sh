@@ -84,6 +84,10 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
 format_status "Running Error Model Script"
 
+# 
+# Data Transfer
+# 
+
 # A Really Long & Dirty Conditional
 if  [ "$experiment" = "bayeshammer" ] || \
     [ "$experiment" = "blessec" ]     || \
@@ -104,7 +108,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
 
             format_status "Copying Read FASTQ Files to Modeled Directory..."
             files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
-            
+
             for file in $files
                 # In Parallel
                 do (
@@ -116,6 +120,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
                     # Run Command
                     if !(has_state $substate); then
 
+                        # No Model, Copy Data to Modeled Directory
                         format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
                         cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
                     
@@ -129,6 +134,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
 
         else
 
+            # Copy Data to Pre-Align Directory For Error Models
             format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
             format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
             cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/

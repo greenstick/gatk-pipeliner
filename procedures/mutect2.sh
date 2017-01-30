@@ -44,6 +44,10 @@ for i in "$@"
         memoryOpt="${i#*=}"
         shift # Per Core Memory Requirement
         ;;
+        -d=*|--debug=*)
+        debugOpt="${i#*=}"
+        shift # Trigger Debugging Available in Tools
+        ;;
 
     # Invalid Argument Handler
 
@@ -59,11 +63,13 @@ done
 ncoresDef="10"
 memoryDef="8G"
 readsDef=150000
+debugDef=false
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 reads=${readsOpt:-$readsDef}
+debug=${debugOpt:-$debugDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -84,11 +90,23 @@ Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
 Max Reads in Memory = $maxReads
+Debug               = $debug
 \n"
 
 # Set Directories
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
+
+# Tool Specific Debugging - GATK
+monitorThreads=false
+performanceLog=false
+loggingLevel="INFO"
+
+if $debug; then 
+    monitorThreads=true
+    performanceLog=true
+    loggingLevel="DEBUG"
+fi
 
 format_status "Running Contamination Estimation & Mutect2 Script"
 
@@ -113,7 +131,9 @@ if !(has_state $state); then
     --population ALL \
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-    --read_buffer_size $maxReads"
+    --read_buffer_size $maxReads \
+    --monitorThreadEfficiency $monitorThreads \
+    --logging_level $loggingLevel"
     java -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
@@ -126,7 +146,9 @@ if !(has_state $state); then
     --population ALL \
     --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
     -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-    --read_buffer_size $maxReads
+    --read_buffer_size $maxReads \
+    --monitorThreadEfficiency $monitorThreads \
+    --logging_level $loggingLevel
     
     # Update State on Exit
     put_state $? $state
@@ -156,7 +178,9 @@ if !(has_state $state); then
     -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
     -nct $ncores \
-    --read_buffer_size $maxReads"
+    --read_buffer_size $maxReads \
+    --monitorThreadEfficiency $monitorThreads \
+    --logging_level $loggingLevel"
     java -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T MuTect2 \
@@ -171,7 +195,9 @@ if !(has_state $state); then
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
     --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
     -nct $ncores \
-    --read_buffer_size $maxReads
+    --read_buffer_size $maxReads \
+    --monitorThreadEfficiency $monitorThreads \
+    --logging_level $loggingLevel
 
 
     # Update State on Exit

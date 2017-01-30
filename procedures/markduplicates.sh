@@ -44,6 +44,10 @@ for i in "$@"
         memoryOpt="${i#*=}"
         shift # Per Core Memory Requirement
         ;;
+        -d=*|--debug=*)
+        debugOpt="${i#*=}"
+        shift # Trigger Debugging Available in Tools
+        ;;
 
     # Invalid Argument Handler
 
@@ -59,11 +63,13 @@ done
 ncoresDef="10"
 memoryDef="8G"
 readsDef=150000
+debugDef=false
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 reads=${readsOpt:-$readsDef}
+debug=${debugOpt:-$debugDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -84,12 +90,20 @@ Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
 Max Reads in Memory = $maxReads
+Debug               = $debug
 \n"
 
 # Set Directories
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 tmpDir=$PIPELINE_HOME/$subset/tmp
+
+# Tool Specific Debugging - Picard
+verbosity="INFO"
+
+if $debug; then 
+    verbosity="DEBUG"
+fi
 
 format_status "Running Mark Duplicates Script"
 
@@ -113,7 +127,8 @@ if [ "$experiment" = "norealign" ]; then
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
-        TMP_DIR=$tmpDir"
+        TMP_DIR=$tmpDir \
+        VERBOSITY=$verbosity"
         java -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
@@ -122,7 +137,8 @@ if [ "$experiment" = "norealign" ]; then
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
-        TMP_DIR=$tmpDir
+        TMP_DIR=$tmpDir \
+        VERBOSITY=$verbosity
 
         # Update State on Exit
         put_state $? $state
