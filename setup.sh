@@ -68,11 +68,11 @@ printf "\nScaffolding Directories...\n"
 cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir
 
 # Pipeline Scaffolding
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
-mkdir -p set{1..6}/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
+mkdir -p set{1..6}/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
+mkdir -p set{1..6}/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
+mkdir -p set{1..6}/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
+mkdir -p set{1..6}/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
+mkdir -p set{1..6}/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
 mkdir -p set{1..6}/{fastq,downloaded,tmp}
 mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
@@ -94,11 +94,11 @@ while true; do
     case $yn in
         [Yy]* )  
             # Scaffold Development Directory
-            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
-            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
-            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
-            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
-            mkdir -p dev/model/{bayeshammer,bless,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
+            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
+            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
+            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
+            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
+            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
             mkdir -p dev/{fastq,downloaded,tmp}
             mkdir -p dev/downloaded/{intervals,metrics,original,split}
             mkdir -p dev/fastq/{fastqc,split}
