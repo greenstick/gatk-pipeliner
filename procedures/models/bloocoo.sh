@@ -131,12 +131,12 @@ if !(has_state $state); then
     format_status "Command:\n
     mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
     && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
-    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq
+    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq \
     && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
     "
     mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
     && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
-    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq
+    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq \
     && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
 
     # Update State on Exit
