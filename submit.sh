@@ -239,8 +239,8 @@ fi
 
 format_status "Compiling Submit Script"
 
-header="####################################\n\n"
-submit="$header Job Details\nexecutable = $PIPELINE_MODS/$binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\ndebug\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $memory\nimage_size = $memory\nrank_memory = $allocMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/$logfile\nerror = $PIPELINE_HOME/logs/err/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\n\n# Compiled Optional Arguments\n"
+header="####################################\n"
+submit="$header\n# Job Details\nexecutable = $PIPELINE_MODS/$binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\ndebug\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $memory\nimage_size = $memory\nrank_memory = $allocMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/$logfile\nerror = $PIPELINE_HOME/logs/err/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
