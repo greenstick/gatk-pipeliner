@@ -76,14 +76,20 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLESSEC:1"
 if !(has_state $state); then
 
+     # Go Directly to Split Dir
+     back=$(pwd)
+     cd $dataDir/fastq/split
+
      format_status "Unmerging Paired End FASTQ"
      # Call Error Model
-     format_status "Command:\nfastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup"
-     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.split
-
+     format_status "Command:\nfastqutils unmerge $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.split"
+     fastqutils unmerge $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq $fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.split
      # Update State on Exit
      status=$?
      put_state $status $state
+
+     # Return From Split Dir
+     cd $back
 
 fi
 
