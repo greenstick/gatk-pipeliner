@@ -79,7 +79,7 @@ if !(has_state $state); then
      format_status "Splitting Paired End FASTQ to Single End"
      # Call Error Model
      format_status "Command:\nfastqutils unmerge $fileprefix.$subset.$condition.$readgroup.fastq $fileprefix.$subset.$condition.$readgroup.split"
-     perl $PAIRFQ splitpairs -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq
+     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $fileprefix.$subset.$condition.$readgroup.split
      # Update State on Exit
      status=$?
      put_state $status $state
