@@ -5,7 +5,7 @@
 #
 
 email="cordier@ohsu.edu"
-timestamp=$(date +"%m-%d-%y%H.%M")
+timestamp=$(date +"%m-%d-%y_%H.%M")
 
 # Exit on First Error - to Prevent Invalid File Modifications
 # set -o errexit
@@ -43,7 +43,7 @@ for i in "$@"
 
     # Optional Arguments With Defaults
 
-    	-b=*|--binary=*)
+        -b=*|--binary=*)
         binary="${i#*=}"
         shift # Shell Script Module to Call
         ;;
@@ -66,35 +66,35 @@ for i in "$@"
 
     # Tool Specific Arguments
 
-    	-a=*|--align=*)
+        -a=*|--align=*)
         alignOpt="${i#*=}"
         shift # BWA Alignment Type
         ;;
 
     # Condor Only Arguments
 
-    	--force=*)
-		forceOpt="${i#*=}"
+        --force=*)
+        forceOpt="${i#*=}"
         shift # Force job duration
         ;;
         --priority=*)
-		priorityOpt="${i#*=}"
+        priorityOpt="${i#*=}"
         shift # Condor Priority (-20 to 20)
         ;;
         --universe=*)
-		universeOpt="${i#*=}"
+        universeOpt="${i#*=}"
         shift # Condor universe
         ;;
         --suspendable=*)
-		suspendableOpt="${i#*=}"
+        suspendableOpt="${i#*=}"
         shift # Is job suspendable
         ;;
         --getenv=*)
-		getenvOpt="${i#*=}"
+        getenvOpt="${i#*=}"
         shift # Get Shell Environment
         ;;
         --notify=*)
-		notifyOpt="${i#*=}"
+        notifyOpt="${i#*=}"
         shift # Get Shell Environment
         ;;
         --maxtime=*)
@@ -165,39 +165,39 @@ args=""
 
 # By Prefix
 if [[ ! -z "$fileprefix" ]]; then
-	args=$args"-f=$fileprefix "
+    args=$args"-f=$fileprefix "
 fi
 
 # By Condition
 if [[ ! -z "$condition" ]]; then
-	subfile=$subfile.$condition
-	logfile=$logfile.$condition
-	errfile=$errfile.$condition
-	args=$args"-x=$condition "
+    subfile=$subfile.$condition
+    logfile=$logfile.$condition
+    errfile=$errfile.$condition
+    args=$args"-x=$condition "
 fi
 
 # By Experiment
 if [[ ! -z "$experiment" ]]; then
-	subfile=$subfile.$experiment
-	logfile=$logfile.$experiment
-	errfile=$errfile.$experiment
-	args=$args"-x=$experiment "
+    subfile=$subfile.$experiment
+    logfile=$logfile.$experiment
+    errfile=$errfile.$experiment
+    args=$args"-x=$experiment "
 fi
 
 # By Parameters
 if [[ ! -z "$parameters" ]]; then
-	subfile=$subfile.$parameters
-	logfile=$logfile.$parameters
-	errfile=$errfile.$parameters
-	args=$args"-p=$parameters "
+    subfile=$subfile.$parameters
+    logfile=$logfile.$parameters
+    errfile=$errfile.$parameters
+    args=$args"-p=$parameters "
 fi
 
 # By Quality Model
 if [[ ! -z $qualitymodel ]]; then
-	subfile=$subfile.$qualitymodel
-	logfile=$logfile.$qualitymodel
-	errfile=$errfile.$qualitymodel
-	args=$args"-q=$qualitymodel "
+    subfile=$subfile.$qualitymodel
+    logfile=$logfile.$qualitymodel
+    errfile=$errfile.$qualitymodel
+    args=$args"-q=$qualitymodel "
 fi
 
 # Append Timestamp & Suffix
@@ -211,26 +211,26 @@ subfile=$subfile.$timestamp.sub
 
 # Memory
 if [ $memory ]; then
-	args=$args"-m=$memory "
+    args=$args"-m=$memory "
 fi
 
 # n Cores
 if [ $ncores ]; then
-	args=$args"-n=$ncores "
+    args=$args"-n=$ncores "
 fi
 
 # Reads per GB
 if [ $reads ]; then
-	args=$args"-r=$reads "
+    args=$args"-r=$reads "
 fi
 
 # Debug Script
 if [ $debug ]; then
-	args=$args"-d=$debug "
+    args=$args"-d=$debug "
 fi
 # BWA Alignment
 if [ $align ]; then
-	args=$args+"-a=$align "
+    args=$args+"-a=$align "
 fi
 
 #
@@ -240,26 +240,26 @@ fi
 format_status "Compiling Submit Script"
 
 header="####################################\n"
-submit="$header\n# Job Details\nexecutable = $PIPELINE_MODS/$binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $memory\nimage_size = $memory\nrank = Memory >= $allocMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/$logfile\nerror = $PIPELINE_HOME/logs/err/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\n\n# Compiled Optional Arguments\n"
+submit="$header\n# Job Details\nexecutable = $PIPELINE_MODS/unbuffer $binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $memory\nimage_size = $memory\nrank = Memory >= $allocMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/$logfile\nerror = $PIPELINE_HOME/logs/err/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
-	submit=$submit"getenv = True\n"
+    submit=$submit"getenv = True\n"
 fi
 
 # Append Notification
 if $notify; then
-	submit=$submit"notification = Complete\nnotify_user = $email\n"
+    submit=$submit"notification = Complete\nnotify_user = $email\n"
 fi
 
 # Append Force
 if $force; then
-	submit=$submit"concurrency_limits = WEEK_LONG_JOBS\n"
+    submit=$submit"concurrency_limits = WEEK_LONG_JOBS\n"
 fi
 
 # Allow Job Suspension
 if $suspendable; then
-	submit=$submit"+IsSuspensionJob = True\n"
+    submit=$submit"+IsSuspensionJob = True\n"
 fi
 
 # Queue
