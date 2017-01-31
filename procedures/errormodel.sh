@@ -156,7 +156,17 @@ fi
 state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:2"
 if !(has_state $state); then
 
+    # Declare References
     errors=0
+    callcount=$(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq | wc -l)
+    ncoresPerCall=$((ncores / callcount))
+
+    # Check Enough Cores Provided for Request
+    if [ $ncoresPerCall < 1 ]; then
+        format_status "Error! errormodel.sh requires 1 core per file. Found $callcount files to be processed by $ncores cores."
+        put_state 1 $state
+        exit $?
+    fi
 
     case "$experiment" in
 
