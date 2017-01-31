@@ -78,8 +78,8 @@ if !(has_state $state); then
 
      format_status "Splitting Paired End FASTQ to Single End"
      # Call Error Model
-     format_status "Command:\nfastqutils unmerge $fileprefix.$subset.$condition.$readgroup.fastq $fileprefix.$subset.$condition.$readgroup.split"
-     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $fileprefix.$subset.$condition.$readgroup.split
+     format_status "Command:\nfastqutils unmerge $fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split"
+     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split
      # Update State on Exit
      status=$?
      put_state $status $state

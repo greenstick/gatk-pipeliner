@@ -119,7 +119,7 @@ state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
 if !(has_state $state); then
 
     format_status "ContEst Start"
-    format_status "Command:\njava -Xmx$maxMemory \
+    format_status "Command:\njava -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
     --precision 0.001 \
