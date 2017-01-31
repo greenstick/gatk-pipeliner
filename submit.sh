@@ -135,7 +135,7 @@ universeDef="vanilla"
 suspendableDef=false
 getenvDef=true
 notifyDef=false
-maxtimeDef="1440"
+maxtimeDef="129600"
 
 # Condor Set Optional Values
 force=${forceOpt:-$forceDef}
@@ -270,9 +270,11 @@ submit=$submit$header
 # Write Script & Submit
 #
 
-echo -e $submit > $subfile
+cd $PIPELINE_HOME
 
-echo -e "Submit Script Written to: $PIPELINE_LOG/sub/$subfile"
+echo -e $submit > /logs/sub/$subfile
+
+echo -e "Submit Script Written to: $PIPELINE_HOME/logs/sub/$subfile"
 
 echo -e "Submitting..."
-condor_submit $PIPELINE_LOG/sub/$subfile
+condor_submit $PIPELINE_HOME/logs/sub/$subfile
