@@ -31,6 +31,7 @@ put_state () {
         # Export Pipeline State
         echo "$state" >> $PIPELINE_HOME/core/pipeline.state
         format_status "State Registered: $state"
+        return $statuscode
     else
         format_status "Unexpected Error $statuscode: $state"
         return $statuscode
