@@ -41,7 +41,7 @@ put_state () {
 has_state () {
     local state=$1
     grep -q "$state" $PIPELINE_HOME/core/pipeline.state
-    status=$?
+    local status=$?
     if [ $status = 0 ]; then
         format_status "Skipping Step – $state"
     fi

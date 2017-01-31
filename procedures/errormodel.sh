@@ -156,6 +156,8 @@ fi
 state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:2"
 if !(has_state $state); then
 
+    errors=0
+
     case "$experiment" in
 
         "bayeshammer")
@@ -173,13 +175,14 @@ if !(has_state $state); then
                     
                     # Run Command
                     if !(has_state $substate); then
-
                         format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                         source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
                     
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
 
@@ -208,6 +211,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -235,6 +240,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -261,6 +268,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -288,6 +297,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -317,6 +328,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -344,6 +357,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -371,6 +386,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
                         
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -399,6 +416,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -427,6 +446,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -456,6 +477,8 @@ if !(has_state $state); then
                         # Check for failed parallel call
                         put_state $? $substate
 
+                        # Add Errors to Cumulative Status Code
+                        errors=$((errors + $?))
                     fi
                 ) &
             done
@@ -480,7 +503,8 @@ if !(has_state $state); then
     esac
 
     # Update State on Exit
-    put_state $? $state
+    # Note Errors Contains Sum of All Status Codes – Should be 0 if all Completed Successfully
+    put_state $errors $state
     format_status "Error Model Complete"
 
 fi

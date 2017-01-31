@@ -130,7 +130,6 @@ if !(has_state $state); then
     status=$?
     put_state $status $state
     format_status "BayesHammer ($parameters $readgroup) Complete"
-
     return $status
 
 fi

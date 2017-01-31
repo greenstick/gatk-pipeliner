@@ -150,9 +150,7 @@ if !(has_state $state); then
     # Update State on Exit
     status=$?
     put_state $status $state
-
     format_status "Bless-EC ($parameters $readgroup) Complete"
-
     return $status
 
 fi
