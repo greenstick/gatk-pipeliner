@@ -164,6 +164,10 @@ fi
 state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
 if !(has_state $state); then
 
+    # Get Contamination
+    contamination=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
+    format_status "Proportion Contamination: $contamination"
+
     format_status "MuTect2 Start"
     format_status "Command:\njava -Xmx$memory \
     -Djava.io.tmpdir=$tmpDir \
@@ -174,7 +178,7 @@ if !(has_state $state); then
     --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
     --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
     --tumor_lod 10.0 \
-    --contamination_fraction_to_filter 0.01 \
+    --contamination_fraction_to_filter $contamination \
     -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
     -nct $ncores \
@@ -190,7 +194,7 @@ if !(has_state $state); then
     --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
     --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
     --tumor_lod 10.0 \
-    --contamination_fraction_to_filter 0.01 \
+    --contamination_fraction_to_filter $contamination \
     -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
     --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
     --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
