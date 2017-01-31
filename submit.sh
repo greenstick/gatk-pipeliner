@@ -270,9 +270,7 @@ submit=$submit$header
 # Write Script & Submit
 #
 
-cd $PIPELINE_HOME
-
-echo -e $submit > /logs/sub/$subfile
+echo -e $submit > $PIPELINE_HOME/logs/sub/$subfile
 
 echo -e "Submit Script Written to: $PIPELINE_HOME/logs/sub/$subfile"
 
