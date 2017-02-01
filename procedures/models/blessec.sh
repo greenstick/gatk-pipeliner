@@ -85,15 +85,15 @@ if !(has_state $state); then
         format_status "Running Bless-EC - Custom Parameters"
         # Call Error Model
         format_status "Command:\n
-        $BLESSEC \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        bless \
+        -prefix $paramDir/modeled/ \
         -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
         -notrim"
-        $BLESSEC \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        bless \
+        -prefix $paramDir/modeled/ \
         -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
@@ -109,15 +109,15 @@ if !(has_state $state); then
         format_status "Running Bless-EC - Custom Parameters"
         # Call Error Model
         format_status "Command:\n
-        $BLESSEC \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        bless \
+        -prefix $paramDir/modeled/ \
         -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
         -notrim"
-        $BLESSEC \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        bless \
+        -prefix $paramDir/modeled/ \
         -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
@@ -134,9 +134,19 @@ if !(has_state $state); then
 
 fi
 
+# $BLESSEC -prefix /home/exacloud/lustre1/MRD_aml/ForBackup/pipeline/set1/model/blessec/param/default/modeled/synthetic.challenge.set1.tumor.blessec.default.C09DF.2 -read /home/exacloud/lustre1/MRD_aml/ForBackup/pipeline/set1/fastq/split/synthetic.challenge.set1.tumor.blessec.default.C09DF.2.fastq -kmerlength 31 -fpr 0.001 -max_mem 80G -notrim
+
+# bless
+
+# ----------------------------------------------------------------------
+#            BLESS: Bloom-filter based error correction tool
+# ----------------------------------------------------------------------
+# VERSION: 0.24
+# DATE   : Jan. 29, 2015
+# ----------------------------------------------------------------------
 
 # 1. USAGE
-#      /home/users/cordier/packages/bless-ec/./bless <OPTIONS>
+#      bless <OPTIONS>
 
 # 2. OPTIONS
 #      1) REQUIRED
@@ -156,7 +166,8 @@ fi
 #      -extend <integer>: Read extension amount. Default: 5.
 #      -fpr <float>: Target false positive probability for the Bloom
 #           filter. Default: 0.001.
-#      -gzip: Compress output files.
+#      -smpthread <integer>: Number of threads used in a SMP node.
+#           Default: number of cores in each SMP node.
 #      -load <prefix>: Skip the solid k-mer finding step and load
 #           pre-built Bloom filter data. When BLESS is executed with
 #           "-prefix <prefix>" option <prefix>.bf.data and
@@ -167,8 +178,6 @@ fi
 #      -notrim: Turn trimming off.
 #      -seed <integer>: Set a seed for random number generation.
 #           Default: 0.
-#      -smpthread <integer>: Number of threads used in a SMP node.
-#           Default: number of cores in each SMP node.
 
 # 3. EXAMPLES
 #      1) PAIRED INPUT READS
