@@ -186,7 +186,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                     
                         # Check for failed parallel call
                         put_state $? $substate
@@ -216,7 +216,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                     
                         # Check for failed parallel call
                         put_state $? $substate
@@ -245,7 +245,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
 
                         # Check for failed parallel call
                         put_state $? $substate
@@ -273,7 +273,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                 
                         # Check for failed parallel call
                         put_state $? $substate
@@ -302,7 +302,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -333,7 +333,7 @@ if !(has_state $state); then
                         # java Xmx$memory -jar $ERIF
                         # java Xmx$memory -jar $KGEM
                         format_status "Command:\nsource $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -362,7 +362,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -391,7 +391,7 @@ if !(has_state $state); then
                     # Run Command
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -421,7 +421,7 @@ if !(has_state $state); then
                     if !(has_state $substate); then
                         # perl $RCORRECTOR
                         format_status "Command:\nsource $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -451,7 +451,7 @@ if !(has_state $state); then
                     if !(has_state $substate); then
                         # source $SEECER
                         format_status "Command:\nsource $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -482,7 +482,7 @@ if !(has_state $state); then
                         # python $SHORAH
                         format_status "Command:\n \
                         source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                        source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
