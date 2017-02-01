@@ -76,7 +76,7 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:1"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:1"
 if !(has_state $state); then
 
     if [ "$parameters" = "default" ]; then
@@ -124,7 +124,7 @@ fi
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters:BLOOCOO:2"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:2"
 if !(has_state $state); then
 
     format_status "Moving Output & Cleaning Up"

@@ -68,30 +68,12 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
-#
-# Unpair FASTQ File
-#
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLESSEC:1"
-if !(has_state $state); then
-
-     format_status "Splitting Paired End FASTQ to Single End"
-     # Call Error Model
-     format_status "Command:\nfastqutils unmerge $fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split"
-     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split
-     # Update State on Exit
-     status=$?
-     put_state $status $state
-
-fi
-
 # 
 # Run Bless-EC
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLESSEC:2"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLESSEC:1"
 if !(has_state $state); then
 
     if [ "$parameters" = "default" ]; then
@@ -105,20 +87,18 @@ if !(has_state $state); then
         format_status "Command:\n
         $BLESSEC \
         -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
-        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
+        -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
-        -gzip"
+        -notrim"
         $BLESSEC \
         -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
-        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
+        -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
-        -gzip
+        -notrim
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -131,19 +111,18 @@ if !(has_state $state); then
         format_status "Command:\n
         $BLESSEC \
         -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
-        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
+        -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
-        -gzip"
+        -notrim"
         $BLESSEC \
         -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -read1 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.1.fastq \
-        -read2 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.2.fastq \
+        -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
-        -max_mem $memory
+        -max_mem $memory \
+        -notrim
 
     fi
     
