@@ -90,15 +90,13 @@ if !(has_state $state); then
         -k 31 \
         -s 3g \
         -t $ncores \
-        -od $paramDir/modeled
-        -verbose"
+        -od $paramDir/modeled"
         perl $RCORRECTOR \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
         -s 3g \
         -t $ncores \
         -od $paramDir/modeled
-        -verbose
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -114,15 +112,13 @@ if !(has_state $state); then
         -k 31 \
         -s 3g \
         -t $ncores \
-        -od $paramDir/modeled
-        -verbose"
+        -od $paramDir/modeled"
         perl $RCORRECTOR \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
         -s 3g \
         -t $ncores \
         -od $paramDir/modeled
-        -verbose
 
     fi
     
