@@ -71,12 +71,33 @@ proceduresDir=$PIPELINE_HOME/procedures
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
+#
+# Convert FastQ to Fasta & Qual
+#
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:1"
+if !(has_state $state); then
+
+        format_status "Splitting FastQ to Fasta & Qual"
+        # Call Error Model & Move Outputs to Output Directory
+        format_status "Command:\n
+        python3 ../utils/fastq-to-fasta-qual.py \
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+        python3 ../utils/fastq-to-fasta-qual.py \
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+fi
+
 # 
 # Run Bloocoo
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:1"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:2"
 if !(has_state $state); then
 
     if [ "$parameters" = "default" ]; then
@@ -89,10 +110,10 @@ if !(has_state $state); then
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores"
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores
 
     elif [ "$parameters" = "custom" ]; then
@@ -101,12 +122,12 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores \
         -slow \
         -high-precision"
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores \
         -slow \
         -high-precision
@@ -120,11 +141,34 @@ if !(has_state $state); then
 fi
 
 #
+# Merge Fasta & Qual Back to FastQ
+#
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:3"
+if !(has_state $state); then
+
+        format_status "Merging Fasta & Qual to FastQ"
+        # Call Error Model & Move Outputs to Output Directory
+        format_status "Command:\n
+        python3 ../utils/fasta-qual-to-fastq.py \
+        -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual"
+        python3 ../utils/fasta-qual-to-fastq.py \
+        -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual
+
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+fi
+
+#
 # Move Output & Cleanup Extra Files
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:2"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:4"
 if !(has_state $state); then
 
     format_status "Moving Output & Cleaning Up"

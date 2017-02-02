@@ -19,7 +19,7 @@ if __name__ == "__main__":
 	# 
 
 	try:
-		opts, args = getopt.getopt(argv, "hf:q:o", ["--inputfasta", "--inputqual", "--outputprefix", "--help"])
+		opts, args = getopt.getopt(sys.argv, "hf:q:o", ["--inputfasta", "--inputqual", "--outputprefix", "--help"])
 	except getopt.GetoptError:
 		print("fasta-qual to fastq.py -f <input fasta> -q <input qual> -o <output prefix>")
 		sys.exit(2)
