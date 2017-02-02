@@ -33,7 +33,7 @@ for i in "$@"
     # Optional Arguments With Defaults
 
         -C=*|--contamination=*)
-        readsOpt="${i#*=}"
+        contaminationOpt="${i#*=}"
         shift # Sample Contamination
         ;;
         -r=*|--reads=*)
