@@ -32,6 +32,10 @@ for i in "$@"
 
     # Optional Arguments With Defaults
 
+        -C=*|--contamination=*)
+        readsOpt="${i#*=}"
+        shift # Sample Contamination
+        ;;
         -r=*|--reads=*)
         readsOpt="${i#*=}"
         shift # n Reads Per GB or Memory
@@ -64,12 +68,14 @@ ncoresDef="10"
 memoryDef="8G"
 readsDef=150000
 debugDef=false
+contamination=false
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
 reads=${readsOpt:-$readsDef}
 debug=${debugOpt:-$debugDef}
+contamination=${contaminationOpt:-$contaminationDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -87,6 +93,7 @@ Data Subset         = $subset
 Experiment          = $experiment
 Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
+Contamination       = $contamination
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
@@ -112,102 +119,159 @@ fi
 format_status "Running Contamination Estimation & Mutect2 Script"
 
 #
-# ContEst
+# If Contamination Not Specified, Run ContEst
 #
 
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
-if !(has_state $state); then
+if [ "$contamination" = "false" ]; then
 
-    format_status "ContEst Start"
-    format_status "Command:\njava -Xmx$contestMem \
-    -Djava.io.tmpdir=$tmpDir \
-    -jar $GATK -T ContEst \
-    --precision 0.001 \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-    -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-    -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
-    -isr INTERSECTION \
-    --population ALL \
-    --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
-    -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-    --read_buffer_size $maxReads \
-    --monitorThreadEfficiency $monitorThreads \
-    --logging_level $loggingLevel"
-    java -Xmx$memory \
-    -Djava.io.tmpdir=$tmpDir \
-    -jar $GATK -T ContEst \
-    --precision 0.001 \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-    -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-    -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
-    -isr INTERSECTION \
-    --population ALL \
-    --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
-    -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-    --read_buffer_size $maxReads \
-    $monitorThreads \
-    --logging_level $loggingLevel
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
+    if !(has_state $state); then
+
+        format_status "ContEst Start"
+        format_status "Command:\njava -Xmx$contestMem \
+        -Djava.io.tmpdir=$tmpDir \
+        -jar $GATK -T ContEst \
+        --precision 0.001 \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+        -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+        -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
+        -isr INTERSECTION \
+        --population ALL \
+        --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
+        -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
+        --read_buffer_size $maxReads \
+        --monitorThreadEfficiency $monitorThreads \
+        --logging_level $loggingLevel"
+        java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
+        -jar $GATK -T ContEst \
+        --precision 0.001 \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+        -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+        -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
+        -isr INTERSECTION \
+        --population ALL \
+        --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
+        -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
+        --read_buffer_size $maxReads \
+        $monitorThreads \
+        --logging_level $loggingLevel
     
-    # Update State on Exit
-    put_state $? $state
-    format_status "ContEst Complete"
+        # Update State on Exit
+        put_state $? $state
+        format_status "ContEst Complete"
 
-fi
-
-#
-# Mutect2
-#
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
-if !(has_state $state); then
-
-    # Get Contamination
-    contamination=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
-    format_status "Proportion Contamination: $contamination"
-
-    format_status "MuTect2 Start"
-    format_status "Command:\njava -Xmx$memory \
-    -Djava.io.tmpdir=$tmpDir \
-    -jar $GATK -T MuTect2 \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-    -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-    --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-    --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
-    --tumor_lod 10.0 \
-    --contamination_fraction_to_filter $contamination \
-    -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
-    --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
-    -nct $ncores \
-    --read_buffer_size $maxReads \
-    --monitorThreadEfficiency $monitorThreads \
-    --logging_level $loggingLevel"
-    java -Xmx$memory \
-    -Djava.io.tmpdir=$tmpDir \
-    -jar $GATK -T MuTect2 \
-    -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-    -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-    -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-    --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-    --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
-    --tumor_lod 10.0 \
-    --contamination_fraction_to_filter $contamination \
-    -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
-    --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
-    --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
-    -nct $ncores \
-    --read_buffer_size $maxReads \
-    $monitorThreads \
-    --logging_level $loggingLevel
+    fi
 
 
-    # Update State on Exit
-    put_state $? $state
-    format_status "MuTect2 Complete"
+    #
+    # Mutect2
+    #
+
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
+    if !(has_state $state); then
+
+        # Get Contamination
+        contamination=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
+        format_status "Proportion Contamination: $contamination"
+
+        format_status "MuTect2 Start"
+        format_status "Command:\njava -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
+        -jar $GATK -T MuTect2 \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+        -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+        --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
+        --tumor_lod 10.0 \
+        --contamination_fraction_to_filter $contamination \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+        -nct $ncores \
+        --read_buffer_size $maxReads \
+        --monitorThreadEfficiency $monitorThreads \
+        --logging_level $loggingLevel"
+        java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
+        -jar $GATK -T MuTect2 \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+        -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+        --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
+        --tumor_lod 10.0 \
+        --contamination_fraction_to_filter $contamination \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+        --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
+        -nct $ncores \
+        --read_buffer_size $maxReads \
+        $monitorThreads \
+        --logging_level $loggingLevel
+
+
+        # Update State on Exit
+        put_state $? $state
+        format_status "MuTect2 Complete"
+
+    fi
+
+else
+
+    #
+    # Mutect2
+    #
+
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
+    if !(has_state $state); then
+
+        format_status "MuTect2 Start"
+        format_status "Command:\njava -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
+        -jar $GATK -T MuTect2 \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+        -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+        --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
+        --tumor_lod 10.0 \
+        --contamination_fraction_to_filter $contamination \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+        -nct $ncores \
+        --read_buffer_size $maxReads \
+        --monitorThreadEfficiency $monitorThreads \
+        --logging_level $loggingLevel"
+        java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
+        -jar $GATK -T MuTect2 \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
+        -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
+        --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
+        --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
+        --tumor_lod 10.0 \
+        --contamination_fraction_to_filter $contamination \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+        --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
+        -nct $ncores \
+        --read_buffer_size $maxReads \
+        $monitorThreads \
+        --logging_level $loggingLevel
+
+
+        # Update State on Exit
+        put_state $? $state
+        format_status "MuTect2 Complete"
+
+    fi
 
 fi
 
