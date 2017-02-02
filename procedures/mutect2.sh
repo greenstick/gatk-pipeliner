@@ -75,6 +75,7 @@ debug=${debugOpt:-$debugDef}
 allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
+contestMem=$((allocMemory * ncores / 2))$allocSize
 
 # Max Reads in RAM - 200,000 per GB
 maxReads=$((allocMemory * $reads))
@@ -119,7 +120,7 @@ state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
 if !(has_state $state); then
 
     format_status "ContEst Start"
-    format_status "Command:\njava -Xmx$memory \
+    format_status "Command:\njava -Xmx$contestMem \
     -Djava.io.tmpdir=$tmpDir \
     -jar $GATK -T ContEst \
     --precision 0.001 \

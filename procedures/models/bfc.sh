@@ -88,12 +88,12 @@ if !(has_state $state); then
         $BFC \
         -s 3g \
         -t $ncores \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
         $BFC \
         -s 3g \
         -t $ncores \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
 
     elif [ "$parameters" = "custom" ]; then
@@ -108,12 +108,12 @@ if !(has_state $state); then
         $BFC \
         -s 3g \
         -t $ncores \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
         $BFC \
         -s 3g \
         -t $ncores \
-        -prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
 
     fi

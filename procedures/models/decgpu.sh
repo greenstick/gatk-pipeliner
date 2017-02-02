@@ -1,3 +1,4 @@
+
 # $DECGPU
 # DecGPU is a distributed error correction on GPUs using CUDA and MPI (CPU-based)
 # Usage:
