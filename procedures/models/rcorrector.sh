@@ -85,16 +85,14 @@ if !(has_state $state); then
         format_status "Running Rcorrector - Default Parameters"
         # Call Error Model
         format_status "Command:\n
-        perl $RCORRECTOR \
+        rcorrector \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
-        -s 3g \
         -t $ncores \
         -od $paramDir/modeled"
-        perl $RCORRECTOR \
+        rcorrector \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
-        -s 3g \
         -t $ncores \
         -od $paramDir/modeled
 
@@ -107,16 +105,14 @@ if !(has_state $state); then
         format_status "Running Rcorrector - Custom Parameters"
         # Call Error Model
         format_status "Command:\n
-        perl $RCORRECTOR \
+        rcorrector \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
-        -s 3g \
         -t $ncores \
         -od $paramDir/modeled"
-        perl $RCORRECTOR \
+        rcorrector \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
-        -s 3g \
         -t $ncores \
         -od $paramDir/modeled
 
