@@ -34,8 +34,8 @@ if __name__ == "__main__":
 			prefix = arg
 
 	# Assertions for Required Input
-	assert (len(fasta) > 0), "No Fasta input provided!"
-	assert (len(qual) > 0), "No Qual input provided!"
+	assert (len(fasta) != 0), "No Fasta input provided!"
+	assert (len(qual) != 0), "No Qual input provided!"
 
 	# 
 	# Conversion

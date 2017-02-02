@@ -32,7 +32,7 @@ if __name__ == "__main__":
 	print(fastq)
 
 	# Assertions for Required Input
-	assert (len(fastq) > 0), "No FASTQ input provided!"
+	assert (len(fastq) != 0), "No FASTQ input provided!"
 
 	# 
 	# Conversion
