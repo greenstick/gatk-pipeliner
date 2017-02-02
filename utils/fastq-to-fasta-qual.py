@@ -29,6 +29,8 @@ if __name__ == "__main__":
 		elif opt in ("-o", "--outputprefix"):
 			prefix = arg
 
+	print(fastq)
+
 	# Assertions for Required Input
 	assert (len(fastq) > 0), "No FASTQ input provided!"
 
@@ -50,4 +52,3 @@ if __name__ == "__main__":
 else:
 
 	pass
-	
