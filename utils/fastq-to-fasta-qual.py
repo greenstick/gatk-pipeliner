@@ -26,9 +26,11 @@ if __name__ == "__main__":
 			print("Split a FASTQ into Seperate FASTA and QUAL files.\nExample usage:\nfastq-to-fasta-qual.py -i <input fastq> -o <output prefix>")
 		elif opt in ("-i", "--input"):
 			fastq = arg
-			assert (len(fastq) > 0), "No FASTQ input provided!"
 		elif opt in ("-o", "--outputprefix"):
 			prefix = arg
+
+	# Assertions for Required Input
+	assert (len(fastq) > 0), "No FASTQ input provided!"
 
 	# 
 	# Conversion

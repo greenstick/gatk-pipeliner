@@ -28,12 +28,14 @@ if __name__ == "__main__":
 			print("Merge Fasta and Qual files into a FastQ file.\nExample usage:\nfasta-qual-to-fastq.py -f <input fasta> -q <input qual> -o <output prefix>")
 		elif opt in ("-f", "--inputfasta"):
 			fasta = arg
-			assert (len(fasta) > 0), "No Fasta input provided!"
 		elif opt in ("-q", "--inputqual"):
 			qual = arg
-			assert (len(qual) > 0), "No Qual input provided!"
 		elif opt in ("-o", "--outputprefix"):
 			prefix = arg
+
+	# Assertions for Required Input
+	assert (len(fasta) > 0), "No Fasta input provided!"
+	assert (len(qual) > 0), "No Qual input provided!"
 
 	# 
 	# Conversion
