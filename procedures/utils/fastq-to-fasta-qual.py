@@ -35,7 +35,7 @@ if __name__ == "__main__":
 	SeqIO.convert(fastq, "fastq", prefix + ".fasta", "fasta")
 	print("Fasta file written to %s.fasta" % prefix)
 	SeqIO.convert(fastq, "fastq", prefix + ".qual", "qual")
-	print("Qual file written to %s.fasta" % prefix)
+	print("Qual file written to %s.qual" % prefix)
 	
 
 else:

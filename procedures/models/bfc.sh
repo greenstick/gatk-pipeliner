@@ -84,7 +84,7 @@ if !(has_state $state); then
 
         format_status "Running BFC - Default Parameters"
         # Call Error Model - Size Parameter = 3 Gigabase Human Genome (hg19)
-        format_status "Command:\n
+        format_status "Command:\n \
         $BFC \
         -s 3g \
         -t $ncores \
@@ -104,7 +104,7 @@ if !(has_state $state); then
 
         format_status "Running BFC - Custom Parameters"
         # Call Error Model - Size Parameter = 3 Gigabase Human Genome (hg19)
-        format_status "Command:\n
+        format_status "Command:\n \
         $BFC \
         -s 3g \
         -t $ncores \
