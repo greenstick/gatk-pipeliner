@@ -66,8 +66,12 @@ for i in "$@"
 
     # Tool Specific Arguments
 
-        -a=*|--align=*)
+        -A=*|--align=*)
         alignOpt="${i#*=}"
+        shift # BWA Alignment Type
+        ;;
+        -C=*|--contamination=*)
+        contaminationOpt="${i#*=}"
         shift # BWA Alignment Type
         ;;
 
@@ -228,9 +232,13 @@ fi
 if [ $debug ]; then
     args=$args"-d=$debug "
 fi
-# BWA Alignment
+# BWA Alignment Type ('mem' or 'bsws')
 if [ $align ]; then
     args=$args+"-a=$align "
+fi
+# ContEst Contamination Proportion (e.g. 0.001)
+if [ $contamination ]; then
+    args=$args+"-C=$contamination "
 fi
 
 #
