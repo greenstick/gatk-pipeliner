@@ -99,14 +99,15 @@ while true; do
     case $yn in
         [Yy]* )  
             # Scaffold Development Directory
-            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
-            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
-            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
-            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
-            mkdir -p dev/model/{bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
+            mkdir -p dev/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
+            mkdir -p dev/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/modeled/{pairs,indexes}
+            mkdir -p dev/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{post-align,pre-align}/fastq
+            mkdir -p dev/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/{bqsr,nobqsr}/logs/{contest,mutect2}
+            mkdir -p dev/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
             mkdir -p dev/{fastq,downloaded,tmp}
             mkdir -p dev/downloaded/{intervals,metrics,original,split}
             mkdir -p dev/fastq/{fastqc,split}
+            mkdir -p dev/fastq/split/{unpaired,unmerged}
             break
             ;;
         [Nn]* ) 
