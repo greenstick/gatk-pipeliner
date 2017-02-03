@@ -82,9 +82,9 @@ if !(has_state $state); then
         format_status "Splitting FastQ to Fasta & Qual"
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
-        python3 ../utils/fastq-to-fasta-qual.py \
+        python3 utils/fastq-to-fasta-qual.py \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
-        python3 ../utils/fastq-to-fasta-qual.py -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+        python3 utils/fastq-to-fasta-qual.py -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
 
         # Update State on Exit
         status=$?
@@ -150,10 +150,10 @@ if !(has_state $state); then
         format_status "Merging Fasta & Qual to FastQ"
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
-        python3 ../utils/fasta-qual-to-fastq.py \
+        python3 utils/fasta-qual-to-fastq.py \
         -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
         -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual"
-        python3 ../utils/fasta-qual-to-fastq.py -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual
+        python3 utils/fasta-qual-to-fastq.py -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual
 
         # Update State on Exit
         status=$?
