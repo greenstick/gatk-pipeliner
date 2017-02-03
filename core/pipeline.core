@@ -12,9 +12,7 @@
 format_status () {
     # Remove Extra Whitespace
     local status=$(echo $1 | sed 's|\s+|\s|g')
-    echo
-    echo -e "$status"
-    echo
+    echo -e "\n$status\n"
     return $?
 }
 
