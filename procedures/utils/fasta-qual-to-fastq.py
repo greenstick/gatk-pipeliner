@@ -27,13 +27,13 @@ if __name__ == "__main__":
 	assert (fasta is not None), "No Fasta input provided!"
 	assert (qual is not None), "No Qual input provided!"
 
-	# 
-	# Conversion
-	#
-
 	#  If No Prefix, Use Same as FASTQ
 	if prefix is None: 
 		prefix = ".".join(fasta.split(".")[0:-1])
+		
+	# 
+	# Conversion
+	#
 
 	# Merge Fasta & Qual into FastQ
 	with PairedFastaQualIterator(open(fasta), open(qual)) as records:

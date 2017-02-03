@@ -78,12 +78,12 @@ if !(has_state $state); then
 
      format_status "Splitting Paired End FASTQ to Single End"
      # Call Error Model
-     format_status "Command:\nfastqutils unmerge \
-     $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-     $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
-     fastqutils unmerge \
-     $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-     $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup
+     format_status "Command:\npython3 utils/paired-end-to-single-ends.py \
+     -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+     -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
+     python3 utils/paired-end-to-single-ends.py \
+     -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+     -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup
      # Update State on Exit
      status=$?
      put_state $status $state
@@ -161,16 +161,14 @@ if !(has_state $state); then
      format_status "Merging Single End FASTQ to Interleaved Paired End"
      # Call Error Model
      format_status "Command:\n
-     fastqutils merge \
-     -slash \
-     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
-     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq >
-     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
-     fastqutils merge \
-     -slash \
-     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
-     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq >
-     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
+     python3 utils/single-ends-to-paired-end.py \
+     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
+     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq \
+     -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
+     python3 utils/single-ends-to-paired-end.py \
+     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
+     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq \
+     -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup
      # Update State on Exit
      status=$?
      put_state $status $state

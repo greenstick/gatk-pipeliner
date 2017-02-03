@@ -154,13 +154,34 @@ if !(has_state $state); then
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
         python3 utils/fasta-qual-to-fastq.py \
-        -f $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
-        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
+        -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
+        -q $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         python3 utils/fasta-qual-to-fastq.py \
-        -f $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
-        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
+        -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
+        -q $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
+
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+fi
+
+#
+# Cleanup
+#
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:4"
+if !(has_state $state); then
+
+        format_status "Cleaning Up Fasta & Qual Files"
+        # Call Error Model & Move Outputs to Output Directory
+        format_status "Command:\n
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta && \
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual"
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta && \
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual
 
         # Update State on Exit
         status=$?

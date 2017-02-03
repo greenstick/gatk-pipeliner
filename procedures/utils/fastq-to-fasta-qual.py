@@ -23,13 +23,13 @@ if __name__ == "__main__":
 	# Assertions for Required Input
 	assert (fastq is not None), "No FASTQ input provided!"
 
-	# 
-	# Conversion
-	#
-
 	#  If No Prefix, Use Same as FastQ
 	if prefix is None: 
 		prefix = ".".join(fastq.split(".")[0:-1])
+
+	# 
+	# Conversion
+	#
 
 	# Split FastQ into Fasta & Qual
 	SeqIO.convert(fastq, "fastq", prefix + ".fasta", "fasta")
