@@ -198,7 +198,14 @@ if !(has_state $state); then
                 ) &
 
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "bfc")
@@ -228,7 +235,14 @@ if !(has_state $state); then
                 ) &
 
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "blessec")
@@ -257,7 +271,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "bloocoo")
@@ -286,7 +307,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
         "decgpu")
 
@@ -314,7 +342,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "karect")
@@ -343,7 +378,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "kgem")
@@ -374,7 +416,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "lighter")
@@ -404,7 +453,14 @@ if !(has_state $state); then
                 ) &
 
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "musket")
@@ -433,7 +489,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "quorum")
@@ -451,18 +514,23 @@ if !(has_state $state); then
                     
                     # Run Command
                     if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
+                        printf "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
                         # Check for failed parallel call
                         put_state $? $substate
                         
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "rcorrector")
@@ -492,7 +560,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "seecer")
@@ -522,7 +597,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "shorah")
@@ -553,7 +635,14 @@ if !(has_state $state); then
                     fi
                 ) &
             done
-            wait # Prevent Premature Exiting of Script
+            # Prevent Premature Exiting of Script &
+            # Gather pIDs to Watch, Capture Errors & Exit if Error
+            for job in `jobs -p`
+                do (
+                    echo $job
+                    wait $job || let errors=$((errors + $?))
+                )
+            done
         ;;
 
         "nomodel")

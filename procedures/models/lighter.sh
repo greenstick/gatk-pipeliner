@@ -78,7 +78,7 @@ if !(has_state $state); then
 
      format_status "Splitting Paired End FASTQ to Single End"
      # Call Error Model
-     format_status "Command:\nfastqutils unmerge -gz $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split"
+     format_status "Command:\nfastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split"
      fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split
      # Update State on Exit
      status=$?
@@ -105,14 +105,14 @@ if !(has_state $state); then
         format_status "Command:\n
         lighter \
         -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq.gz \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq.gz \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
         -t $ncores \
         -K 31 3137000000"
         lighter \
         -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq.gz \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq.gz \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
         -t $ncores \
         -K 31 3137000000
 
@@ -127,14 +127,14 @@ if !(has_state $state); then
         format_status "Command:\n
         lighter \
         -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq.gz \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq.gz \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
         -t $ncores \
         -K 31 3137000000"
         lighter \
         -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq.gz \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq.gz \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
+        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
         -t $ncores \
         -K 31 3137000000
 
@@ -156,8 +156,8 @@ if !(has_state $state); then
 
      format_status "Merging Single End FASTQ to Interleaved Paired End"
      # Call Error Model
-     format_status "Command:\nfastqutils merge -slash $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.1.cor.fq.gz $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.2.cor.fq.gz | gunzip > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
-     fastqutils merge -slash $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.1.cor.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.2.cor.fastq | gunzip > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
+     format_status "Command:\nfastqutils merge -slash $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.1.cor.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.2.cor.fastq > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
+     fastqutils merge -slash $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.1.cor.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.2.cor.fastq > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
      # Update State on Exit
      status=$?
      put_state $status $state
