@@ -83,8 +83,11 @@ if !(has_state $state); then
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
         python3 utils/fastq-to-fasta-qual.py \
-        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
-        python3 utils/fastq-to-fasta-qual.py -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup"
+        python3 utils/fastq-to-fasta-qual.py \
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup
 
         # Update State on Exit
         status=$?
@@ -109,10 +112,10 @@ if !(has_state $state); then
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores"
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores
 
     elif [ "$parameters" = "custom" ]; then
@@ -121,12 +124,12 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores \
         -slow \
         -high-precision"
         $BLOOCOO \
-        -file $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores \
         -slow \
         -high-precision
@@ -140,7 +143,7 @@ if !(has_state $state); then
 fi
 
 #
-# Merge Fasta & Qual Back to FastQ
+# Merge Fasta & Qual Back to FastQ & Output to Model Directory
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
@@ -151,41 +154,17 @@ if !(has_state $state); then
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
         python3 utils/fasta-qual-to-fastq.py \
-        -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
-        -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual"
-        python3 utils/fasta-qual-to-fastq.py -f $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta -q $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.qual
+        -f $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
+        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+        python3 utils/fasta-qual-to-fastq.py \
+        -f $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
+        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
 
         # Update State on Exit
         status=$?
         put_state $status $state
-fi
-
-#
-# Move Output & Cleanup Extra Files
-#
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:4"
-if !(has_state $state); then
-
-    format_status "Moving Output & Cleaning Up"
-    format_status "Command:\n
-    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
-    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq \
-    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
-    "
-    mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-    && mv $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.h5 \
-    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fastq \
-    && rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.h5
-
-    # Update State on Exit
-    status=$?
-    put_state $status $state
-    format_status "Bloocoo ($parameters $readgroup) Complete"
-    return $status
-
 fi
 
 #

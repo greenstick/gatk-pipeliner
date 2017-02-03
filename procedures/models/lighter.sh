@@ -78,8 +78,12 @@ if !(has_state $state); then
 
      format_status "Splitting Paired End FASTQ to Single End"
      # Call Error Model
-     format_status "Command:\nfastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split"
-     fastqutils unmerge $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split
+     format_status "Command:\nfastqutils unmerge \
+     $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+     $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.split"
+     fastqutils unmerge \
+     $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+     $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup
      # Update State on Exit
      status=$?
      put_state $status $state
@@ -104,15 +108,15 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         lighter \
-        -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
+        -od $paramDir/modeled \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
         -K 31 3137000000"
         lighter \
-        -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
+        -od $paramDir/modeled \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
         -K 31 3137000000
 
@@ -126,15 +130,15 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n
         lighter \
-        -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
+        -od $paramDir/modeled \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
         -K 31 3137000000"
         lighter \
-        -od $paramDir/modeled/ \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.1.fastq \
-        -r $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.split.2.fastq \
+        -od $paramDir/modeled \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
+        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
         -K 31 3137000000
 
@@ -156,8 +160,17 @@ if !(has_state $state); then
 
      format_status "Merging Single End FASTQ to Interleaved Paired End"
      # Call Error Model
-     format_status "Command:\nfastqutils merge -slash $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.1.cor.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.2.cor.fastq > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
-     fastqutils merge -slash $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.1.cor.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.split.2.cor.fastq > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
+     format_status "Command:\n
+     fastqutils merge \
+     -slash \
+     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
+     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq >
+     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
+     fastqutils merge \
+     -slash \
+     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
+     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq >
+     $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
      # Update State on Exit
      status=$?
      put_state $status $state

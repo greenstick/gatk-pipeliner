@@ -79,6 +79,8 @@ mkdir -p set{1..6}/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,bless
 mkdir -p set{1..6}/{fastq,downloaded,tmp}
 mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
 mkdir -p set{1..6}/fastq/{fastqc,split}
+mkdir -p set{1..6}/fastq/split/{unpaired,unmerged}
+
 
 # Clean Up Old pipeline.config
 if [ -f $pipeline_dir/core/pipeline.config ]; then
