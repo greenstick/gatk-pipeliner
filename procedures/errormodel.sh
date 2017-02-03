@@ -188,7 +188,13 @@ if !(has_state $state); then
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
-                    
+                        
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -197,14 +203,6 @@ if !(has_state $state); then
                     fi
                 ) &
 
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -226,6 +224,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                     
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -234,14 +238,6 @@ if !(has_state $state); then
                     fi
                 ) &
 
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -263,6 +259,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                     
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -270,14 +272,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -299,6 +293,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
 
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -306,14 +306,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
         "decgpu")
@@ -333,7 +325,13 @@ if !(has_state $state); then
                     if !(has_state $substate); then
                         format_status "Command:\nsource $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
-                
+                        
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -341,14 +339,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -370,6 +360,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -377,14 +373,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -408,6 +396,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -415,14 +409,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -444,6 +430,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                     
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -452,14 +444,6 @@ if !(has_state $state); then
                     fi
                 ) &
 
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -481,6 +465,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -488,14 +478,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -517,19 +499,17 @@ if !(has_state $state); then
                         printf "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
                         
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -551,6 +531,15 @@ if !(has_state $state); then
                         # perl $RCORRECTOR
                         format_status "Command:\nsource $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        wait $! || let errors=$((errors + $?))
+
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
                         
                         # Check for failed parallel call
                         put_state $? $substate
@@ -559,14 +548,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -589,6 +570,12 @@ if !(has_state $state); then
                         format_status "Command:\nsource $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -596,14 +583,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 
@@ -627,6 +606,12 @@ if !(has_state $state); then
                         source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory"
                         source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncoresPerCall -m=$memory
                         
+                        # Prevent Premature Exiting of Script &
+                        # Watch pID, Capture Errors & Exit if Error
+                        pid=$!
+                        printf "Waiting For pID: $pid"
+                        wait pid || let errors=$((errors + $?))
+                        
                         # Check for failed parallel call
                         put_state $? $substate
 
@@ -634,14 +619,6 @@ if !(has_state $state); then
                         errors=$((errors + $?))
                     fi
                 ) &
-            done
-            # Prevent Premature Exiting of Script &
-            # Gather pIDs to Watch, Capture Errors & Exit if Error
-            for job in `jobs -p`
-                do (
-                    echo $job
-                    wait $job || let errors=$((errors + $?))
-                )
             done
         ;;
 

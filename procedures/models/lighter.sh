@@ -80,7 +80,7 @@ if !(has_state $state); then
      # Call Error Model
      format_status "Command:\nfastqutils unmerge \
      $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-     $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.split"
+     $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
      fastqutils unmerge \
      $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
      $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup
