@@ -33,7 +33,7 @@ To run a procedure, the general syntax is:
     -x=$experiment \
     -p=$parameters \
     -q=$bqsr \
-    -m=$memory_per_thread
+    -m=$memory_per_thread \
     -n=$threads
     # Note not all parameters are accepted by all procedure scripts
     
