@@ -33,8 +33,9 @@ put_state () {
         format_status "State Registered: $state"
         return $statuscode
     else
+        # If an Error Occurred Exit
         format_status "Unexpected Error $statuscode: $state"
-        return $statuscode
+        exit $statuscode
     fi
 }
 
