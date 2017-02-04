@@ -162,12 +162,12 @@ if !(has_state $state); then
      # Call Error Model
      format_status "Command:\n
      python3 utils/single-ends-to-paired-end.py \
-     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
-     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq \
+     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
+     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
      -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
      python3 utils/single-ends-to-paired-end.py \
-     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fastq \
-     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fastq \
+     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
+     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
      -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup
      # Update State on Exit
      status=$?
