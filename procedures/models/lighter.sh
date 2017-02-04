@@ -112,13 +112,13 @@ if !(has_state $state); then
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
-        -K 31 3137000000"
+        -k 23 3250000000 0.225"
         lighter \
         -od $paramDir/modeled \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
-        -K 31 3137000000
+        -k 23 3250000000 0.225
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -134,13 +134,13 @@ if !(has_state $state); then
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
-        -K 31 3137000000"
+        -k 23 3250000000 0.225"
         lighter \
         -od $paramDir/modeled \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
-        -K 31 3137000000
+        -k 23 3250000000 0.225
 
     fi
     

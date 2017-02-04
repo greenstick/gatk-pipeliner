@@ -155,11 +155,11 @@ if !(has_state $state); then
         format_status "Command:\n
         python3 utils/fasta-qual-to-fastq.py \
         -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
-        -q $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual \
+        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         python3 utils/fasta-qual-to-fastq.py \
         -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
-        -q $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual \
+        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
 
         # Update State on Exit
@@ -178,10 +178,8 @@ if !(has_state $state); then
         format_status "Cleaning Up Fasta & Qual Files"
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta && \
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual"
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta && \
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup.qual
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected"
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected
 
         # Update State on Exit
         status=$?
