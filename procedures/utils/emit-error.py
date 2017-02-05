@@ -14,7 +14,7 @@ if __name__ == "__main__":
 
 	# Error Description Dict
 	errors = {
-		0 : "Script Completed Successfully"
+		0 : "Script Completed Successfully",
 		1 : "Operation not permitted (EPERM)",
 		2 : "No such file or directory (ENOENT)",
 		3 : "No such process (ESRCH)",

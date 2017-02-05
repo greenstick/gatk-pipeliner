@@ -35,8 +35,8 @@ if __name__ == "__main__":
 	#
 
 	# Merge Fasta & Qual into FastQ
-	with PairedFastaQualIterator(open(fasta), open(qual)) as records:
-		SeqIO.write(records, prefix + ".fastq", "fastq")
+	records = PairedFastaQualIterator(open(fasta), open(qual))
+	SeqIO.write(records, prefix + ".fastq", "fastq")
 
 else:
 
