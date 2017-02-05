@@ -44,10 +44,6 @@ for i in "$@"
         lowmemOpt="${i#*=}"
         shift # n Reads Per GB or Memory
         ;;
-        -i=*|--inmemindex=*)
-        inmemindexOpt="${i#*=}"
-        shift # n Reads Per GB or Memory
-        ;;
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
         shift # Number of Cores to Use
@@ -77,7 +73,6 @@ memoryDef="8G"
 readsDef=150000
 debugDef=false
 lowmemDef=false
-inmemindexDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
@@ -85,7 +80,6 @@ memory=${memoryOpt:-$memoryDef}
 reads=${readsOpt:-$readsDef}
 debug=${debugOpt:-$debugDef}
 lowmem=${lowmemOpt:-$lowmemDef}
-inmemindex=${inmemindexOpt:-$inmemindexDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -109,7 +103,6 @@ Cores               = $ncores
 Low Memory Mode     = $lowmem
 Max Memory          = $maxMemory
 Max Reads in Memory = $maxReads
-
 Debug               = $debug
 \n"
 
@@ -123,7 +116,6 @@ monitorThreads=""
 performanceLog=false
 loggingLevel="INFO"
 lowmemorymode=""
-noinmemoryindex="--disable_auto_index_creation_and_locking_when_reading_rods"
 
 if $debug; then 
     monitorThreads="--monitorThreadEfficiency"
@@ -133,10 +125,6 @@ fi
 
 if $lowmem; then
     lowmemorymode="--lowMemoryMode"
-fi
-
-if $inmemindex; then
-    noinmemoryindex=""
 fi
 
 # 

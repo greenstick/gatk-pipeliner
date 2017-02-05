@@ -166,7 +166,6 @@ if [ "$contamination" = "false" ]; then
 
     fi
 
-
     #
     # Mutect2
     #
