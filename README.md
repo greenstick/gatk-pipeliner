@@ -68,7 +68,7 @@ A more concrete example:
     
 ## Directory Structure
 
-Note that the `dataset`, `tmp`, and `logs` directories are scaffolded when you call `source setup.py`. The reference directory is not and must be managed entirely by the user. For development, that mean setting up an `alias` in my `~/.bash_profile` & `~/.bashrc` to point to the directory. From there, scripts within the directory directly refer to the reference genomes, any VCF callsets, etc. (e.g. the version of the hg19 reference genome as a FASTA or a 1000 genomes VCF).
+Note that the `dataset`, `tmp`, and `logs` directories are scaffolded when you call `source setup.py`. The reference directory is not and must be managed entirely by the user. For development, that mean setting up an `alias` in my `~/.bash_profile` & `~/.bashrc` to point to the directory. From there, scripts within the directory directly refer to the reference genomes, any VCF callsets, etc. (e.g. the version of the hg19 reference genome as a FASTA or a 1000 genomes VCF). Finally, the data that will be processed is placed in the `downloaded` child directory of the `dataset` directory. A future update will likely provide a variable defined during the setup procedure that will store a reference to a user-defined home data directory. The same *may* go for any reference genomes.
 
 ```
 pipeline
@@ -104,13 +104,11 @@ pipeline
 ├── dataset
 |   └── ...
 └── dataset
-    ├── tmp
     ├── downloaded
     │   ├── intervals
     │   ├── metrics
     │   ├── original
-    |   ├── split
-    │   └── *data_to_process_goes_here*
+    │   └── split
     ├── fastq
     │   ├── fastqc
     │   └── split
