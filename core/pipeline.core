@@ -16,6 +16,10 @@ format_status () {
     return $?
 }
 
+# Emit Verbose Errors
+alias emit_status="python3 $PIPELINE_HOME/procedures/utils/emit-error.py -e"
+
+
 #
 # State Management Methods
 #
@@ -33,6 +37,7 @@ put_state () {
     else
         # If an Error Occurred Exit
         format_status "Unexpected Error $statuscode: $state"
+        emit_status $statuscode
         exit $statuscode
     fi
 }

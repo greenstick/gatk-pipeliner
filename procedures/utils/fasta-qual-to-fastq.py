@@ -39,7 +39,6 @@ if __name__ == "__main__":
 	with PairedFastaQualIterator(open(fasta), open(qual)) as records:
 		SeqIO.write(records, prefix + ".fastq", "fastq")
 
-
 else:
 
 	pass

@@ -10,10 +10,11 @@ if __name__ == "__main__":
 	error = argsDict["error"]
 
 	# Is Valid Error
-	assert (error in range(1,129)), "Invalid Error %d" % error
+	assert (error in range(0,129)), "Invalid Error %d" % error
 
-	# Error Dict
+	# Error Description Dict
 	errors = {
+		0 : "Script Completed Successfully"
 		1 : "Operation not permitted (EPERM)",
 		2 : "No such file or directory (ENOENT)",
 		3 : "No such process (ESRCH)",
@@ -145,8 +146,8 @@ if __name__ == "__main__":
 		129 : "Key was rejected by service (EKEYREJECTED)"
 	}
 
-	# Output Error
-	print("Error (%d) %s" % (error, errors[error]))
+	# Output Error & Pass Through
+	print("Exit (%d) %s" % (error, errors[error]))
 	exit(error)
 
 else:
