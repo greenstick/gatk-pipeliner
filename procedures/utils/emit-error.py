@@ -7,11 +7,9 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e", "--error", type = int, help = "C Error Code")
 	argsDict = vars(parser.parse_args())
-	# Circle Errors Back if Greater Than 130
-	error = argsDict["error"] if argsDict["error"] < 130 else argsDict["error"] - 128
 
 	# Is Valid Error
-	assert (error in range(0,130)), "Error Undefined (%d)" % error
+	assert (error in range(0,255)), "Error Undefined (%d)" % error
 
 	# Error Description Dict
 	errors = {
@@ -148,8 +146,12 @@ if __name__ == "__main__":
 		130 : "Script terminated by Control-C (EUSEREXIT"
 	}
 
-	# Output Error & Pass Through
-	print("Error (%d): %s" % (error, errors[error]))
+	# Output Error, Cycle Back if > 130, Pass Through Via Exit
+	error = argsDict["error"]
+	if error > 130:
+		print("Error (%d) with Probable Source: %s" % (error , errors[error - 128]))
+	else:
+		print("Error (%d): %s" % (error, errors[error]))
 	exit(error)
 
 else:
