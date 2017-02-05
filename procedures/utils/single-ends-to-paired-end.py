@@ -1,9 +1,10 @@
 #! /home/users/cordier/.linuxbrew/bin/python3
 
-def interleave(single1, single2):
+def interleave(single1, single2, strict = False):
     # import itertools
     for singleA, singleB in zip(single1, single2):
-        assert singleA.id[0:-2] == singleB.id[0:-2], "Single-end IDs don't match (%s - %s)" % (singleA.id, singleB.id)
+        if strict:
+            assert singleA.id[0:-2] == singleB.id[0:-2], "Single-end IDs don't match (%s - %s)" % (singleA.id, singleB.id)
         singleA.id += "/1"
         singleB.id += "/2"
         yield singleA
@@ -27,6 +28,7 @@ if __name__ == "__main__":
     parser.add_argument("-1", "--input1", type = str, help = "First Single-End FastQ File")
     parser.add_argument("-2", "--input2", type = str, help = "Second Single-End FastQ File")
     parser.add_argument("-o", "--outputprefix", type = str, help = "Prefix to Output Paired End FastQ File (i.e. prefix.fastq")
+    parser.add_argument("-s", "--strict", action = "store_true", help = "Require all single-end IDs match their mate")
     argsDict = vars(parser.parse_args())
 
     handleA = argsDict["input1"]
