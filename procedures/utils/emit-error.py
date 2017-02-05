@@ -7,10 +7,11 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e", "--error", type = int, help = "C Error Code")
 	argsDict = vars(parser.parse_args())
-	error = argsDict["error"]
+	# Circle Errors Back if Greater Than 130
+	error = argsDict["error"] if argsDict["error"] < 130 else argsDict["error"] - 128
 
 	# Is Valid Error
-	assert (error in range(0,129)), "Invalid Error %d" % error
+	assert (error in range(0,130)), "Error Undefined (%d)" % error
 
 	# Error Description Dict
 	errors = {
@@ -143,11 +144,12 @@ if __name__ == "__main__":
 		126 : "Required key not available (ENOKEY)",
 		127 : "Key has expired (EKEYEXPIRED)",
 		128 : "Key has been revoked (EKEYREVOKED)",
-		129 : "Key was rejected by service (EKEYREJECTED)"
+		129 : "Key was rejected by service (EKEYREJECTED)",
+		130 : "Script terminated by Control-C (EUSEREXIT"
 	}
 
 	# Output Error & Pass Through
-	print("Exit (%d) %s" % (error, errors[error]))
+	print("Error (%d): %s" % (error, errors[error]))
 	exit(error)
 
 else:
