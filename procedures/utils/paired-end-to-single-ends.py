@@ -5,10 +5,7 @@ def lineGenerator (filehandle, type = "r"):
         for i, line in enumerate(file):
             yield line, i
 
-
-
 if __name__ == "__main__":
-
 
     # Imports
     import argparse

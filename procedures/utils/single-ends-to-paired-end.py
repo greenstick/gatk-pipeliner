@@ -10,10 +10,7 @@ def interleave(single1, single2, strict = False):
         yield singleA
         yield singleB
 
-
-
 if __name__ == "__main__":
-
 
     # Imports
     import argparse
@@ -47,7 +44,6 @@ if __name__ == "__main__":
     
     # If Single End Prefixes Are Not The Same
     assert (prefix is not None), "No output prefix provided (& input prefixes differ – this tool doesn't assume an output destination)!"
-
 
     # 
     # Conversion

@@ -2,7 +2,6 @@
 
 if __name__ == "__main__":
 
-
 	# Imports
 	import sys, argparse
 	# Library Import
@@ -36,7 +35,6 @@ if __name__ == "__main__":
 	print("Fasta file written to %s.fasta" % prefix)
 	SeqIO.convert(fastq, "fastq", prefix + ".qual", "qual")
 	print("Qual file written to %s.qual" % prefix)
-	
 
 else:
 
