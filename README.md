@@ -15,6 +15,7 @@ Given the scoping constraints within the shell environment, the system relies al
 As of yet, the system does not:
 
 * Guarantee each module will succeed in its computation
+* Expose system-level variables for supplemental data files used in processing (i.e. reference genomes, call sets, etc.)
 * Expose all parameters of the algorithms being run
 
 Regarding the last point, unexposed parameters are hard-coded into the scripts and can be updated to a user's needs. For example, the reference genome used is hard coded into all scripts (gross, I know). 
@@ -67,11 +68,42 @@ A more concrete example:
     
 ## Directory Structure
 
+Note that the `dataset`, `tmp`, and `logs` directories are scaffolded when you call `source setup.py`. The reference directory is not and must be managed entirely by the user. For development, that mean setting up an `alias` in my `~/.bash_profile` & `~/.bashrc` to point to the directory. From there, scripts within the directory directly refer to the reference genomes, any VCF callsets, etc. (e.g. the version of the hg19 reference genome as a FASTA or a 1000 genomes VCF).
+
 ```
 pipeline
-├── datasetX
+├── setup.sh
+├── submit.sh
+├── README.md
+├── LICENSE
+├── core
+│   ├── pipeline.config
+│   ├── pipeline.core
+│   ├── pipeline.state
+│   └── states.manifest
+├── procedures
+│   ├── bamtofastq.sh
+│   ├── bqsr.sh
+│   ├── bwa.sh
+│   ├── errormodel.sh
+│   ├── markduplicates.sh
+│   ├── mergealignment.sh
+│   ├── models
+│   ├── mutect2.sh
+|   └── utils
+|       ├── emit-error.py
+|       ├── fasta-qual-to-fastq.py
+|       ├── fastq-to-fasta-qual.py
+|       ├── paired-end-to-single-ends.py
+|       └── single-ends-to-paired-end.py
+├── logs
+├── tmp
+├── reference
+│   ├── extra
+│   └── hg19
+├── dataset
 |   └── ...
-└── datasetY
+└── dataset
     ├── tmp
     ├── downloaded
     │   ├── intervals
