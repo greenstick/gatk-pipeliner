@@ -70,7 +70,7 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="10"
 memoryDef="8G"
-readsDef=150000
+readsDef="0"
 debugDef=false
 lowmemDef=false
 
@@ -88,6 +88,14 @@ maxMemory=$((allocMemory * ncores))$allocSize
 
 # Max Reads in RAM - 200,000 per GB
 maxReads=$((allocMemory * $reads))
+
+# Use Default n Reads or User Defines
+if [ "$maxReads" = "0" ]; then
+    maxReads="default"
+    readbuffersize=""
+else
+    readbuffersize="--read_buffer_size "$maxReads
+fi
 
 printf "\nPARAMETERS: 
 GATK Directory      = $GATK
@@ -181,8 +189,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
         -nct $ncores $lowmemorymode \
-        --read_buffer_size $maxReads \
-        --logging_level $loggingLevel $monitorThreads $noinmemoryindex"
+        --logging_level $loggingLevel \
+        $monitorThreads $noinmemoryindex $readbuffersize" # Additional Optional Args
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -193,8 +201,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
         -nct $ncores $lowmemorymode \
-        --read_buffer_size $maxReads \
-        --logging_level $loggingLevel $monitorThreads $noinmemoryindex
+        --logging_level $loggingLevel \
+        $monitorThreads $noinmemoryindex $readbuffersize # Additional Optional Args
 
         # Update State on Exit
         put_state $? $state
@@ -222,8 +230,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
         -nct $ncores $lowmemorymode \
-        --read_buffer_size $maxReads \
-        --logging_level $loggingLevel $monitorThreads $noinmemoryindex"
+        --logging_level $loggingLevel \
+        $monitorThreads $noinmemoryindex $readbuffersize" # Additional Optional Args
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
@@ -235,8 +243,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
         --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
         -nct $ncores $lowmemorymode \
-        --read_buffer_size $maxReads \
-        --logging_level $loggingLevel $monitorThreads $noinmemoryindex
+        --logging_level $loggingLevel \
+        $monitorThreads $noinmemoryindex $readbuffersize # Additional Optional Args
 
         # Update State on Exit
         put_state $? $state
@@ -261,7 +269,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
         -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt \
-        --logging_level $loggingLevel $monitorThreads"
+        --logging_level $loggingLevel \
+        $monitorThreads" # Additional Optional Args
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T AnalyzeCovariates \
@@ -270,7 +279,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
         -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt \
-        --logging_level $loggingLevel $monitorThreads
+        --logging_level $loggingLevel \
+        $monitorThreads # Additional Optional Args
 
         # Update State on Exit
         put_state $? $state
@@ -297,7 +307,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
         -nct $ncores \
         --read_buffer_size $maxReads \
-        --logging_level $loggingLevel $monitorThreads"
+        --logging_level $loggingLevel \
+        $monitorThreads" # Additional Optional Args
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
@@ -308,7 +319,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
         -nct $ncores \
         --read_buffer_size $maxReads \
-        --logging_level $loggingLevel $monitorThreads
+        --logging_level $loggingLevel \
+        $monitorThreads # Additional Optional Args
 
         # Update State on Exit
         put_state $? $state
