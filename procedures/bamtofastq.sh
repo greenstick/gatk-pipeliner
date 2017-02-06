@@ -81,7 +81,7 @@ if !(has_state $state); then
 
     format_status "Shuffling & Splitting Merged BAM"
     format_status "Command:\nsamtools collate -uO $dataDir/downloaded/$fileprefix.$subset.$condition.bam $tmp | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.%. -"
-    samtools collate -Ou $dataDir/downloaded/$fileprefix.$subset.$condition.bam | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.%. -
+    samtools collate -Ou $dataDir/downloaded/$fileprefix.$subset.$condition.bam -n 256 | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.%. -
     
     # Update State on Exit
     put_state $? $state
