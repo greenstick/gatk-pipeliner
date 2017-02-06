@@ -134,13 +134,13 @@ if !(has_state $state); then
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
-        -k 23 3250000000 0.225"
+        -k 23 3250000000 0.1"
         lighter \
         -od $paramDir/modeled \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
-        -k 23 3250000000 0.225
+        -k 23 3250000000 0.1
 
     fi
     
