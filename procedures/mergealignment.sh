@@ -85,47 +85,42 @@ format_status "Running Merge BAMs Script"
 # Inserting Read Groups
 # 
 
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state"$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:1"
-if !(has_state $state); then
+# State Management Delegated to Substates
+format_status "Samtools AddReplaceRG"
+# Retrieve Files to Process
+files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
 
-    format_status "Samtools AddReplaceRG"
-    # Retrieve Files to Process
-    files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
-
-    for file in $files
-        # In Parallel
-        do (
-            # Get Read Group to Process
-            suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
-            readgroup=$(echo "$suffix" | sed "s|.bam$||")
-            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:MERGEALIGNMENT:1"
+for file in $files
+    # In Parallel
+    do (
+        # Get Read Group to Process
+        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
+        readgroup=$(echo "$suffix" | sed "s|.bam$||")
+        substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:MERGEALIGNMENT:1"
+        
+        # Run Command
+        if !(has_state $substate); then
+            # Get Read Group Arguments to Pass to Samtools
+            rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$6,$7,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-\:]*|-r &|g")
             
-            # Run Command
-            if !(has_state $substate); then
-                # Get Read Group Arguments to Pass to Samtools
-                rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$6,$7,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-\:]*|-r &|g")
-                
-                # Check for failed parallel call
-                put_state $? $substate
+            # Check for failed parallel call
+            put_state $? $substate
 
-                format_status "Command:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam" 
-                # Insert Read Groups into New BAM - WARNING USES EVAL
-                eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
-            
-                # Check for failed parallel call
-                put_state $? $substate
+            format_status "Command:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam" 
+            # Insert Read Groups into New BAM - WARNING USES EVAL
+            eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
+        
+            # Check for failed parallel call
+            put_state $? $substate
 
-            fi
-        ) &
-    done
-    wait # Prevent Premature Exiting of Script
+        fi
+    ) &
+done
+wait # Prevent Premature Exiting of Script
 
-    # Update State on Exit
-    put_state $? $state
-    format_status "Samtools AddReplaceRG Complete"
-
-fi
+# Update State on Exit
+put_state $? $state
+format_status "Samtools AddReplaceRG Complete"
 
 # 
 # Merge BAMs to Single BAM

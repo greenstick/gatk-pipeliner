@@ -93,43 +93,35 @@ fi
 # Bam to FastQ
 #
 
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition:BAMTOFASTQ:2"
-if !(has_state $state); then
+# State Management Delegated to Substates
+format_status "Running Picard BAM to FASTQ"
+# Retrieve Files
+files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
 
-    format_status "Running Picard BAM to FASTQ"
-    # Retrieve Files
-    files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
-
-    for file in $files
-        # In Parallel
-        do ( 
-            # Get Read Group to Process
-            suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
-            readgroup=$(echo "$suffix" | sed "s|.bam$||")
-            substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:2"
+for file in $files
+    # In Parallel
+    do ( 
+        # Get Read Group to Process
+        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
+        readgroup=$(echo "$suffix" | sed "s|.bam$||")
+        substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:2"
+        
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
+        if !(has_state $substate); then
             
-            # Run Command
-            if !(has_state $substate); then
-                
-                # Call Bam to FastQ
-                format_status "Command:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
-                samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
-            
-                # Check for failed parallel call
-                put_state $? $substate
+            # Call Bam to FastQ
+            format_status "Command:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+            samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+        
+            # Check for failed parallel call
+            put_state $? $substate
 
-            fi
-        ) &
+        fi
+    ) &
 
-    done
-    wait # Prevent Premature Exiting of Script
-
-    # Update State on Exit
-    put_state $? $state
-    format_status "BAM to FASTQ Complete"
-
-fi
+done
+wait # Prevent Premature Exiting of Script
+format_status "BAM to FASTQ Complete"
 
 format_status "Done"
 

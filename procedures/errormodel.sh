@@ -102,8 +102,6 @@ if  [ "$experiment" = "bayeshammer" ] || \
     [ "$experiment" = "rcorrector" ]  || \
     [ "$experiment" = "nomodel" ]; then 
 
-    state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
-    if !(has_state $state); then
 
         if [ "$experiment" = "nomodel" ]; then
 
@@ -129,20 +127,28 @@ if  [ "$experiment" = "bayeshammer" ] || \
                         put_state $? $substate
 
                     fi
-                ) & wait # Prevent Premature Exiting of Script
+                ) &
             done
-
+            wait # Prevent Premature Exiting of Script
+            
         else
 
-            # Copy Data to Pre-Align Directory For Error Models
-            format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
-            format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
-            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # State Check - Run Block if it Has Not Already Been Executed Successfully
+            state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
+            if !(has_state $state); then
+
+                # Copy Data to Pre-Align Directory For Error Models
+                format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
+                format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
+                cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
         
+                # Update State on Exit
+                put_state $? $state
+
+            fi
+
         fi
 
-        # Update State on Exit
-        put_state $? $state
         format_status "FASTQ Copy Complete"
     fi
 
@@ -152,6 +158,7 @@ fi
 # Delegate Args & Call Experiment Script
 #
 
+# State Management Delegated to Substates
 case "$experiment" in
 
     "bayeshammer")
