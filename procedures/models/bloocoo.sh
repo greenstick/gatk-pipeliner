@@ -178,8 +178,8 @@ if !(has_state $state); then
         format_status "Cleaning Up Fasta & Qual Files"
         # Call Error Model & Move Outputs to Output Directory
         format_status "Command:\n
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected"
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta"
+        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta
 
         # Update State on Exit
         status=$?

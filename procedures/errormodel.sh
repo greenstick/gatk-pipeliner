@@ -152,428 +152,328 @@ fi
 # Delegate Args & Call Experiment Script
 #
 
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:2"
-if !(has_state $state); then
+case "$experiment" in
 
-    # Declare References
-    errors=0
-    callcount=$(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq | wc -l)
-    ncoresPerCall=$((ncores / callcount))
+    "bayeshammer")
 
-    # Check Enough Cores Provided for Request
-    if [ $ncoresPerCall < 1 ]; then
-        format_status "Error! errormodel.sh requires 1 core per file. Found $callcount files to be processed by $ncores cores."
-        put_state 1 $state
-        exit $?
-    fi
-
-    case "$experiment" in
-
-        "bayeshammer")
-
-            format_status "Running Bayes Hammer"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "bfc")
-
-            format_status "Running BFC"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "blessec")
-
-            format_status "Running Bless-EC"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "bloocoo")
-
-            format_status "Running Bloocoo"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-        "decgpu")
-
-            format_status "Running Dec-GPU"
-             # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "karect")
-
-            format_status "Running Karect"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "kgem")
-
-            format_status "Running KGEM"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        # java Xmx$memory -jar $ERIF
-                        # java Xmx$memory -jar $KGEM
-                        format_status "Command:\nsource $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "lighter")
-
-            format_status "Running Lighter"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "musket")
-
-            format_status "Running Musket"
-             # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        format_status "Command:\nsource $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-
-                        # Check for failed parallel call
-                        put_state $? $substate
-
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
-
-        "quorum")
+        format_status "Running Bayes Hammer"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
             
-            format_status "Running Quorum"
-             # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        printf "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-                        # Check for failed parallel call
-                        put_state $? $substate
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
 
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
+    "bfc")
 
-        "rcorrector")
+        format_status "Running BFC"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-            format_status "Running Rcorrector"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        # perl $RCORRECTOR
-                        format_status "Command:\nsource $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
 
-                        # Check for failed parallel call
-                        put_state $? $substate
+    "blessec")
 
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
+        format_status "Running Bless-EC"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-        "seecer")
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
 
-            format_status "Running Seecer"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        # source $SEECER
-                        format_status "Command:\nsource $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+    "bloocoo")
 
-                        # Check for failed parallel call
-                        put_state $? $substate
+        format_status "Running Bloocoo"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+    "decgpu")
 
-        "shorah")
+        format_status "Running Dec-GPU"
+         # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-            format_status "Running SHoRAH"
-            # Retrieve Files to Process
-            files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
-                        # python $SHORAH
-                        format_status "Command:\n \
-                        source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                        source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
-                        
-                        # Check for failed parallel call
-                        put_state $? $substate
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
 
-                        # Add Errors to Cumulative Status Code
-                        errors=$((errors + $?))
-                    fi
-                )
-                # ) & wait # Prevent Premature Exiting of Script
-            done
-        ;;
+    "karect")
 
-        "nomodel")
-            format_status "No Model Selected"
-        ;;
+        format_status "Running Karect"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-        "norealign")
-            format_status "No Realignment Selected"
-            format_status "Nothing to do...Exiting"
-        ;;
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
 
-        # Catch Any Invalid Error Models & Output Error
-        *)
+    "kgem")
 
-        format_status "Invalid Experiment (Error Model) Parameter: $experiment"
-        ;;
+        format_status "Running KGEM"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                # java Xmx$memory -jar $ERIF
+                # java Xmx$memory -jar $KGEM
+                format_status "Command:\nsource $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
-    esac
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
 
-    # Update State on Exit
-    # Note Errors Contains Sum of All Status Codes – Should be 0 if all Completed Successfully
-    put_state $errors $state
-    format_status "Error Model Complete"
+    "lighter")
 
-fi
+        format_status "Running Lighter"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
 
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+
+    "musket")
+
+        format_status "Running Musket"
+         # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                format_status "Command:\nsource $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+
+    "quorum")
+        
+        format_status "Running Quorum"
+         # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                printf "Command:\nsource $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+
+    "rcorrector")
+
+        format_status "Running Rcorrector"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                # perl $RCORRECTOR
+                format_status "Command:\nsource $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+
+    "seecer")
+
+        format_status "Running Seecer"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                # source $SEECER
+                format_status "Command:\nsource $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+
+    "shorah")
+
+        format_status "Running SHoRAH"
+        # Retrieve Files to Process
+        files=$(echo $(ls $paramDir/pre-align/fastq/$fileprefix.$subset.$condition.*.fastq))
+        for file in $files
+            # Extract Read Group to Pass Through
+            suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
+            readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:2"
+            
+            # Run Command
+            if !(has_state $substate); then
+                # python $SHORAH
+                format_status "Command:\n \
+                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                
+                # Check for failed parallel call
+                put_state $? $substate
+            fi
+        done
+        format_status "Error Model Complete"
+    ;;
+
+    "nomodel")
+        format_status "No Model Selected. Exiting."
+    ;;
+
+    "norealign")
+        format_status "No Realignment Selected"
+        format_status "Nothing to do. Exiting."
+    ;;
+
+    # Catch Any Invalid Error Models & Output Error
+    *)
+
+    format_status "Invalid Experiment (Error Model) Parameter: $experiment"
+    ;;
+
+esac
+
+# Note State Completion is Managed by Fulfillment of Model Child States
 format_status "Done"
