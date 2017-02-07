@@ -85,10 +85,7 @@ if !(has_state $state); then
     
     # Update State on Exit
     put_state $? $state
-    format_status "Shuffling & Splitting Merged BAM Complete"
-
-samtools collate -Ou /home/exacloud/lustre1/MRD_aml/ForBackup/pipeline/set2/downloaded/synthetic.challenge.set2.normal.bam | samtools split -f /home/exacloud/lustre1/MRD_aml/ForBackup/pipeline/set2/downloaded/split/synthetic.challenge.set2.normal.%%!.bam -
-
+    format_status "Splitting Merged BAM Complete"
 
 fi
 
