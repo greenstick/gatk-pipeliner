@@ -30,8 +30,9 @@ put_state () {
     local state=$2
     # Update State on Exit
     if [ $statuscode = 0 ]; then
-        # Export Pipeline State
+        # Append State to pipeline.state & Do In Place Sort & Write Output
         echo "$state" >> $PIPELINE_HOME/core/pipeline.state
+        sort $PIPELINE_HOME/core/pipeline.state -o $PIPELINE_HOME/core/pipeline.state
         format_status "State Registered: $state"
         return $statuscode
     else
