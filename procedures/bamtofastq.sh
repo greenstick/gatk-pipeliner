@@ -45,7 +45,7 @@ done
 
 # Defaults if No Arguments Passed
 ncoresDef="12"
-memoryDef="6G"
+memoryDef="8G"
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
@@ -80,12 +80,15 @@ state="$fileprefix.$subset.$condition:BAMTOFASTQ:1"
 if !(has_state $state); then
 
     format_status "Shuffling & Splitting Merged BAM"
-    format_status "Command:\nsamtools collate -Ou $dataDir/downloaded/$fileprefix.$subset.$condition.bam -n 256 | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.%. -"
-    samtools collate -Ou $dataDir/downloaded/$fileprefix.$subset.$condition.bam -n 256 | samtools split -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.%. -
+    format_status "Command:\nbam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition"
+    bam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition
     
     # Update State on Exit
     put_state $? $state
     format_status "Shuffling & Splitting Merged BAM Complete"
+
+samtools collate -Ou /home/exacloud/lustre1/MRD_aml/ForBackup/pipeline/set2/downloaded/synthetic.challenge.set2.normal.bam | samtools split -f /home/exacloud/lustre1/MRD_aml/ForBackup/pipeline/set2/downloaded/split/synthetic.challenge.set2.normal.%%!.bam -
+
 
 fi
 
