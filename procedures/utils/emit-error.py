@@ -9,6 +9,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument("-e", "--error", type = int, help = "C Error Code")
 	argsDict = vars(parser.parse_args())
+	error = argsDict["error"]
 
 	# Error Description Dict
 	errors = {
@@ -146,7 +147,6 @@ if __name__ == "__main__":
 	}
 
 	# Validate Error is Within Range
-	error = argsDict["error"]
 	assert (error in range(0,255)), "Error Undefined (%d)" % error
 
 	# Print Error
