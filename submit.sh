@@ -290,7 +290,7 @@ echo -e "Submit Script Written to: $PIPELINE_HOME/submits/$subfile"
 
 if $autosubmit; then
 
-    condor_submit $subfile
-    echo -e "Submitted"
+    condor_submit $PIPELINE_HOME/submits/$subfile
+    emit_status $?
 
 fi
