@@ -150,7 +150,9 @@ if __name__ == "__main__":
 	assert (error in range(0,255)), "Error Undefined (%d)" % error
 
 	# Print Error
-	if error > 130:
+	if error == 0:
+		print("Exit (%d): %s" % (error, errors[error]))
+	elif error > 130:
 		print("Error (%d) with Probable Source: %s" % (error , errors[error - 128]))
 	else:
 		print("Error (%d): %s" % (error, errors[error]))

@@ -323,7 +323,6 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
         -nct $ncores \
-        --read_buffer_size $maxReads \
         --logging_level $loggingLevel \
         $monitorThreads # Additional Optional Args
 

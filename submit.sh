@@ -75,6 +75,10 @@ for i in "$@"
 
     # Condor Only Arguments
 
+        --notify=*)
+        notifyOpt="${i#*=}"
+        shift # Force job duration
+        ;;
         --autosubmit=*)
         autosubmitOpt="${i#*=}"
         shift # Force job duration
