@@ -9,8 +9,6 @@ timestamp=$(date +"%m-%d-%y_%H.%M")
 # Exit on First Error - to Prevent Invalid File Modifications
 # set -o errexit
 
-source submit.sh -b=mutect2.sh -f=synthetic.challenge -s=set3 -x=nomodel -p=default -q=nobqsr -n=12 -m=8G --notify cordier@ohsu.edu
-
 # Assign Arguments
 for i in "$@"
     do case $i in
