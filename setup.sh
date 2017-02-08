@@ -61,6 +61,9 @@ modules_dir=$pipeline_dir/procedures
 # Set Logging Directory
 logging_dir=$pipeline_dir/logs
 
+# Set Auto Submit Directory
+submit_dir=$pipeline_dir/submits
+
 #
 # Scaffolding
 #
@@ -68,7 +71,7 @@ logging_dir=$pipeline_dir/logs
 printf "\nScaffolding Directories...\n"
 
 # Scaffold Pipeline Directory & Change Directory
-cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir && mkdir -p $loggin_dir && makdir -p submits/logs
+cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir && mkdir -p $logging_dir && mkdir -p $submit_dir/logs
 
 # Pipeline Scaffolding
 mkdir -p set{1..6}/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
