@@ -133,7 +133,7 @@ debug=${debugOpt:-$debugDef}
 # Condor Defaults
 autosubmitDef=true
 forceDef=false
-priorityDef=1
+priorityDef=0
 universeDef="vanilla"
 suspendableDef=false
 getenvDef=true
