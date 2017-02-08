@@ -77,6 +77,10 @@ for i in "$@"
 
     # Condor Only Arguments
 
+        --autosubmit=*)
+        autosubmitOpt="${i#*=}"
+        shift # Force job duration
+        ;;
         --force=*)
         forceOpt="${i#*=}"
         shift # Force job duration
@@ -133,6 +137,7 @@ reads=${readsOpt:-$readsDef}
 debug=${debugOpt:-$debugDef}
 
 # Condor Defaults
+autosubmitDef=true
 forceDef=false
 priorityDef=1
 universeDef="vanilla"
@@ -142,6 +147,7 @@ notifyDef=false
 maxtimeDef="129600"
 
 # Condor Set Optional Values
+autosubmit=${autosubmitOpt:-$autosubmitDef}
 force=${forceOpt:-$forceDef}
 priority=${priorityOpt:-$priorityDef}
 universe=${universeOpt:-$universeDef}
@@ -275,12 +281,20 @@ submit=$submit"queue\n"
 submit=$submit$header
 
 #
-# Write Script & Submit
+# Write Submit
 #
 
 echo -e $submit > $PIPELINE_HOME/logs/sub/$subfile
 
 echo -e "Submit Script Written to: $PIPELINE_HOME/logs/sub/$subfile"
 
-echo -e "Submitting..."
-condor_submit $PIPELINE_HOME/logs/sub/$subfile
+#
+# Submission
+#
+
+if $autosubmit; then
+
+    echo -e "Submitting..."
+    condor_submit $PIPELINE_HOME/logs/sub/$subfile
+
+fi
