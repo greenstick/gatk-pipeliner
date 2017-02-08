@@ -68,7 +68,7 @@ logging_dir=$pipeline_dir/logs
 printf "\nScaffolding Directories...\n"
 
 # Scaffold Pipeline Directory & Change Directory
-cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir && mkdir -p $loggin_dir && makdir -p submits
+cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir && mkdir -p $loggin_dir && makdir -p submits/logs
 
 # Pipeline Scaffolding
 mkdir -p set{1..6}/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}

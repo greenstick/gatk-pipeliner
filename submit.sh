@@ -158,9 +158,9 @@ maxMemory=$((allocMemory * ncores))$allocSize
 maxMemoryMB=$((allocMemory * ncores * 1024))
 
 # Generate Argument String & Namespace File Handles
-subfile=$module.$fileprefix.$subset
-logfile=$module.$fileprefix.$subset
-errfile=$module.$fileprefix.$subset
+subfile=$timestamp.$module.$fileprefix.$subset
+logfile=$timestamp.$module.$fileprefix.$subset
+errfile=$timestamp.$module.$fileprefix.$subset
 args=""
 
 #
@@ -204,10 +204,10 @@ if [[ ! -z $qualitymodel ]]; then
     args=$args"-q=$qualitymodel "
 fi
 
-# Prepend Timestamp & Append Suffix
-logfile=$timestamp.$logfile.log
-errfile=$timestamp.$errfile.err
-subfile=$timestamp.$subfile.sub
+# Append Suffix
+logfile=$logfile.log
+errfile=$errfile.err
+subfile=$subfile.sub
 
 #
 # Append Additional Args to Args String
@@ -248,7 +248,7 @@ fi
 format_status "Compiling Submit Script"
 
 header="####################################\n"
-submit="$header\n# Job Details\nexecutable = ../procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = ~/logs/condor_jobs.log\noutput = ../logs/auto/$logfile\nerror = ../logs/auto/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
+submit="$header\n# Job Details\nexecutable = ../procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = ~/logs/condor_jobs.log\noutput = logs/$logfile\nerror = logs$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
