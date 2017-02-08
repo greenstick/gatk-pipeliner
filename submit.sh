@@ -204,10 +204,10 @@ if [[ ! -z $qualitymodel ]]; then
     args=$args"-q=$qualitymodel "
 fi
 
-# Append Timestamp & Suffix
-logfile=$logfile.$timestamp.log
-errfile=$errfile.$timestamp.err
-subfile=$subfile.$timestamp.sub
+# Prepend Timestamp & Append Suffix
+logfile=$timestamp.$logfile.log
+errfile=$timestamp.$errfile.err
+subfile=$timestamp.$subfile.sub
 
 #
 # Append Additional Args to Args String
@@ -248,7 +248,7 @@ fi
 format_status "Compiling Submit Script"
 
 header="####################################\n"
-submit="$header\n# Job Details\nexecutable = $PIPELINE_MODS/$binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/auto/$logfile\nerror = $PIPELINE_HOME/logs/auto/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
+submit="$header\n# Job Details\nexecutable = ../procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = ~/logs/condor_jobs.log\noutput = ../logs/auto/$logfile\nerror = ../logs/auto/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
@@ -278,9 +278,9 @@ submit=$submit$header
 # Write Submit
 #
 
-echo -e $submit > $PIPELINE_HOME/logs/sub/$subfile
+echo -e $submit > $PIPELINE_HOME/submits/$subfile
 
-echo -e "Submit Script Written to: $PIPELINE_HOME/logs/sub/$subfile"
+echo -e "Submit Script Written to: $PIPELINE_HOME/submits/$subfile"
 
 #
 # Submission
@@ -288,7 +288,9 @@ echo -e "Submit Script Written to: $PIPELINE_HOME/logs/sub/$subfile"
 
 if $autosubmit; then
 
-    echo -e "Submitting..."
-    condor_submit $PIPELINE_HOME/logs/sub/$subfile
+    cd $PIPELINE_HOME/submits
+    condor_submit $subfile
+    cd $PIPELINE_HOME
+    echo -e "Submitted"
 
 fi
