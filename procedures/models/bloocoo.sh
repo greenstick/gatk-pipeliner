@@ -3,6 +3,11 @@
 # Exit on First Error - to Prevent Invalid File Modifications
 # set -o errexit
 
+# Load ~/.bash_profile if Not Found
+if [ -z $PIPELINE_HOME ]; then
+    source ~/.bash_profile
+fi
+
 # Assign Arguments
 for i in "$@"
     do case $i in
