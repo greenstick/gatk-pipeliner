@@ -248,7 +248,7 @@ fi
 format_status "Compiling Submit Script"
 
 header="####################################\n"
-submit="$header\n# Job Details\nexecutable = ../procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = ~/logs/condor_jobs.log\noutput = logs/$logfile\nerror = logs$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
+submit="$header\n# Job Details\nexecutable = ../procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = logs/$logfile\nerror = logs$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
