@@ -247,8 +247,11 @@ fi
 
 format_status "Compiling Submit Script"
 
+# Submit Header
 header="####################################\n"
-submit="$header\n# Job Details\nexecutable = ../procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = logs/$logfile\nerror = logs$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
+
+# Submit Boilerplate
+submit="$header\n\ncommon_dir=/mnt/lustre1/MRD_aml/ForBackup/pipeline\n# Job Details\nexecutable = $(common_dir)/procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $(common_dir)/logs/$logfile\nerror = $(common_dir)/logs/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
