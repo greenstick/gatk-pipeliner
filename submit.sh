@@ -250,8 +250,8 @@ format_status "Compiling Submit Script"
 # Submit Header
 header="####################################\n"
 
-# Submit Boilerplate
-submit="$header\n\ncommon_dir=/home/exacloud/lustre1/MRD_aml/ForBackup/pipeline\n# Job Details\nexecutable = $(common_dir)/procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $(common_dir)/logs/condor_jobs.log\noutput = $(common_dir)/submits/logs/$logfile\nerror = $(common_dir)/submits/logs/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
+# Submit Boiler
+submit="$header\n\n# Job Details\nexecutable = procedures/$binary\narguments = $args\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $maxMemory\nimage_size = $maxMemory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = submits/logs/$logfile\nerror = submits/logs/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\nshould_transfer_files = IF_NEEDED\nwhen_to_transfer_output = ON_EXIT\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
@@ -282,7 +282,6 @@ submit=$submit$header
 #
 
 echo -e $submit > $PIPELINE_HOME/submits/$subfile
-
 echo -e "Submit Script Written to: $PIPELINE_HOME/submits/$subfile"
 
 #
@@ -291,7 +290,7 @@ echo -e "Submit Script Written to: $PIPELINE_HOME/submits/$subfile"
 
 if $autosubmit; then
 
-    condor_submit submits/$subfile
+    condor_submit $subfile
     echo -e "Submitted"
 
 fi
