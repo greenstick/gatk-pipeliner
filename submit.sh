@@ -4,18 +4,22 @@
 # A Positively Disgusting Submit Script Generator
 #
 
-email="cordier@ohsu.edu"
 timestamp=$(date +"%m-%d-%y_%H.%M")
 
 # Exit on First Error - to Prevent Invalid File Modifications
 # set -o errexit
+
+source submit.sh -b=mutect2.sh -f=synthetic.challenge -s=set3 -x=nomodel -p=default -q=nobqsr -n=12 -m=8G --notify cordier@ohsu.edu
 
 # Assign Arguments
 for i in "$@"
     do case $i in
 
     # Standard Arguments
-
+        -b=*|--binary=*)
+        binary="${i#*=}"
+        shift # Shell Script Module to Call
+        ;;
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
         shift # Access & Write Files With This Prefix
@@ -43,10 +47,6 @@ for i in "$@"
 
     # Optional Arguments With Defaults
 
-        -b=*|--binary=*)
-        binary="${i#*=}"
-        shift # Shell Script Module to Call
-        ;;
         -r=*|--reads=*)
         readsOpt="${i#*=}"
         shift # n Reads Per GB or Memory
@@ -143,7 +143,7 @@ priorityDef=1
 universeDef="vanilla"
 suspendableDef=false
 getenvDef=true
-notifyDef=false
+notifyDef=""
 maxtimeDef="129600"
 
 # Condor Set Optional Values
@@ -262,8 +262,8 @@ if $getenv; then
 fi
 
 # Append Notification
-if $notify; then
-    submit=$submit"notification = Complete\nnotify_user = $email\n"
+if [[ ! -z $notify ]]; then
+    submit=$submit"notification = Complete\nnotify_user = $notify\n"
 fi
 
 # Append Force
