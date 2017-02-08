@@ -4,7 +4,7 @@
 # A Positively Disgusting Submit Script Generator
 #
 
-timestamp=$(date +"%m-%d-%y_%H.%M")
+timestamp=$(date +"%m-%d-%y_%H꞉%M")
 
 # Exit on First Error - to Prevent Invalid File Modifications
 # set -o errexit
@@ -99,10 +99,6 @@ for i in "$@"
         getenvOpt="${i#*=}"
         shift # Get Shell Environment
         ;;
-        --notify=*)
-        notifyOpt="${i#*=}"
-        shift # Get Shell Environment
-        ;;
         --maxtime=*)
         maxtimeOpt="${i#*=}"
         shift # Get Shell Environment
@@ -159,7 +155,7 @@ allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 module=${binary//.sh/}
 maxMemory=$((allocMemory * ncores))$allocSize
-allocMemoryMB=$((allocMemory * 1024))
+maxMemoryMB=$((allocMemory * ncores * 1024))
 
 # Generate Argument String & Namespace File Handles
 subfile=$module.$fileprefix.$subset
@@ -252,7 +248,7 @@ fi
 format_status "Compiling Submit Script"
 
 header="####################################\n"
-submit="$header\n# Job Details\nexecutable = $PIPELINE_MODS/$binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $memory\nimage_size = $memory\nrank = Memory >= $allocMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/auto/$logfile\nerror = $PIPELINE_HOME/logs/auto/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\n\n# Compiled Optional Arguments\n"
+submit="$header\n# Job Details\nexecutable = $PIPELINE_MODS/$binary\narguments = '$args'\nuniverse = $universe\npriority = $priority\n\n# Resource Requirements\nrequest_cpus = $ncores\nrequest_memory = $memory\nimage_size = $memory\nrank = Memory >= $maxMemoryMB\n\n# Logging\nlog = $HOME/logs/condor_jobs.log\noutput = $PIPELINE_HOME/logs/auto/$logfile\nerror = $PIPELINE_HOME/logs/auto/$errfile\n\n# Additional Arguments\n+MaxExecutionTime = $maxtime\n\n# Compiled Optional Arguments\n"
 
 # Append Getenv
 if $getenv; then
