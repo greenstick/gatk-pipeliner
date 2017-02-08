@@ -103,55 +103,54 @@ if  [ "$experiment" = "bayeshammer" ] || \
     [ "$experiment" = "nomodel" ]; then 
 
 
-        if [ "$experiment" = "nomodel" ]; then
+    if [ "$experiment" = "nomodel" ]; then
 
-            format_status "Copying Read FASTQ Files to Modeled Directory..."
-            files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
+        format_status "Copying Read FASTQ Files to Modeled Directory..."
+        files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
 
-            for file in $files
-                # In Parallel
-                do (
-                    # Extract Read Group to Pass Through
-                    suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
-                    readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                    substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:1"
-                    
-                    # Run Command
-                    if !(has_state $substate); then
+        for file in $files
+            # In Parallel
+            do (
+                # Extract Read Group to Pass Through
+                suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
+                readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+                substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:ERRORMODEL:1"
+                
+                # Run Command
+                if !(has_state $substate); then
 
-                        # No Model, Copy Data to Modeled Directory
-                        format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
-                        cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
-                    
-                        # Check for failed parallel call
-                        put_state $? $substate
+                    # No Model, Copy Data to Modeled Directory
+                    format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+                    cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
+                
+                    # Check for failed parallel call
+                    put_state $? $substate
 
-                    fi
-                ) &
-            done
-            wait # Prevent Premature Exiting of Script
-            
-        else
-
-            # State Check - Run Block if it Has Not Already Been Executed Successfully
-            state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
-            if !(has_state $state); then
-
-                # Copy Data to Pre-Align Directory For Error Models
-                format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
-                format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
-                cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+                fi
+            ) &
+        done
+        wait # Prevent Premature Exiting of Script
         
-                # Update State on Exit
-                put_state $? $state
+    else
 
-            fi
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
+        state="$fileprefix.$subset.$condition.$experiment.$parameters:ERRORMODEL:1"
+        if !(has_state $state); then
+
+            # Copy Data to Pre-Align Directory For Error Models
+            format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
+            format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
+            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+    
+            # Update State on Exit
+            put_state $? $state
 
         fi
 
-        format_status "FASTQ Copy Complete"
     fi
 
+    format_status "FASTQ Copy Complete"
+    
 fi
 
 #
