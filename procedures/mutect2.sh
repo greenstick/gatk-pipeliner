@@ -74,7 +74,7 @@ ncoresDef="10"
 memoryDef="8G"
 readsDef="0"
 debugDef=false
-contamination=true
+contaminationDef=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
