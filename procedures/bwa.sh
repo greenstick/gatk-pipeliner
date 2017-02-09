@@ -126,7 +126,6 @@ files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$
 if [ "$align" = "mem" ]; then
 
     for file in $files
-        # In Parallel
         do (
             # Extract Read Group to Pass to BWA mem
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
@@ -144,9 +143,8 @@ if [ "$align" = "mem" ]; then
                 put_state $? $substate
 
             fi
-        ) &
+        )
     done
-    wait # Prevent Premature Exiting of Script
 
     # Update State on Exit
     put_state $? $state
@@ -174,9 +172,8 @@ elif [ "$align" = "bwasw" ]; then
                 put_state $? $substate
 
             fi
-        ) &
+        )
     done
-    wait # Prevent Premature Exiting of Script
 
     # Update State on Exit
     put_state $? $state

@@ -72,6 +72,29 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
+#
+# Convert FastQ to Fasta & Qual
+#
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:1"
+if !(has_state $state); then
+
+        format_status "Splitting FastQ to Fasta & Qual"
+        # Call Error Model & Move Outputs to Output Directory
+        format_status "Command:\n
+        python3 utils/fastq-to-fasta-qual.py \
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup"
+        python3 utils/fastq-to-fasta-qual.py \
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup
+
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+fi
+
 # 
 # Run Quorum
 # 
