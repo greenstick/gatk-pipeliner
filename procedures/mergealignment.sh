@@ -96,7 +96,6 @@ format_status "Samtools AddReplaceRG"
 files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
 
 for file in $files
-    # In Parallel
     do (
         # Get Read Group to Process
         suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.||")
@@ -110,6 +109,12 @@ for file in $files
             
             # Check for failed parallel call
             put_state $? $substate
+        fi
+
+        substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:MERGEALIGNMENT:2"
+        
+        # Run Command
+        if !(has_state $substate); then
 
             format_status "Command:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam" 
             # Insert Read Groups into New BAM - WARNING USES EVAL
@@ -119,12 +124,10 @@ for file in $files
             put_state $? $substate
 
         fi
-    ) &
+    )
 done
-wait # Prevent Premature Exiting of Script
 
-# Update State on Exit
-put_state $? $state
+# Notify
 format_status "Samtools AddReplaceRG Complete"
 
 # 

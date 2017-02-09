@@ -159,11 +159,8 @@ if [ "$align" = "mem" ]; then
         )
     done
 
-    # Update State on Exit
-    put_state $? $state
+    # Notification
     format_status "BWA $align Complete"
-
-grep --no-filename @HWUSI-EAS100R:6:73:941:1973 *.fastq | cut -d' ' -f1 | sort | uniq -c | sort -rgk 1,1 | head
 
 # BWASW
 elif [ "$align" = "bwasw" ]; then
@@ -189,15 +186,14 @@ elif [ "$align" = "bwasw" ]; then
         )
     done
 
-    # Update State on Exit
-    put_state $? $state
+    # Notification
     format_status "BWA $align Complete"
 
 else
 
     format_status "Invalid BWA algorithm parameter: $align"
 
-    fi
+fi
 
 # Backtrack
 
