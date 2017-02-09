@@ -135,9 +135,21 @@ if [ "$align" = "mem" ]; then
             # Run Command
             if !(has_state $substate); then
 
+                # Test for Paired Ends
+                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/3(\s|\t|\n)"
+                end1=$?
+                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/3(\s|\t|\n)"
+                end2=$?
+
+                # Is Interleaved?
+                paired=""
+                if [ $end1 ] && [ $end2 ]; then
+                    paired="-p"
+                fi
+
                 # Call BWA mem
                 format_status "Command:\nbwa mem -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
-                bwa $align -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
+                bwa $align $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
                 
                 # Check for failed parallel call
                 put_state $? $substate
@@ -150,10 +162,13 @@ if [ "$align" = "mem" ]; then
     put_state $? $state
     format_status "BWA $align Complete"
 
+grep --no-filename @HWUSI-EAS100R:6:73:941:1973 *.fastq | cut -d' ' -f1 | sort | uniq -c | sort -rgk 1,1 | head
+
 # BWASW
 elif [ "$align" = "bwasw" ]; then
 
     for file in $files
+
         # In Parallel
         do (
             # Extract Read Group to Pass to BWA mem
