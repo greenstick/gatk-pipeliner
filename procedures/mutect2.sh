@@ -135,7 +135,7 @@ format_status "Running Contamination Estimation & Mutect2 Script"
 # If Contamination Not Specified, Run ContEst
 #
 
-if [ "$contamination" = "false" ]; then
+if $contamination; then
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
     state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:1"
