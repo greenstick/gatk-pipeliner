@@ -136,7 +136,7 @@ format_status "Samtools AddReplaceRG Complete"
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state"$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2"
+state="$fileprefix.$subset.$condition.$experiment.$parameters:MERGEALIGNMENT:2"
 if !(has_state $state); then
 
     # Retrieve Files to Process
