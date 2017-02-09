@@ -145,6 +145,7 @@ if [ "$align" = "mem" ]; then
                 paired=""
                 if [ $end1 ] && [ $end2 ]; then
                     paired="-p"
+                    format_status "Paired-End Detected"
                 fi
 
                 # Call BWA mem
