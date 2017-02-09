@@ -168,8 +168,6 @@ grep --no-filename @HWUSI-EAS100R:6:73:941:1973 *.fastq | cut -d' ' -f1 | sort |
 elif [ "$align" = "bwasw" ]; then
 
     for file in $files
-
-        # In Parallel
         do (
             # Extract Read Group to Pass to BWA mem
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
