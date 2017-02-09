@@ -5,6 +5,7 @@
 
 # Load ~/.bash_profile if Not Found
 if [ -z $PIPELINE_HOME ]; then
+    echo "Reloading ~/.bash_profile"
     source ~/.bash_profile
 fi
 
@@ -77,7 +78,7 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO:1"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
 if !(has_state $state); then
 
         format_status "Splitting FastQ to Fasta & Qual"
@@ -112,15 +113,15 @@ if !(has_state $state); then
         format_status "Running Quorum - $parameters Parameters"
         # Call Error Model
         format_status "Command:\n \
-        $QUORUM \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        quorum \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
         --size 20G \
         --no-discard \
         --min-q-char 33 \
         --debug"
-        $QUORUM \
+        quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \

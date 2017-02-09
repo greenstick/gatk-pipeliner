@@ -5,6 +5,7 @@
 
 # Load ~/.bash_profile if Not Found
 if [ -z $PIPELINE_HOME ]; then
+    echo "Reloading ~/.bash_profile"
     source ~/.bash_profile
 fi
 
@@ -94,12 +95,12 @@ if !(has_state $state); then
         -s 3g \
         -t $ncores \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
+        > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         $BFC \
         -s 3g \
         -t $ncores \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
+        > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -114,12 +115,12 @@ if !(has_state $state); then
         -s 3g \
         -t $ncores \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq"
+        > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         $BFC \
         -s 3g \
         -t $ncores \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        > $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.fastq
+        > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
 
     fi
     

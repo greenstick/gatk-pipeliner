@@ -5,6 +5,7 @@
 
 # Load ~/.bash_profile if Not Found
 if [ -z $PIPELINE_HOME ]; then
+    echo "Reloading ~/.bash_profile"
     source ~/.bash_profile
 fi
 

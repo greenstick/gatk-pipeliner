@@ -5,6 +5,7 @@
 
 # Load ~/.bash_profile if Not Found
 if [ -z $PIPELINE_HOME ]; then
+    echo "Reloading ~/.bash_profile"
     source ~/.bash_profile
 fi
 
@@ -71,9 +72,9 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="10"
 memoryDef="8G"
-readsDef=150000
+readsDef="0"
 debugDef=false
-contamination=false
+contamination=true
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
@@ -86,11 +87,18 @@ contamination=${contaminationOpt:-$contaminationDef}
 allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
 maxMemory=$((allocMemory * ncores))$allocSize
-contestMem=$((allocMemory * ncores / 2))$allocSize
-
+ 
 # Max Reads in RAM - 200,000 per GB
 maxReads=$((allocMemory * $reads))
- 
+
+# Use Default n Reads or User Defines
+if [ "$maxReads" = "0" ]; then
+    maxReads="default"
+    readbuffersize=""
+else
+    readbuffersize="--read_buffer_size "$maxReads
+fi
+
 printf "\nPARAMETERS:
 GATK Directory      = $GATK
 Data File Prefix    = $fileprefix
@@ -134,7 +142,7 @@ if [ "$contamination" = "false" ]; then
     if !(has_state $state); then
 
         format_status "ContEst Start"
-        format_status "Command:\njava -Xmx$contestMem \
+        format_status "Command:\njava -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T ContEst \
         --precision 0.001 \
@@ -146,10 +154,9 @@ if [ "$contamination" = "false" ]; then
         --population ALL \
         --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
         -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-        --read_buffer_size $maxReads \
-        --monitorThreadEfficiency $monitorThreads \
-        --logging_level $loggingLevel"
-        java -Xmx$memory \
+        --logging_level $loggingLevel \
+        $monitorThreads $readbuffersize" # Additional Optional Args
+        java -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T ContEst \
         --precision 0.001 \
@@ -161,9 +168,8 @@ if [ "$contamination" = "false" ]; then
         --population ALL \
         --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
         -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-        --read_buffer_size $maxReads \
-        $monitorThreads \
-        --logging_level $loggingLevel
+        --logging_level $loggingLevel \
+        $monitorThreads $readbuffersize # Additional Optional Args
     
         # Update State on Exit
         put_state $? $state
@@ -197,9 +203,8 @@ if [ "$contamination" = "false" ]; then
         -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         -nct $ncores \
-        --read_buffer_size $maxReads \
-        --monitorThreadEfficiency $monitorThreads \
-        --logging_level $loggingLevel"
+        --logging_level $loggingLevel \
+        $monitorThreads $readbuffersize" # Additional Optional Args
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
@@ -214,9 +219,8 @@ if [ "$contamination" = "false" ]; then
         --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
         -nct $ncores \
-        --read_buffer_size $maxReads \
-        $monitorThreads \
-        --logging_level $loggingLevel
+        --logging_level $loggingLevel \
+        $monitorThreads $readbuffersize
 
 
         # Update State on Exit
@@ -249,9 +253,8 @@ else
         -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         -nct $ncores \
-        --read_buffer_size $maxReads \
-        --monitorThreadEfficiency $monitorThreads \
-        --logging_level $loggingLevel"
+        --logging_level $loggingLevel \
+        $monitorThreads $readbuffersize" # Additional Optional Args
         java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
@@ -266,9 +269,8 @@ else
         --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
         -nct $ncores \
-        --read_buffer_size $maxReads \
-        $monitorThreads \
-        --logging_level $loggingLevel
+        --logging_level $loggingLevel \
+        $monitorThreads $readbuffersize # Additional Optional Args
 
 
         # Update State on Exit
