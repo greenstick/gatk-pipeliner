@@ -94,17 +94,15 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 48G \
+        --size 64G \
         --no-discard \
-        --min-q-char 33 \
         --debug"
         quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 48G \
+        --size 64G \
         --no-discard \
-        --min-q-char 33 \
         --debug
 
     elif [ "$parameters" = "custom" ]; then
@@ -120,17 +118,15 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 48G \
+        --size 64G \
         --no-discard \
-        --min-q-char 33 \
         --debug"
         quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 48G \
+        --size 64G \
         --no-discard \
-        --min-q-char 33 \
         --debug
 
     fi
