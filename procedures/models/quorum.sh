@@ -96,6 +96,7 @@ if !(has_state $state); then
         -t $ncores \
         --size 64G \
         --no-discard \
+        --min-q-char 33 \
         --debug"
         quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
@@ -103,6 +104,7 @@ if !(has_state $state); then
         -t $ncores \
         --size 64G \
         --no-discard \
+        --min-q-char 33 \
         --debug
 
     elif [ "$parameters" = "custom" ]; then
@@ -120,6 +122,7 @@ if !(has_state $state); then
         -t $ncores \
         --size 64G \
         --no-discard \
+        --min-q-char 33 \
         --debug"
         quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
@@ -127,6 +130,7 @@ if !(has_state $state); then
         -t $ncores \
         --size 64G \
         --no-discard \
+        --min-q-char 33 \
         --debug
 
     fi
