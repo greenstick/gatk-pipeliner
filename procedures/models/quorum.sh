@@ -73,29 +73,6 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
-#
-# Convert FastQ to Fasta & Qual
-#
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
-if !(has_state $state); then
-
-        format_status "Splitting FastQ to Fasta & Qual"
-        # Call Error Model & Move Outputs to Output Directory
-        format_status "Command:\n
-        python3 utils/fastq-to-fasta-qual.py \
-        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup"
-        python3 utils/fastq-to-fasta-qual.py \
-        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup
-
-        # Update State on Exit
-        status=$?
-        put_state $status $state
-fi
-
 # 
 # Run Quorum
 # 
@@ -114,10 +91,10 @@ if !(has_state $state); then
         # Call Error Model
         format_status "Command:\n \
         quorum \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fasta \
+        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 20G \
+        --size 40G \
         --no-discard \
         --min-q-char 33 \
         --debug"
@@ -125,7 +102,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 20G \
+        --size 40G \
         --no-discard \
         --min-q-char 33 \
         --debug
@@ -139,19 +116,19 @@ if !(has_state $state); then
         format_status "Running Quorum - $parameters Parameters"
         # Call Error Model
         format_status "Command:\n \
-        $QUORUM \
+        quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 20G \
+        --size 40G \
         --no-discard \
         --min-q-char 33 \
         --debug"
-        $QUORUM \
+        quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 20G \
+        --size 40G \
         --no-discard \
         --min-q-char 33 \
         --debug
