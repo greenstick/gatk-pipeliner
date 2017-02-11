@@ -94,7 +94,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 40G \
+        --size 48G \
         --no-discard \
         --min-q-char 33 \
         --debug"
@@ -102,7 +102,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 40G \
+        --size 48G \
         --no-discard \
         --min-q-char 33 \
         --debug
@@ -120,7 +120,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 40G \
+        --size 48G \
         --no-discard \
         --min-q-char 33 \
         --debug"
@@ -128,7 +128,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 40G \
+        --size 48G \
         --no-discard \
         --min-q-char 33 \
         --debug
