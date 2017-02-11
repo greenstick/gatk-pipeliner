@@ -154,7 +154,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
     #
 
     # State Check - Run Block if it Has Not Already Been Executed Successfully
-    state="$fileprefix.$subset.$condition:NOBQSR:1"
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel:BQSR:1"
     if !(has_state $state); then
 
         # Copy Files & Rename to Maintain Consistency
