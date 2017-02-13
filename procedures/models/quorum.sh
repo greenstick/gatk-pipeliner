@@ -60,6 +60,9 @@ for i in "$@"
     esac
 done
 
+ncoresDef="16"
+memoryDef="15G"
+
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
@@ -94,7 +97,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 64G \
+        --size 96G \
         --no-discard \
         --min-q-char 33 \
         --debug"
@@ -102,7 +105,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 64G \
+        --size 96G \
         --no-discard \
         --min-q-char 33 \
         --debug
@@ -120,7 +123,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 64G \
+        --size 96G \
         --no-discard \
         --min-q-char 33 \
         --debug"
@@ -128,7 +131,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 64G \
+        --size 96G \
         --no-discard \
         --min-q-char 33 \
         --debug

@@ -60,6 +60,9 @@ for i in "$@"
     esac
 done
 
+ncoresDef="16"
+memoryDef="15G"
+
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
