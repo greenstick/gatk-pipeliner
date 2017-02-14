@@ -85,6 +85,23 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BAYESHAMMER:1"
 if !(has_state $state); then
 
+    # Test for Paired Ends
+    head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/1"
+    end1=$?
+    head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/2"
+    end2=$?
+
+    # Is Interleaved?
+    paired=""
+    single=""
+    if [ $end1 ] && [ $end2 ]; then
+        paired="--12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+        format_status "Interleaved Paired-End Detected  (/1 = $end1, /2 = $end2)"
+    else
+        single="-s $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+        format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
+    fi
+
     if [ "$parameters" = "default" ]; then
         
         #
@@ -95,11 +112,10 @@ if !(has_state $state); then
         # Define Command
         call="python $BAYESHAMMER \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-        --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $allocMax \
         --only-error-correction \
-        --debug"
+        $paired $single --debug "
         # Print & Call
         format_status "Command:\n$call"
         $call
@@ -114,11 +130,10 @@ if !(has_state $state); then
         # Define Command
         call="python $BAYESHAMMER \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-        --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $allocMax \
         --only-error-correction \
-        --debug"
+        $paired $single --debug "
         # Print & Call
         format_status "Command:\n$call"
         $call

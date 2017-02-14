@@ -84,6 +84,19 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
 if !(has_state $state); then
 
+    # Test for Paired Ends
+    head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/1"
+    end1=$?
+    head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/2"
+    end2=$?
+
+    # Is Interleaved?
+    paired=""
+    if [ $end1 ] && [ $end2 ]; then
+        paired="--paired-files"
+        format_status "Interleaved Paired-End Detected (/1 = $end1, /2 = $end2)"
+    fi
+
     if [ "$parameters" = "default" ]; then
 
         #
@@ -99,7 +112,7 @@ if !(has_state $state); then
         --size 43000000000 \
         --no-discard \
         --min-q-char 33 \
-        --debug"
+        $paired --debug"
         # Print & Call
         format_status "Command:\n$call"
         $call
@@ -119,7 +132,7 @@ if !(has_state $state); then
         --size 43000000000 \
         --no-discard \
         --min-q-char 33 \
-        --debug"
+        $paired --debug"
         # Print & Call
         format_status "Command:\n$call"
         $call

@@ -80,6 +80,7 @@ if __name__ == "__main__":
             }
         }
         if paired:
+
             # Not Strict, Paired, No Orphans
             print("\nValidating That Sequences are Correctly Interleaved and That Sequence & Quality Scores Are of The Same Length")
             with open(inputfile, "r") as handle:
@@ -108,6 +109,7 @@ if __name__ == "__main__":
                         # Is Read /2 In Fact the Read /2? If Not, 2 is in Fact next 1, & 1 is Missing it's /2 Pair
                         if (seqB.id[-2:] != "/2"):
                             warnings["id_mismatch"]["missing_2"].append(seqA.id)
+
             # Write Warnings
             with open("validation_warnings.%s.tsv" % prefix, "w") as warningfile:
                 warningfile.write("id\twarning\n")
@@ -129,6 +131,7 @@ if __name__ == "__main__":
             print("\nWarnings Written to: validation_warnings.%s.tsv" % prefix)
 
         else:
+
             # Not Strict, Single
             print("\nValidating That Single-End Sequence & Quality Scores Are of The Same Length")
             with open(inputfile, "r") as handle:
@@ -151,10 +154,13 @@ if __name__ == "__main__":
             print("\nWarnings Written to: validation_warnings.%s.tsv" % prefix)
 
     else:
+        
         # Strict, Paired, No Orphans
         if paired:
+
             print("\nValidating That Sequences are Correctly Interleaved and That Sequence & Quality Scores Are of The Same Length")
             if orphans:
+
                 with open(inputfile, "r") as handle:
                     records = SeqIO.parse(handle, format)
                     for record in records:
@@ -166,7 +172,9 @@ if __name__ == "__main__":
                         # Are Sequence Lengths & Quality Lengths the Same?
                         assert (len(seqA.seq) == len(seqA.letter_annotations["phred_quality"])), "Error: Sequence & Quality Lengths Do Not Match: (%s)" % seqA.id
                         assert (len(seqB.seq) == len(seqB.letter_annotations["phred_quality"])), "Error: Sequence & Quality Lengths Do Not Match: (%s)" % seqB.id
+            
             else:
+
                 with open(inputfile, "r") as handle:
                     records = SeqIO.parse(handle, format)
                     for record in records:
@@ -184,7 +192,9 @@ if __name__ == "__main__":
                         # Are Sequence Lengths & Quality Lengths the Same?
                         assert (len(seqA.seq) == len(seqA.letter_annotations["phred_quality"])), "Error: Sequence & Quality Lengths Do Not Match: (%s)" % seqA.id
                         assert (len(seqB.seq) == len(seqB.letter_annotations["phred_quality"])), "Error: Sequence & Quality Lengths Do Not Match: (%s)" % seqB.id
+        
         else:
+
             # Strict, Single
             print("\nValidating That Single-End Sequence & Quality Scores Are of The Same Length")
             with open(inputfile, "r") as handle:

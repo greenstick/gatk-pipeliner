@@ -82,6 +82,8 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BFC:1"
 if !(has_state $state); then
 
+    # No Test for Paire / Single Required
+
     if [ "$parameters" = "default" ]; then
         
         #

@@ -140,9 +140,9 @@ if [ "$align" = "mem" ]; then
             if !(has_state $substate); then
 
                 # Test for Paired Ends
-                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/3(\s|\t|\n)"
+                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/1"
                 end1=$?
-                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/3(\s|\t|\n)"
+                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/2"
                 end2=$?
 
                 # Is Interleaved?
