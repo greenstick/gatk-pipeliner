@@ -371,7 +371,6 @@ case "$experiment" in
                 # Extract Read Group to Pass Through
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                printf "Command:\nsource $proceduresDir/modeledels/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Define Command
                 call="source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
