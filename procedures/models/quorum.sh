@@ -86,10 +86,7 @@ if !(has_state $state); then
 
     # Sort FastQ Inplace
     # Define Command
-    call="fastq-sort −−id \
-    $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq > \
-    $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && \
-    mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq" 
+    call="fastq-sort −I $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq" 
     # Print & Call
     format_status "Command:\n$call"
     $call
