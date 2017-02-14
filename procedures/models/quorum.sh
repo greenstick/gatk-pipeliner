@@ -91,9 +91,8 @@ if !(has_state $state); then
         #
         
         format_status "Running Quorum - $parameters Parameters"
-        # Call Error Model
-        format_status "Command:\n \
-        quorum \
+        # Define Command
+        call="quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
@@ -101,14 +100,9 @@ if !(has_state $state); then
         --no-discard \
         --min-q-char 33 \
         --debug"
-        quorum \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -t $ncores \
-        --size 100000000000000 \
-        --no-discard \
-        --min-q-char 33 \
-        --debug
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -117,9 +111,8 @@ if !(has_state $state); then
         #
         
         format_status "Running Quorum - $parameters Parameters"
-        # Call Error Model
-        format_status "Command:\n \
-        quorum \
+        # Define Command
+        call="quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
@@ -127,14 +120,9 @@ if !(has_state $state); then
         --no-discard \
         --min-q-char 33 \
         --debug"
-        quorum \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -t $ncores \
-        --size 100000000000000 \
-        --no-discard \
-        --min-q-char 33 \
-        --debug
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     fi
 

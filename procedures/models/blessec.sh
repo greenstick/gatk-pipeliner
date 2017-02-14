@@ -89,22 +89,17 @@ if !(has_state $state); then
         #
 
         format_status "Running Bless-EC - Custom Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        bless \
+        # Define Command
+        call="bless \
         -prefix $paramDir/modeled/ \
         -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
         -notrim"
-        bless \
-        -prefix $paramDir/modeled/ \
-        -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -kmerlength 31 \
-        -fpr 0.001 \
-        -max_mem $memory \
-        -notrim
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -113,22 +108,18 @@ if !(has_state $state); then
         #
 
         format_status "Running Bless-EC - Custom Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        bless \
+        # Define Command
+        call="bless \
         -prefix $paramDir/modeled/ \
         -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -kmerlength 31 \
         -fpr 0.001 \
         -max_mem $memory \
         -notrim"
-        bless \
-        -prefix $paramDir/modeled/ \
-        -read $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -kmerlength 31 \
-        -fpr 0.001 \
-        -max_mem $memory \
-        -notrim
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+        
 
     fi
     

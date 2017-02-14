@@ -119,8 +119,12 @@ for file in $files
 
             format_status "Command:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam" 
             # Insert Read Groups into New BAM - WARNING USES EVAL
-            eval "samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
-        
+            # Define Command
+            call="eval \"samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam\""
+            # Print & Call
+            format_status "Command:\n$call"
+            $call
+
             # Check for failed parallel call
             put_state $? $substate
 
@@ -143,9 +147,12 @@ if !(has_state $state); then
     files=$(echo $(ls $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.*.bam))
 
     format_status "Samtools Merge"
-    format_status "Command:\nsamtools merge -r $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
-    samtools merge -r -f $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files
-    
+    # Define Command
+    call="samtools merge -r -f $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
+
     # Update State on Exit
     put_state $? $state
     format_status "Samtools Merge Complete"

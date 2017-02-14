@@ -125,7 +125,8 @@ if [ "$experiment" = "norealign" ]; then
     if !(has_state $state); then
 
         format_status "MarkDuplicates Start"
-        format_status "Command:\njava -Xmx$maxMemory \
+        # Define Command
+        call="java -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
@@ -135,16 +136,9 @@ if [ "$experiment" = "norealign" ]; then
         PG=null \
         TMP_DIR=$tmpDir \
         VERBOSITY=$verbosity"
-        java -Xmx$maxMemory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $PICARD MarkDuplicates \
-        I=$dataDir/downloaded/$fileprefix.$subset.$condition.bam \
-        O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
-        MAX_RECORDS_IN_RAM=$maxReads \
-        PG=null \
-        TMP_DIR=$tmpDir \
-        VERBOSITY=$verbosity
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -161,9 +155,13 @@ if [ "$experiment" = "norealign" ]; then
     if !(has_state $state); then
 
         format_status "Indexing BAM"
-        format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
-        samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
-        
+        # Define Command
+        call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+
+
         # Update State on Exit
         put_state $? $state
         format_status "BAM Indexing Complete"
@@ -182,9 +180,12 @@ else
     if !(has_state $state); then
 
         format_status "Sorting BAM"
-        format_status "Command:\nsamtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
-        samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
-        
+        # Define Command
+        call="samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+
         # Update State on Exit
         put_state $? $state
         format_status "Sort BAM Complete"
@@ -200,8 +201,11 @@ else
     if !(has_state $state); then
 
         format_status "Indexing BAM Output"
-        format_status "Command:\nsamtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
-        samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam
+        # Define Command
+        call="samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -218,16 +222,8 @@ else
     if !(has_state $state); then
 
         format_status "MarkDuplicates Start"
-        format_status "Command:\njava -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $PICARD MarkDuplicates \
-        I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
-        MAX_RECORDS_IN_RAM=$maxReads \
-        PG=null \
-        TMP_DIR=$tmpDir"
-        java -Xmx$memory \
+        # Define Command
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $PICARD MarkDuplicates \
         I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
@@ -235,7 +231,10 @@ else
         M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
         MAX_RECORDS_IN_RAM=$maxReads \
         PG=null \
-        TMP_DIR=$tmpDir
+        TMP_DIR=$tmpDir"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -252,8 +251,11 @@ else
     if !(has_state $state); then
 
         format_status "Indexing BAM Output"
-        format_status "Command:\nsamtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
-        samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam
+        # Define Command
+        call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state

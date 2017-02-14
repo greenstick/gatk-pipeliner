@@ -159,13 +159,14 @@ if [ "$qualitymodel" = "nobqsr" ]; then
 
         # Copy Files & Rename to Maintain Consistency
         format_status "Copying BAM & BAI Files to Model Directory..."
-        format_status "Command:\ncp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir \
+        # Define Command
+        call="cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir \
         && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai"
-        cp $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.ba* $recalDir \
-        && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
-        && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai
-        
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+
         # Update State on Exit
         put_state $? $state
         format_status "BAM & BAI Copy Complete"
@@ -185,7 +186,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
     if !(has_state $state); then
 
         format_status "BQSR - Step 1 Start"
-        format_status "Command:\njava -Xmx$memory \
+        # Define Command
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -197,18 +199,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores $lowmemorymode \
         --logging_level $loggingLevel \
         $monitorThreads $noinmemoryindex $readbuffersize" # Additional Optional Args
-        java -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T BaseRecalibrator \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-        -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
-        -o $recalDir/logs/bqsr/recal_data_$condition.table \
-        --log_to_file $recalDir/logs/bqsr/log_$condition-recal1.txt \
-        -nct $ncores $lowmemorymode \
-        --logging_level $loggingLevel \
-        $monitorThreads $noinmemoryindex $readbuffersize # Additional Optional Args
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -225,7 +218,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
     if !(has_state $state); then
 
         format_status "BQSR - Step 2 Start"
-        format_status "Command:\njava -Xmx$memory \
+        # Define Command
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T BaseRecalibrator \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -238,19 +232,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -nct $ncores $lowmemorymode \
         --logging_level $loggingLevel \
         $monitorThreads $noinmemoryindex $readbuffersize" # Additional Optional Args
-        java -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T BaseRecalibrator \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        -knownSites $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-        -knownSites $PIPELINE_REF/Mills_and_1000G_gold_standard.indels.hg19.sites_modified.vcf \
-        -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
-        -o $recalDir/logs/bqsr/post_recal_data_$condition.table \
-        --log_to_file $recalDir/logs/bqsr/log_$condition-recal2.txt \
-        -nct $ncores $lowmemorymode \
-        --logging_level $loggingLevel \
-        $monitorThreads $noinmemoryindex $readbuffersize # Additional Optional Args
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -267,7 +251,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
     if !(has_state $state); then
 
         format_status "BQSR - Step 3 Start"
-        format_status "Command:\njava -Xmx$maxMemory \
+        # Define Commands
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T AnalyzeCovariates \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -277,16 +262,9 @@ if [ "$qualitymodel" = "bqsr" ]; then
         --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt \
         --logging_level $loggingLevel \
         $monitorThreads" # Additional Optional Args
-        java -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T AnalyzeCovariates \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -before $recalDir/logs/bqsr/recal_data_$condition.table \
-        -after $recalDir/logs/bqsr/post_recal_data_$condition.table \
-        -plots $recalDir/logs/bqsr/recalibration_plots_$condition.pdf \
-        --log_to_file $recalDir/logs/bqsr/log_$condition-generateplots.txt \
-        --logging_level $loggingLevel \
-        $monitorThreads # Additional Optional Args
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -303,7 +281,8 @@ if [ "$qualitymodel" = "bqsr" ]; then
     if !(has_state $state); then
 
         format_status "BQSR - Step 4 Start"
-        format_status "Command:\njava -Xmx$memory \
+        # Define Command
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T PrintReads \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -312,20 +291,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
         -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
         --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
         -nct $ncores \
-        --read_buffer_size $maxReads \
         --logging_level $loggingLevel \
         $monitorThreads" # Additional Optional Args
-        java -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T PrintReads \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        -BQSR $recalDir/logs/bqsr/recal_data_$condition.table \
-        -o $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam \
-        --log_to_file $recalDir/logs/bqsr/log_$condition-printreads.txt \
-        -nct $ncores \
-        --logging_level $loggingLevel \
-        $monitorThreads # Additional Optional Args
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -342,8 +312,11 @@ if [ "$qualitymodel" = "bqsr" ]; then
     if !(has_state $state); then
 
         format_status "Indexing BAM Output"
-        format_status "Command:\nsamtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$qualitymodel.bam"
-        samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam
+        # Define Command
+        call="samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state

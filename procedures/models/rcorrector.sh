@@ -89,18 +89,15 @@ if !(has_state $state); then
         #
 
         format_status "Running Rcorrector - Default Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        rcorrector \
+        # Define Command
+        call="rcorrector \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
         -t $ncores \
         -od $paramDir/modeled"
-        rcorrector \
-        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -k 31 \
-        -t $ncores \
-        -od $paramDir/modeled
+        # Print Command & Call
+        format_status "Command:\n$call"
+        $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -109,18 +106,15 @@ if !(has_state $state); then
         #
 
         format_status "Running Rcorrector - Custom Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        rcorrector \
+        # Define Command
+        call="rcorrector \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -k 31 \
         -t $ncores \
         -od $paramDir/modeled"
-        rcorrector \
-        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -k 31 \
-        -t $ncores \
-        -od $paramDir/modeled
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     fi
     

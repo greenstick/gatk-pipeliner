@@ -90,17 +90,16 @@ if !(has_state $state); then
 
         format_status "Running BFC - Default Parameters"
         # Call Error Model - Size Parameter = 3 Gigabase Human Genome (hg19)
-        format_status "Command:\n \
-        $BFC \
+        # Define Command
+        call="$BFC \
         -s 3g \
         -t $ncores \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
-        $BFC \
-        -s 3g \
-        -t $ncores \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -110,17 +109,15 @@ if !(has_state $state); then
 
         format_status "Running BFC - Custom Parameters"
         # Call Error Model - Size Parameter = 3 Gigabase Human Genome (hg19)
-        format_status "Command:\n \
-        $BFC \
+        # Define Command
+        call="$BFC \
         -s 3g \
         -t $ncores \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
-        $BFC \
-        -s 3g \
-        -t $ncores \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     fi
     

@@ -92,22 +92,17 @@ if !(has_state $state); then
         #
 
         format_status "Running BayesHammer - Default Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        python $BAYESHAMMER \
-        -o $paramDir/modeled/$readgroup \
-        --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --threads $ncores \
-        --memory $memory \
-        --only-error-correction \
-        --debug"
-        python $BAYESHAMMER \
+        # Define Command
+        call="python $BAYESHAMMER \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $allocMax \
         --only-error-correction \
-        --debug
+        --debug"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -116,22 +111,17 @@ if !(has_state $state); then
         #
 
         format_status "Running BayesHammer - Custom Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        python $BAYESHAMMER \
-        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
-        --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        --threads $ncores \
-        --memory $memory \
-        --only-error-correction \
-        --debug"
-        python $BAYESHAMMER \
+        # Define Command
+        call="python $BAYESHAMMER \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq \
         --12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --threads $ncores \
         --memory $allocMax \
         --only-error-correction \
-        --debug
+        --debug"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     fi
     

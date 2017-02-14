@@ -86,14 +86,13 @@ state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO
 if !(has_state $state); then
 
         format_status "Splitting FastQ to Fasta & Qual"
-        # Call Error Model & Move Outputs to Output Directory
-        format_status "Command:\n
-        python3 utils/fastq-to-fasta-qual.py \
+        # Define Command
+        call="python3 utils/fastq-to-fasta-qual.py \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup"
-        python3 utils/fastq-to-fasta-qual.py \
-        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-        -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         status=$?
@@ -115,30 +114,27 @@ if !(has_state $state); then
         #
 
         format_status "Running Bloocoo - $parameters Parameters"
-        # Call Error Model & Move Outputs to Output Directory
-        format_status "Command:\n
-        $BLOOCOO \
+        # Define Command
+        call="$BLOOCOO \
         -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores"
-        $BLOOCOO \
-        -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
-        -nb-cores $ncores
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     elif [ "$parameters" = "custom" ]; then
         
         format_status "Running Bloocoo - Custom Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        $BLOOCOO \
+        # Define Command
+        call="$BLOOCOO \
         -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
         -nb-cores $ncores \
         -slow \
         -high-precision"
-        $BLOOCOO \
-        -file $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.fasta \
-        -nb-cores $ncores \
-        -slow \
-        -high-precision
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+        
 
     fi
 
@@ -157,16 +153,14 @@ state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO
 if !(has_state $state); then
 
         format_status "Merging Fasta & Qual to FastQ"
-        # Call Error Model & Move Outputs to Output Directory
-        format_status "Command:\n
-        python3 utils/fasta-qual-to-fastq.py \
+        # Define Command
+        call="python3 utils/fasta-qual-to-fastq.py \
         -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
         -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
-        python3 utils/fasta-qual-to-fastq.py \
-        -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
-        -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
-        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         status=$?
@@ -182,10 +176,11 @@ state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BLOOCOO
 if !(has_state $state); then
 
         format_status "Cleaning Up Fasta & Qual Files"
-        # Call Error Model & Move Outputs to Output Directory
-        format_status "Command:\n
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta"
-        rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta
+        # Define Command
+        call="rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         status=$?

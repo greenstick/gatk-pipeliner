@@ -142,7 +142,8 @@ if $contamination; then
     if !(has_state $state); then
 
         format_status "ContEst Start"
-        format_status "Command:\njava -Xmx$maxMemory \
+        # Define Command
+        call="java -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T ContEst \
         --precision 0.001 \
@@ -156,21 +157,11 @@ if $contamination; then
         -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
         --logging_level $loggingLevel \
         $monitorThreads $readbuffersize" # Additional Optional Args
-        java -Xmx$maxMemory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T ContEst \
-        --precision 0.001 \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I:eval $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-        -I:genotype $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-        -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
-        -isr INTERSECTION \
-        --population ALL \
-        --log_to_file $recalDir/logs/contest/log_$experiment-cont_est_recal.txt \
-        -o $recalDir/logs/contest/cont_est_recal_$experiment.txt \
-        --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize # Additional Optional Args
-    
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+
+
         # Update State on Exit
         put_state $? $state
         format_status "ContEst Complete"
@@ -190,22 +181,8 @@ if $contamination; then
         format_status "Proportion Contamination: $contamination"
 
         format_status "MuTect2 Start"
-        format_status "Command:\njava -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T MuTect2 \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-        -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-        --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-        --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
-        --tumor_lod 10.0 \
-        --contamination_fraction_to_filter $contamination \
-        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
-        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
-        -nct $ncores \
-        --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize" # Additional Optional Args
-        java -Xmx$memory \
+        # Define Command
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -220,8 +197,10 @@ if $contamination; then
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
         -nct $ncores \
         --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize
-
+        $monitorThreads $readbuffersize" # Additional Optional Args
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -240,22 +219,8 @@ else
     if !(has_state $state); then
 
         format_status "MuTect2 Start"
-        format_status "Command:\njava -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T MuTect2 \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
-        -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
-        --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
-        --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
-        --tumor_lod 10.0 \
-        --contamination_fraction_to_filter $contamination \
-        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.raw.snps.indels.vcf \
-        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
-        -nct $ncores \
-        --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize" # Additional Optional Args
-        java -Xmx$memory \
+        # Define Command
+        call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -270,8 +235,10 @@ else
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
         -nct $ncores \
         --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize # Additional Optional Args
-
+        $monitorThreads $readbuffersize" # Additional Optional Args
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
         # Update State on Exit
         put_state $? $state
@@ -290,7 +257,11 @@ state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
 if !(has_state $state); then
 
     format_status "Copying VCFs to I/O Directory"
-    cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/
+    # Define Command
+    call="cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/"
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
 
     # Update State on Exit
     put_state $? $state

@@ -105,9 +105,12 @@ state="$fileprefix:BWA:1"
 if !(has_state $state); then
 
     format_status "BWA Index"
-    format_status "Command:\nbwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta"
-    bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta
-    
+    # Define Command
+    call="bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta"
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
+
     # Update State on Exit
     put_state $? $state
     format_status "BWA Index Complete"
@@ -150,9 +153,12 @@ if [ "$align" = "mem" ]; then
                 fi
 
                 # Call BWA mem
-                format_status "Command:\nbwa mem $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
-                bwa $align $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-                
+                # Define Command
+                call="bwa $align $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call
+
                 # Check for failed parallel call
                 put_state $? $substate
 
@@ -177,9 +183,12 @@ elif [ "$align" = "bwasw" ]; then
             if !(has_state $substate); then
 
                 # BWA bwasw
-                format_status "Command:\nbwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
-                bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam
-            
+                # Define Command
+                call="bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call
+
                 # Check for failed parallel call
                 put_state $? $substate
 

@@ -126,9 +126,12 @@ if  [ "$experiment" = "bayeshammer" ] || \
                 if !(has_state $substate); then
 
                     # No Model, Copy Data to Modeled Directory
-                    format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
-                    cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq
-                
+                    # Define Command
+                    call="cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+                    # Print & Call
+                    format_status "Command:\n$call"
+                    $call
+
                     # Check for failed parallel call
                     put_state $? $substate
 
@@ -145,8 +148,11 @@ if  [ "$experiment" = "bayeshammer" ] || \
 
             # Copy Data to Pre-Align Directory For Error Models
             format_status "Copying Read FASTQ Files to Pre-Alignment Directory..."
-            format_status "Command:\ncp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
-            cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/
+            # Define Command
+            call="cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
+            # Print & Call
+            format_status "Command:\n$call"
+            $call
     
             # Update State on Exit
             put_state $? $state
@@ -177,8 +183,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -195,8 +204,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -213,8 +225,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -231,8 +246,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -248,8 +266,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -266,8 +287,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -286,8 +310,11 @@ case "$experiment" in
                 # Run Error Model by Readgroup
                 # java Xmx$memory -jar $ERIF
                 # java Xmx$memory -jar $KGEM
-                format_status "Command:\nsource $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -304,8 +331,11 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
-                format_status "Command:\nsource $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -321,8 +351,11 @@ case "$experiment" in
                 # Extract Read Group to Pass Through
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-                format_status "Command:\nsource $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -339,7 +372,12 @@ case "$experiment" in
                 suffix=$(echo "$file" | sed "s|$paramDir/pre-align/fastq/$fileprefix.$subset.$condition.||")
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 printf "Command:\nsource $proceduresDir/modeledels/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Define Command
+                call=""
                 source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -357,8 +395,11 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
                 # perl $RCORRECTOR
-                format_status "Command:\nsource $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -376,8 +417,11 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
                 # source $SEECER
-                format_status "Command:\nsource $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"
@@ -395,9 +439,11 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 # Run Error Model by Readgroup
                 # python $SHORAH
-                format_status "Command:\n \
-                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
-                source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                # Define Command
+                call="source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
+                # Print & Call
+                format_status "Command:\n$call"
+                $call 
             )
         done
         format_status "Error Model Complete"

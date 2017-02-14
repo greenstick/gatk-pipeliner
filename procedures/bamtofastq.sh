@@ -86,9 +86,12 @@ state="$fileprefix.$subset.$condition:BAMTOFASTQ:1"
 if !(has_state $state); then
 
     format_status "Shuffling & Splitting Merged BAM"
-    format_status "Command:\nbam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition"
-    bam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition
-    
+    # Define Command
+    call="bam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition"
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
+
     # Update State on Exit
     put_state $? $state
     format_status "Splitting Merged BAM Complete"
@@ -116,9 +119,13 @@ for file in $files
         if !(has_state $substate); then
             
             # Call Bam to FastQ
-            format_status "Command:\nsamtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
-            samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
-        
+            # Define Command
+            call="samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+            # Print & Call
+            format_status "Command:\n$call"
+            $call
+
+
             # Check for failed parallel call
             put_state $? $substate
 

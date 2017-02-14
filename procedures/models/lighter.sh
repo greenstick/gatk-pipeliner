@@ -83,13 +83,13 @@ state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:LIGHTER
 if !(has_state $state); then
 
      format_status "Splitting Paired End FASTQ to Single End"
-     # Call Error Model
-     format_status "Command:\npython3 utils/paired-end-to-single-ends.py \
+     # Define Command
+     call="python3 utils/paired-end-to-single-ends.py \
      -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
      -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
-     python3 utils/paired-end-to-single-ends.py \
-     -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
-     -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup
+     # Print & Call
+     format_status "Command:\n$call"
+     $call
      # Update State on Exit
      status=$?
      put_state $status $state
@@ -111,20 +111,16 @@ if !(has_state $state); then
         #
 
         format_status "Running Lighter - Default Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        lighter \
+        # Define Command
+        call="lighter \
         -od $paramDir/modeled \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
         -k 23 3250000000 0.225"
-        lighter \
-        -od $paramDir/modeled \
-        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
-        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
-        -t $ncores \
-        -k 23 3250000000 0.225
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -133,20 +129,16 @@ if !(has_state $state); then
         #
 
         format_status "Running Lighter - Custom Parameters"
-        # Call Error Model
-        format_status "Command:\n
-        lighter \
+        # Define Command
+        call="lighter \
         -od $paramDir/modeled \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -t $ncores \
         -k 23 3250000000 0.1"
-        lighter \
-        -od $paramDir/modeled \
-        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
-        -r $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
-        -t $ncores \
-        -k 23 3250000000 0.1
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
 
     fi
     
@@ -164,20 +156,19 @@ fi
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:LIGHTER:3"
 if !(has_state $state); then
 
-     format_status "Merging Single End FASTQ to Interleaved Paired End"
-     # Call Error Model
-     format_status "Command:\n
-     python3 utils/single-ends-to-paired-end.py \
-     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
-     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
-     -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
-     python3 utils/single-ends-to-paired-end.py \
-     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
-     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
-     -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup
-     # Update State on Exit
-     status=$?
-     put_state $status $state
+    format_status "Merging Single End FASTQ to Interleaved Paired End"
+    # Define Command
+    call="python3 utils/single-ends-to-paired-end.py \
+    -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
+    -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
+    -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
+
+    # Update State on Exit
+    status=$?
+    put_state $status $state
 
     # Update State on Exit
     status=$?
