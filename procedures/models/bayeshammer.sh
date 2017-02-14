@@ -78,11 +78,32 @@ dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
 # 
-# Run BayesHammer
+# Sort Reads Prior to Error Correction
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BAYESHAMMER:1"
+if !(has_state $state); then
+
+    # Sort FastQ
+    # Define Command
+    call="fastqutils sort \
+    $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+    -T $PIPELINE_HOME/$subset/tmp -cs 1000000 > \
+    $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && \
+    mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq" 
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
+
+    # Update State on Exit
+    status=$?
+    put_state $status $state
+
+fi
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BAYESHAMMER:2"
 if !(has_state $state); then
 
     # Test for Paired Ends
@@ -100,7 +121,7 @@ if !(has_state $state); then
     else
         single="-s $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
         format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
-    fi
+    fi  
 
     if [ "$parameters" = "default" ]; then
         

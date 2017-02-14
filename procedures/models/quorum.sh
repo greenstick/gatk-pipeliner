@@ -76,12 +76,37 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
+#
+# Sort Reads Prior To Error Correcton
+#
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
+if !(has_state $state); then
+
+    # Sort FastQ
+    # Define Command
+    call="fastqutils sort \
+    $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+    -T $PIPELINE_HOME/$subset/tmp -cs 1000000 > \
+    $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && \
+    mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq" 
+    # Print & Call
+    format_status "Command:\n$call"
+    $call
+
+    # Update State on Exit
+    status=$?
+    put_state $status $state
+
+fi
+
 # 
 # Run Quorum
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
+state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:2"
 if !(has_state $state); then
 
     # Test for Paired Ends
@@ -92,10 +117,14 @@ if !(has_state $state); then
 
     # Is Interleaved?
     paired=""
+    single=""
     if [ $end1 ] && [ $end2 ]; then
-        paired="--paired-files"
-        format_status "Interleaved Paired-End Detected (/1 = $end1, /2 = $end2)"
-    fi
+        paired="--12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+        format_status "Interleaved Paired-End Detected  (/1 = $end1, /2 = $end2)"
+    else
+        single="-s $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+        format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
+    fi  
 
     if [ "$parameters" = "default" ]; then
 
@@ -108,7 +137,7 @@ if !(has_state $state); then
         call="quorum \
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -t $ncores \
+        -t $ncores \ 
         --size 43000000000 \
         --no-discard \
         --min-q-char 33 \

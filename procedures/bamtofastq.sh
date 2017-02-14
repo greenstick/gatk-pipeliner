@@ -85,7 +85,7 @@ format_status "Running BAM to FASTQ Script"
 state="$fileprefix.$subset.$condition:BAMTOFASTQ:1"
 if !(has_state $state); then
 
-    format_status "Shuffling & Splitting Merged BAM"
+    format_status "Splitting Merged BAM"
     # Define Command
     call="bam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition"
     # Print & Call
@@ -125,11 +125,13 @@ for file in $files
             format_status "Command:\n$call"
             $call
 
-
             # Check for failed parallel call
             put_state $? $substate
 
         fi
+
+
+
     ) &
 
 done
