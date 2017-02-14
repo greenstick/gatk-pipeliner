@@ -88,7 +88,7 @@ if !(has_state $state); then
     # Define Command
     call="cat $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
     | paste - - - - \
-    | sort -k1,1 -S 16G \
+    | sort -k 1,1 -S 16G \
     | tr '\t' '\n' \
     > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq \
     && $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
