@@ -96,7 +96,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 100000000000000 \
+        --size 43000000000 \
         --no-discard \
         --min-q-char 33 \
         --debug"
@@ -116,7 +116,7 @@ if !(has_state $state); then
         $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
-        --size 100000000000000 \
+        --size 43000000000 \
         --no-discard \
         --min-q-char 33 \
         --debug"
