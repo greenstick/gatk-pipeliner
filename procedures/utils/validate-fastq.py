@@ -4,6 +4,24 @@
 # Note: This Script Has Only Been Validated on FastQ
 #
 
+def chunks (iterator, size):
+    """
+    Split File into Chunks for Processing - Not Yet Implemented
+    """
+    reads = True
+    while reads:
+        reads = []
+        while len(chunk) < size:
+            try:
+                reads = iterator.next()
+            except StopIteration:
+                reads = None
+            if reads is None:
+                break
+            chunk.append(reads)
+        if chunk:
+            yield chunk
+
 if __name__ == "__main__":
 
     # Imports

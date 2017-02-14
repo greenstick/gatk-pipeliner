@@ -120,7 +120,6 @@ if !(has_state $state); then
         format_status "Command:\n$call"
         $call
         
-
     fi
     
     # Update State on Exit

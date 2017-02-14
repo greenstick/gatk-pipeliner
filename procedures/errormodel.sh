@@ -373,8 +373,7 @@ case "$experiment" in
                 readgroup=$(echo "$suffix" | sed "s|.fastq$||")
                 printf "Command:\nsource $proceduresDir/modeledels/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Define Command
-                call=""
-                source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory
+                call="source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
                 $call 
