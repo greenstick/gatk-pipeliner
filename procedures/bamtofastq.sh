@@ -149,7 +149,7 @@ for file in $files
     do (
         # Get Read Group to Process
         suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
-        readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+        readgroup=$(echo "$suffix" | sed "s|.fastq$||" | sed "s|.sorted$||")
         substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:3"
 
         if !(has_state $substate); then
