@@ -76,12 +76,12 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
-# 
-# Run Quorum
-# 
+#
+# FASTQ File Pre-Processing
+#
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
 if !(has_state $state); then
 
     # Test for Paired Ends
@@ -92,14 +92,37 @@ if !(has_state $state); then
 
     # Is Interleaved?
     paired=""
-    single=""
     if [ $end1 ] && [ $end2 ]; then
-        paired="--12 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+        paired="--paired-files"
         format_status "Interleaved Paired-End Detected  (/1 = $end1, /2 = $end2)"
+        format_status "Splitting Paired End FASTQ to Single End"
+        # Define Command
+        call="python3 utils/paired-end-to-single-ends.py \
+        -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
+        # Print & Call
+        format_status "Command:\n$call"
+        $call
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+        input=$dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup*
     else
-        single="-s $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
         format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
+        input=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+        status=$?
+        put_state $status $state
     fi  
+
+fi
+
+# 
+# Run Quorum
+# 
+
+# State Check - Run Block if it Has Not Already Been Executed Successfully
+state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
+if !(has_state $state); then
 
     if [ "$parameters" = "default" ]; then
 
@@ -110,9 +133,9 @@ if !(has_state $state); then
         format_status "Running Quorum - $parameters Parameters"
         # Define Command
         call="quorum \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        $input \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -t $ncores \ 
+        -t $ncores \
         --size 43000000000 \
         --no-discard \
         --min-q-char 33 \
@@ -130,7 +153,7 @@ if !(has_state $state); then
         format_status "Running Quorum - $parameters Parameters"
         # Define Command
         call="quorum \
-        $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
+        $input \
         --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
         -t $ncores \
         --size 43000000000 \
