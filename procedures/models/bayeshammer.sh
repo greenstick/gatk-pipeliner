@@ -77,29 +77,8 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
-# 
-# Sort Reads Prior to Error Correction
-# 
-
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BAYESHAMMER:1"
-if !(has_state $state); then
-
-    # Sort FastQ Inplace
-    # Define Command
-    call="cat $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | paste - - - - | sort -k 1,1 -S 16G | tr \t \n > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
-    # Print & Call
-    format_status "Command:\n$call"
-    eval $call
-
-    # Update State on Exit
-    status=$?
-    put_state $status $state
-
-fi
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BAYESHAMMER:2"
 if !(has_state $state); then
 
     # Test for Paired Ends
@@ -117,7 +96,7 @@ if !(has_state $state); then
     else
         single="-s $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
         format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
-    fi  
+    fi
 
     if [ "$parameters" = "default" ]; then
         

@@ -76,33 +76,12 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
-#
-# Sort Reads Prior To Error Correcton
-#
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
-if !(has_state $state); then
-
-    # Sort FastQ Inplace
-    # Define Command
-    call="cat $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | paste - - - - | sort -k 1,1 -S 16G | tr \t \n > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
-    # Print & Call
-    format_status "Command:\n$call"
-    eval $call
-
-    # Update State on Exit
-    status=$?
-    put_state $status $state
-
-fi
-
 # 
 # Run Quorum
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:2"
+state="$fileprefix.$subset.$condition.$experiment.$parameters:QUORUM:1"
 if !(has_state $state); then
 
     # Test for Paired Ends

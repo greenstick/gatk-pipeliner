@@ -82,7 +82,7 @@ paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BFC:1"
 if !(has_state $state); then
 
-    # No Test for Paire / Single Required
+    # No Test for Paired / Single Reads Required
 
     if [ "$parameters" = "default" ]; then
         
@@ -91,7 +91,7 @@ if !(has_state $state); then
         #
 
         format_status "Running BFC - Default Parameters"
-        # Call Error Model - Size Parameter = 3 Gigabase Human Genome (hg19)
+        # Call Error Model - Size Parameter = Approx. 3 Gigabase Human Genome (hg19)
         # Define Command
         call="$BFC \
         -s 3g \
@@ -110,7 +110,7 @@ if !(has_state $state); then
         #
 
         format_status "Running BFC - Custom Parameters"
-        # Call Error Model - Size Parameter = 3 Gigabase Human Genome (hg19)
+        # Call Error Model - Size Parameter = Approx. 3 Gigabase Human Genome (hg19)
         # Define Command
         call="$BFC \
         -s 3g \

@@ -75,7 +75,7 @@ Max Memory          = $maxMemory
 dataDir=$PIPELINE_HOME/$subset
 tmpDir=$PIPELINE_HOME/$subset/tmp
 
-format_status "Running BAM to FASTQ Script"
+format_status "Running BAM to FastQ Script"
 
 #
 # Shuffle & Split BAM
@@ -103,7 +103,7 @@ fi
 #
 
 # State Management Delegated to Substates
-format_status "Running Picard BAM to FASTQ"
+format_status "Running Samtools BAM to FastQ"
 # Retrieve Files
 files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
 
@@ -130,12 +130,45 @@ for file in $files
 
         fi
 
-
-
     ) &
 
 done
 wait # Prevent Premature Exiting of Script
+
+#
+# Sort FastQs
+#
+
+# State Management Delegated to Substates
+format_status "Sorting FastQs"
+# Retrieve Files
+files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
+
+for file in $files
+    # In Parallel
+    do (
+        # Get Read Group to Process
+        suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
+        readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+        substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:3"
+
+        if !(has_state $substate); then
+
+            # Sort FastQ Inplace
+            # Define Command
+            call="cat $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | paste - - - - | sort -k 1,1 -S 16G | tr \t \n > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+            # Update State on Exit
+            status=$?
+            put_state $status $substate
+
+        fi
+    )
+done
+
 format_status "BAM to FASTQ Complete"
 
 format_status "Done"
