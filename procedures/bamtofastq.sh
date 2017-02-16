@@ -120,7 +120,7 @@ for file in $files
             
             # Call Bam to FastQ
             # Define Command
-            call="samtools sort -n -l 0 -m $memory -@ $ncores -T $dataDir/tmp/ $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam"
+            call="samtools sort -n -m $memory -@ $ncores -T $dataDir/tmp/ $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam"
             # Print & Call
             format_status "Command:\n$call"
             $call
@@ -130,10 +130,9 @@ for file in $files
 
         fi
 
-    ) &
+    )
 
 done
-wait # Prevent Premature Exiting of Script
 
 #
 # Bam to FastQ
@@ -167,10 +166,9 @@ for file in $files
 
         fi
 
-    ) &
+    )
 
 done
-wait # Prevent Premature Exiting of Script
 
 format_status "BAM to FASTQ Complete"
 
