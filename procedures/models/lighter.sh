@@ -89,7 +89,7 @@ if !(has_state $state); then
      -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
      # Print & Call
      format_status "Command:\n$call"
-     $call
+     eval $call
      # Update State on Exit
      status=$?
      put_state $status $state
@@ -120,7 +120,7 @@ if !(has_state $state); then
         -k 23 3250000000 0.225"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -138,7 +138,7 @@ if !(has_state $state); then
         -k 23 3250000000 0.1"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     fi
     
@@ -164,7 +164,7 @@ if !(has_state $state); then
     -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
     # Print & Call
     format_status "Command:\n$call"
-    $call
+    eval $call
 
     # Update State on Exit
     status=$?

@@ -138,7 +138,7 @@ if [ "$experiment" = "norealign" ]; then
         VERBOSITY=$verbosity"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -159,7 +159,7 @@ if [ "$experiment" = "norealign" ]; then
         call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
 
         # Update State on Exit
@@ -184,7 +184,7 @@ else
         call="samtools sort -m $memory -@ $ncores -T $tmpDir $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam -o $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -205,7 +205,7 @@ else
         call="samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -234,7 +234,7 @@ else
         TMP_DIR=$tmpDir"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -255,7 +255,7 @@ else
         call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state

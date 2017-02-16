@@ -109,7 +109,7 @@ if !(has_state $state); then
     call="bwa index -a bwtsw $PIPELINE_REF/Homo_sapiens_assembly19.fasta"
     # Print & Call
     format_status "Command:\n$call"
-    $call
+    eval $call
 
     # Update State on Exit
     put_state $? $state
@@ -157,7 +157,7 @@ if [ "$align" = "mem" ]; then
                 call="bwa $align $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call
+                eval $call
 
                 # Check for failed parallel call
                 put_state $? $substate
@@ -187,7 +187,7 @@ elif [ "$align" = "bwasw" ]; then
                 call="bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call
+                eval $call
 
                 # Check for failed parallel call
                 put_state $? $substate

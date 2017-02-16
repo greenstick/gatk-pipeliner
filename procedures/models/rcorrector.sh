@@ -97,7 +97,7 @@ if !(has_state $state); then
         -od $paramDir/modeled"
         # Print Command & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -114,7 +114,7 @@ if !(has_state $state); then
         -od $paramDir/modeled"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     fi
     

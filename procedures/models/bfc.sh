@@ -100,7 +100,7 @@ if !(has_state $state); then
         > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
 
     elif [ "$parameters" = "custom" ]; then
@@ -119,7 +119,7 @@ if !(has_state $state); then
         > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     fi
     

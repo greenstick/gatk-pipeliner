@@ -165,7 +165,7 @@ if [ "$qualitymodel" = "nobqsr" ]; then
         && mv $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.bam.bai $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam.bai"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -201,7 +201,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         $monitorThreads $noinmemoryindex $readbuffersize" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -234,7 +234,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         $monitorThreads $noinmemoryindex $readbuffersize" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -264,7 +264,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         $monitorThreads" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -295,7 +295,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         $monitorThreads" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -316,7 +316,7 @@ if [ "$qualitymodel" = "bqsr" ]; then
         call="samtools index $recalDir/$fileprefix.$subset.$condition.$experiment.$parameters.$qualitymodel.bam"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state

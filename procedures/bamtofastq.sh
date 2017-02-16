@@ -90,7 +90,7 @@ if !(has_state $state); then
     call="bam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition"
     # Print & Call
     format_status "Command:\n$call"
-    $call
+    eval $call
 
     # Update State on Exit
     put_state $? $state

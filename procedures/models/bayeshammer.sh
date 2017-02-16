@@ -114,7 +114,7 @@ if !(has_state $state); then
         $paired $single --debug "
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     elif [ "$parameters" = "custom" ]; then
 
@@ -132,7 +132,7 @@ if !(has_state $state); then
         $paired $single --debug "
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     fi
     

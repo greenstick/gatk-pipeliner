@@ -123,7 +123,7 @@ for file in $files
             call="eval \"samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam\""
             # Print & Call
             format_status "Command:\n$call"
-            $call
+            eval $call
 
             # Check for failed parallel call
             put_state $? $substate
@@ -151,7 +151,7 @@ if !(has_state $state); then
     call="samtools merge -r -f $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.bam $files"
     # Print & Call
     format_status "Command:\n$call"
-    $call
+    eval $call
 
     # Update State on Exit
     put_state $? $state

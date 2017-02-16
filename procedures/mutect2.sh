@@ -159,7 +159,7 @@ if $contamination; then
         $monitorThreads $readbuffersize" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
 
         # Update State on Exit
@@ -200,7 +200,7 @@ if $contamination; then
         $monitorThreads $readbuffersize" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -238,7 +238,7 @@ else
         $monitorThreads $readbuffersize" # Additional Optional Args
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -261,7 +261,7 @@ if !(has_state $state); then
     call="cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/"
     # Print & Call
     format_status "Command:\n$call"
-    $call
+    eval $call
 
     # Update State on Exit
     put_state $? $state

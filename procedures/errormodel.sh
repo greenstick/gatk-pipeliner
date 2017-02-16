@@ -130,7 +130,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
                     call="cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
                     # Print & Call
                     format_status "Command:\n$call"
-                    $call
+                    eval $call
 
                     # Check for failed parallel call
                     put_state $? $substate
@@ -152,7 +152,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
             call="cp $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq $paramDir/pre-align/fastq/"
             # Print & Call
             format_status "Command:\n$call"
-            $call
+            eval $call
     
             # Update State on Exit
             put_state $? $state
@@ -187,7 +187,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/bayeshammer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -208,7 +208,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/bfc.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -229,7 +229,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/blessec.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -250,7 +250,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/bloocoo.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -270,7 +270,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/decgpu.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -291,7 +291,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/karect.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -314,7 +314,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/kgem.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -335,7 +335,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/lighter.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -355,7 +355,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/musket.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -375,7 +375,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/quorum.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -397,7 +397,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/rcorrector.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -419,7 +419,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/seecer.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
@@ -441,7 +441,7 @@ case "$experiment" in
                 call="source $proceduresDir/models/shorah.sh -f=$fileprefix -s=$subset -c=$condition -g=$readgroup -x=$experiment -p=$parameters -n=$ncores -m=$memory"
                 # Print & Call
                 format_status "Command:\n$call"
-                $call 
+                eval $call 
             )
         done
         format_status "Error Model Complete"
