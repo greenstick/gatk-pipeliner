@@ -122,7 +122,7 @@ for file in $files
             call="samtools sort -n -m $memory -@ $ncores $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam"
             # Print & Call
             format_status "Command:\n$call"
-            $call
+            eval $call
 
             # Check for failed parallel call
             put_state $? $substate
@@ -158,7 +158,7 @@ for file in $files
             call="samtools fastq -t -O $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
             # Print & Call
             format_status "Command:\n$call"
-            $call
+            eval $call
 
             # Check for failed parallel call
             put_state $? $substate
