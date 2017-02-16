@@ -87,7 +87,7 @@ if !(has_state $state); then
 
     format_status "Splitting Merged BAM"
     # Define Command
-    call="bam splitBam -i $dataDir/downloaded/$fileprefix.$subset.$condition.bam -o $dataDir/downloaded/split/$fileprefix.$subset.$condition"
+    call="samtools split $dataDir/downloaded/$fileprefix.$subset.$condition.bam -f $dataDir/downloaded/split/$fileprefix.$subset.$condition.%!.%."
     # Print & Call
     format_status "Command:\n$call"
     eval $call
