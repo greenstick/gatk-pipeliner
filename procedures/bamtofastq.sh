@@ -99,11 +99,11 @@ if !(has_state $state); then
 fi
 
 #
-# Bam to FastQ
+# Sort BAMs
 #
 
 # State Management Delegated to Substates
-format_status "Running Samtools BAM to FastQ"
+format_status "Running Samtools Sort BAM"
 # Retrieve Files
 files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam))
 
@@ -120,7 +120,7 @@ for file in $files
             
             # Call Bam to FastQ
             # Define Command
-            call="samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+            call="samtools sort -n -l 0 -m $memory -@ $ncores -T $dataDir/tmp/ $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam"
             # Print & Call
             format_status "Command:\n$call"
             $call
@@ -136,38 +136,41 @@ done
 wait # Prevent Premature Exiting of Script
 
 #
-# Sort FastQs
+# Bam to FastQ
 #
 
 # State Management Delegated to Substates
-format_status "Sorting FastQs"
+format_status "Running Samtools BAM to FastQ"
 # Retrieve Files
-files=$(echo $(ls $dataDir/fastq/split/$fileprefix.$subset.$condition.*.fastq))
+files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.*.bam))
 
 for file in $files
     # In Parallel
-    do (
+    do ( 
         # Get Read Group to Process
-        suffix=$(echo "$file" | sed "s|$dataDir/fastq/split/$fileprefix.$subset.$condition.||")
-        readgroup=$(echo "$suffix" | sed "s|.fastq$||" | sed "s|.sorted$||")
+        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.||")
+        readgroup=$(echo "$suffix" | sed "s|.bam$||")
         substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:3"
-
+        
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
         if !(has_state $substate); then
-
-            # Sort FastQ Inplace
+            
+            # Call Bam to FastQ
             # Define Command
-            call="cat $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | paste - - - - | sort -k 1,1 -S 16G | tr \t \n > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq && mv $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.sorted.fastq $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+            call="samtools fastq -t $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
             # Print & Call
             format_status "Command:\n$call"
-            eval $call
+            $call
 
-            # Update State on Exit
-            status=$?
-            put_state $status $substate
+            # Check for failed parallel call
+            put_state $? $substate
 
         fi
-    )
+
+    ) &
+
 done
+wait # Prevent Premature Exiting of Script
 
 format_status "BAM to FASTQ Complete"
 
