@@ -9,30 +9,31 @@
 
 # Processing Steps:
 #
-# Step    Procedure           State               Input       Output      
-# 1       bamtofastq.sh       BAMTOFASTQ:1        bam         bam
-# 2       bamtofastq.sh       BAMTOFASTQ:2        bam         fastq
-# 3       errormodel.sh       ERRORMODEL:1        fastq       fastq
-# 4       errormodel.sh       BAYESHAMMER:1       fastq       fastq
-# 5       errormodel.sh       BLOOCOO:1           fastq       fastq
-# 6       errormodel.sh       QUORUM:1            fastq       fastq
-# 7       bwa.sh              BWA:1               fastq       fai
-# 8       bwa.sh              BWA:2               fastq       bam
-# 9       mergealignment.sh   MERGEALIGNMENT:1    bam         bam
-# 10      mergealignment.sh   MERGEALIGNMENT:2    bam         bam
-# 11      markduplicates.sh   MARKDUPLICATES:1    bam         bam
-# 12      markduplicates.sh   MARKDUPLICATES:2    bam         bam
-# 13      markduplicates.sh   MARKDUPLICATES:3    bam         bam
-# 14      markduplicates.sh   MARKDUPLICATES:4    bam         bam
-# 15      bqsr.sh             NOBQSR:1            bam         bam
-# 16      bqsr.sh             BQSR:1              bam         table
-# 17      bqsr.sh             BQSR:2              bam         table
-# 18      bqsr.sh             BQSR:3              bam         pdf
-# 19      bqsr.sh             BQSR:4              bam         bam
-# 20      bqsr.sh             BQSR:5              bam         bai
-# 21      mutect2.sh          MUTECT2:1           bam         txt
-# 22      mutect2.sh          MUTECT2:2           bam         vcf
-# 23      mutect2.sh          MUTECT2:3           vcf         vcf
+# Step    Procedure           Subroutine        State               Input       Output      
+# 1.1     bamtofastq.sh       Split Merged BAM  BAMTOFASTQ:1        bam         bam
+# 1.2     bamtofastq.sh       Sort BAM          BAMTOFASTQ:1        bam         bam
+# 1.3     bamtofastq.sh       BAM to FASTQ      BAMTOFASTQ:2        bam         fastq
+# 2.1     errormodel.sh       Copy Data         ERRORMODEL:1        fastq       fastq
+# 2.2     errormodel.sh       BAYESHAMMER:1       fastq       fastq
+# 2.2     errormodel.sh       BLOOCOO:1           fastq       fastq
+# 2.2     errormodel.sh       QUORUM:1            fastq       fastq
+# 3.1     bwa.sh              BWA:1               fastq       fai
+# 3.2     bwa.sh              BWA:2               fastq       bam
+# 4.1     mergealignment.sh   MERGEALIGNMENT:1    bam         bam
+# 4.2     mergealignment.sh   MERGEALIGNMENT:2    bam         bam
+# 5.1     markduplicates.sh   MARKDUPLICATES:1    bam         bam
+# 5.2     markduplicates.sh   MARKDUPLICATES:2    bam         bam
+# 5.3     markduplicates.sh   MARKDUPLICATES:3    bam         bam
+# 5.4     markduplicates.sh   MARKDUPLICATES:4    bam         bam
+# 6.1     bqsr.sh             NOBQSR:1            bam         bam
+# 6.2     bqsr.sh             BQSR:1              bam         table
+# 6.3     bqsr.sh             BQSR:2              bam         table
+# 6.4     bqsr.sh             BQSR:3              bam         pdf
+# 6.5     bqsr.sh             BQSR:4              bam         bam
+# 6.6     bqsr.sh             BQSR:5              bam         bai
+# 7.1     mutect2.sh          MUTECT2:1           bam         txt
+# 7.2     mutect2.sh          MUTECT2:2           bam         vcf
+# 7.3     mutect2.sh          MUTECT2:3           vcf         vcf
 
 #
 # References / Locations
@@ -81,6 +82,7 @@ mkdir -p set{1..6}/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,bless
 mkdir -p set{1..6}/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
 mkdir -p set{1..6}/{fastq,downloaded,tmp}
 mkdir -p set{1..6}/downloaded/{intervals,metrics,original,split}
+mkdir -p set{1..6}/downloaded/split/sorted
 mkdir -p set{1..6}/fastq/{fastqc,split}
 mkdir -p set{1..6}/fastq/split/{unpaired,unmerged}
 
@@ -108,6 +110,7 @@ while true; do
             mkdir -p dev/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/recal/bqsr/logs/bqsr
             mkdir -p dev/{fastq,downloaded,tmp}
             mkdir -p dev/downloaded/{intervals,metrics,original,split}
+            mkdir -p dev/downloaded/split/sorted
             mkdir -p dev/fastq/{fastqc,split}
             mkdir -p dev/fastq/split/{unpaired,unmerged}
             break
@@ -115,7 +118,7 @@ while true; do
         [Nn]* ) 
             break
             ;;
-        * ) echo "Please answer yes [y] or no [n].";;
+        * ) echo "Requires yes [y] or no [n] input.";;
     esac
 done
 
@@ -165,7 +168,7 @@ while true; do
         [Nn]* ) 
             break
             ;;
-        * ) echo "Please answer yes [y] or no [n].";;
+        * ) echo "Requires yes [y] or no [n] input.";;
     esac
 done
 
@@ -185,7 +188,7 @@ while true; do
         [Nn]* ) 
             break
             ;;
-        * ) echo "Please answer yes [y] or no [n].";;
+        * ) echo "Requires yes [y] or no [n] input.";;
     esac
 done
 
@@ -206,7 +209,7 @@ while true; do
         [Nn]* ) 
             break
             ;;
-        * ) echo "Please answer yes [y] or no [n].";;
+        * ) echo "Requires yes [y] or no [n] input.";;
     esac
 done
 

@@ -138,7 +138,7 @@ for file in $files
 
             # Call BBMap shuffle.sh
             # Define Command
-            call="shuffle.sh -Xmx$memory in=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq out=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+            call="shuffle.sh -Xmx$memory in=$file out=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
             # Print & Call
             format_status "Command:\n$call"
             eval $call
@@ -175,9 +175,9 @@ if [ "$align" = "mem" ]; then
             if !(has_state $substate); then
 
                 # Test for Paired Ends
-                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/1"
+                head -n 1000 $file | grep -qE "^@.*/1"
                 end1=$?
-                head -n 1000 $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq | grep -qE "^@.*/2"
+                head -n 1000 $file | grep -qE "^@.*/2"
                 end2=$?
 
                 # Is Interleaved?
@@ -189,7 +189,7 @@ if [ "$align" = "mem" ]; then
 
                 # Call BWA mem
                 # Define Command
-                call="bwa $align $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
+                call="bwa $align $paired -M -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $file > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
                 # Print & Call
                 format_status "Command:\n$call"
                 eval $call
@@ -219,7 +219,7 @@ elif [ "$align" = "bwasw" ]; then
 
                 # BWA bwasw
                 # Define Command
-                call="bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
+                call="bwa $align -t $ncores $PIPELINE_REF/Homo_sapiens_assembly19.fasta $file > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam"
                 # Print & Call
                 format_status "Command:\n$call"
                 eval $call

@@ -127,7 +127,7 @@ if  [ "$experiment" = "bayeshammer" ] || \
 
                     # No Model, Copy Data to Modeled Directory
                     # Define Command
-                    call="cp $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+                    call="cp $file $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
                     # Print & Call
                     format_status "Command:\n$call"
                     eval $call

@@ -117,10 +117,9 @@ for file in $files
         # Run Command
         if !(has_state $substate); then
 
-            format_status "Command:\nsamtools addreplacerg $rgArgs $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam" 
-            # Insert Read Groups into New BAM - WARNING USES EVAL
+            # Insert Read Groups into New BAM
             # Define Command
-            call="eval \"samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam\""
+            call="samtools addreplacerg ${rgArgs[@]} $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.sam > $paramDir/post-align/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.bam"
             # Print & Call
             format_status "Command:\n$call"
             eval $call

@@ -39,6 +39,12 @@ for i in "$@"
         shift # Per Core Memory Requirement
         ;;
 
+    # Directory Cleanup (Voids All Other Parameters)
+
+        --clean)
+        cleanOpt=true
+        ;;
+
     # Invalid Argument Handler
 
         *)
@@ -52,10 +58,12 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="12"
 memoryDef="8G"
+cleanDef=false
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
+clean=${cleanOpt:-$cleanDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -69,6 +77,7 @@ Condition           = $condition
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
+Do Cleanup          = $clean
 \n"
 
 # Set Directories
@@ -119,7 +128,7 @@ for file in $files
             
             # Call Bam to FastQ
             # Define Command
-            call="samtools sort -n -m $memory -@ $ncores $dataDir/downloaded/split/$fileprefix.$subset.$condition.$readgroup.bam > $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam"
+            call="samtools sort -n -m $memory -@ $ncores $file > $dataDir/downloaded/split/sorted/$fileprefix.$subset.$condition.$readgroup.bam"
             # Print & Call
             format_status "Command:\n$call"
             eval $call
@@ -140,13 +149,13 @@ done
 # State Management Delegated to Substates
 format_status "Running Samtools BAM to FastQ"
 # Retrieve Files
-files=$(echo $(ls $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.*.bam))
+files=$(echo $(ls $dataDir/downloaded/split/sorted/$fileprefix.$subset.$condition.*.bam))
 
 for file in $files
     # In Parallel
     do ( 
         # Get Read Group to Process
-        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.||")
+        suffix=$(echo "$file" | sed "s|$dataDir/downloaded/split/sorted/$fileprefix.$subset.$condition.||")
         readgroup=$(echo "$suffix" | sed "s|.bam$||")
         substate="$fileprefix.$subset.$condition.$readgroup:BAMTOFASTQ:3"
         
@@ -155,7 +164,7 @@ for file in $files
             
             # Call Bam to FastQ
             # Define Command
-            call="samtools fastq -t -O $dataDir/downloaded/split/$fileprefix.$subset.$condition.sorted.$readgroup.bam > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
+            call="samtools fastq -t -O $file > $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq"
             # Print & Call
             format_status "Command:\n$call"
             eval $call
@@ -168,6 +177,12 @@ for file in $files
     )
 
 done
+
+# Run Cleanup
+if $clean; then
+    rm $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam
+    rm $dataDir/downloaded/split/sorted/$fileprefix.$subset.$condition.*.bam
+fi
 
 format_status "BAM to FASTQ Complete"
 
