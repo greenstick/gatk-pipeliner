@@ -7,34 +7,6 @@
 # BWA           7.15
 # Seqtk         1.2-r94
 
-# Processing Steps:
-#
-# Step    Procedure           Subroutine        State               Input       Output      
-# 1.1     bamtofastq.sh       Split Merged BAM  BAMTOFASTQ:1        bam         bam
-# 1.2     bamtofastq.sh       Sort BAM          BAMTOFASTQ:1        bam         bam
-# 1.3     bamtofastq.sh       BAM to FASTQ      BAMTOFASTQ:2        bam         fastq
-# 2.1     errormodel.sh       Copy Data         ERRORMODEL:1        fastq       fastq
-# 2.2     errormodel.sh       BAYESHAMMER:1       fastq       fastq
-# 2.2     errormodel.sh       BLOOCOO:1           fastq       fastq
-# 2.2     errormodel.sh       QUORUM:1            fastq       fastq
-# 3.1     bwa.sh              BWA:1               fastq       fai
-# 3.2     bwa.sh              BWA:2               fastq       bam
-# 4.1     mergealignment.sh   MERGEALIGNMENT:1    bam         bam
-# 4.2     mergealignment.sh   MERGEALIGNMENT:2    bam         bam
-# 5.1     markduplicates.sh   MARKDUPLICATES:1    bam         bam
-# 5.2     markduplicates.sh   MARKDUPLICATES:2    bam         bam
-# 5.3     markduplicates.sh   MARKDUPLICATES:3    bam         bam
-# 5.4     markduplicates.sh   MARKDUPLICATES:4    bam         bam
-# 6.1     bqsr.sh             NOBQSR:1            bam         bam
-# 6.2     bqsr.sh             BQSR:1              bam         table
-# 6.3     bqsr.sh             BQSR:2              bam         table
-# 6.4     bqsr.sh             BQSR:3              bam         pdf
-# 6.5     bqsr.sh             BQSR:4              bam         bam
-# 6.6     bqsr.sh             BQSR:5              bam         bai
-# 7.1     mutect2.sh          MUTECT2:1           bam         txt
-# 7.2     mutect2.sh          MUTECT2:2           bam         vcf
-# 7.3     mutect2.sh          MUTECT2:3           vcf         vcf
-
 #
 # References / Locations
 #

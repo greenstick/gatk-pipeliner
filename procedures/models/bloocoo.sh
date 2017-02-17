@@ -60,10 +60,6 @@ for i in "$@"
     esac
 done
 
-# Set Optional Values
-ncores=${ncoresOpt:-$ncoresDef}
-memory=${memoryOpt:-$memoryDef}
-
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}
@@ -92,7 +88,7 @@ if !(has_state $state); then
         -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         status=$?
@@ -120,7 +116,7 @@ if !(has_state $state); then
         -nb-cores $ncores"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
     elif [ "$parameters" = "custom" ]; then
         
@@ -133,7 +129,7 @@ if !(has_state $state); then
         -high-precision"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
         
 
     fi
@@ -160,7 +156,7 @@ if !(has_state $state); then
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         status=$?
@@ -180,7 +176,7 @@ if !(has_state $state); then
         call="rm $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta"
         # Print & Call
         format_status "Command:\n$call"
-        $call
+        eval $call
 
         # Update State on Exit
         status=$?

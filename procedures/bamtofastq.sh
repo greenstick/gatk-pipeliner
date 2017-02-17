@@ -56,8 +56,8 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="12"
-memoryDef="8G"
+ncoresDef="16"
+memoryDef="6G"
 cleanDef=false
 
 # Set Optional Values
@@ -183,8 +183,6 @@ if $clean; then
     rm $dataDir/downloaded/split/$fileprefix.$subset.$condition.*.bam
     rm $dataDir/downloaded/split/sorted/$fileprefix.$subset.$condition.*.bam
 fi
-
-format_status "BAM to FASTQ Complete"
 
 format_status "Done"
 

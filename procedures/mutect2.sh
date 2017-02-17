@@ -59,6 +59,12 @@ for i in "$@"
         shift # Trigger Debugging Available in Tools
         ;;
 
+    # Directory Cleanup (Voids All Other Parameters)
+
+        --clean)
+        cleanOpt=true
+        ;;
+
     # Invalid Argument Handler
 
         *)
@@ -70,8 +76,9 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="10"
-memoryDef="8G"
+ncoresDef="16"
+memoryDef="6G"
+cleanDef=false
 readsDef="0"
 debugDef=false
 contaminationDef=true
@@ -79,6 +86,7 @@ contaminationDef=true
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
+clean=${cleanOpt:-$cleanDef}
 reads=${readsOpt:-$readsDef}
 debug=${debugOpt:-$debugDef}
 contamination=${contaminationOpt:-$contaminationDef}
@@ -112,6 +120,7 @@ Cores               = $ncores
 Max Memory          = $maxMemory
 Max Reads in Memory = $maxReads
 Debug               = $debug
+Do Cleanup          = $clean
 \n"
 
 # Set Directories

@@ -60,13 +60,6 @@ for i in "$@"
     esac
 done
 
-ncoresDef="16"
-memoryDef="15G"
-
-# Set Optional Values
-ncores=${ncoresOpt:-$ncoresDef}
-memory=${memoryOpt:-$memoryDef}
-
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
 allocSize=${memory//[0-9]/}

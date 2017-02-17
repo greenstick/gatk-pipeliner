@@ -47,6 +47,12 @@ for i in "$@"
         shift # Per Core Memory Requirement
         ;;
 
+    # Directory Cleanup (Voids All Other Parameters)
+
+        --clean)
+        cleanOpt=true
+        ;;
+
     # Invalid Argument Handler
 
         *)
@@ -58,13 +64,14 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
-ncoresDef="10"
-memoryDef="8G"
+ncoresDef="16"
+memoryDef="6G"
+cleanDef=false
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
-ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
+clean=${cleanOpt:-$cleanDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -81,6 +88,7 @@ Parameter Set       = $parameters
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
+Do Cleanup          = $clean
 \n"
 
 # Set Directories
