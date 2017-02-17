@@ -118,6 +118,41 @@ if !(has_state $state); then
 fi
 
 #
+# Shuffle Reads Inplace
+#
+
+# State Management Delegated to Substates
+format_status "Shuffling Input FastQ Reads"
+# Retrieve Files
+files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.*.fastq))
+
+for file in $files
+    do (
+        # Extract Read Group to Pass to BWA mem
+        suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
+        readgroup=$(echo "$suffix" | sed "s|.fastq$||")
+        substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
+        
+        # Run Command
+        if !(has_state $substate); then
+
+            # Call BBMap shuffle.sh
+            # Define Command
+            call="shuffle.sh -Xmx$memory in=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq out=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+            # Update State on Exit
+            put_state $? $state
+
+        fi
+    )
+
+done
+format_status "Shuffle Input FastQ Complete"
+
+#
 # BWA - mem or bwasw
 #
 
@@ -134,7 +169,7 @@ if [ "$align" = "mem" ]; then
             # Extract Read Group to Pass to BWA mem
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
             readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:3"
             
             # Run Command
             if !(has_state $substate); then
@@ -177,7 +212,7 @@ elif [ "$align" = "bwasw" ]; then
             # Extract Read Group to Pass to BWA mem
             suffix=$(echo "$file" | sed "s|$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.||")
             readgroup=$(echo "$suffix" | sed "s|.fastq$||")
-            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:2"
+            substate="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:BWA:3"
             
             # Run Command
             if !(has_state $substate); then
@@ -204,7 +239,5 @@ else
     format_status "Invalid BWA algorithm parameter: $align"
 
 fi
-
-# Backtrack
 
 format_status "Done"
