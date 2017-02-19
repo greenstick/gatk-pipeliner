@@ -131,7 +131,7 @@ if [ $end1 ] && [ $end2 ]; then
             $input \
             --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
-            --size 43000000000 \
+            --size 60000000000 \
             --no-discard \
             --min-q-char 33 \
             --paired-files \
@@ -153,7 +153,7 @@ if [ $end1 ] && [ $end2 ]; then
             $input \
             --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
-            --size 43000000000 \
+            --size 60000000000 \
             --no-discard \
             --min-q-char 33 \
             --paired-files \
