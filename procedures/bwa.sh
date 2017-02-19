@@ -146,7 +146,7 @@ for file in $files
 
             # Call BBMap shuffle.sh
             # Define Command
-            call="shuffle.sh -Xmx$maxMemory in=$file out=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.shuffled.$readgroup.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+            call="shuffle.sh in=$file out=$paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
             # Print & Call
             format_status "Command:\n$call"
             eval $call
