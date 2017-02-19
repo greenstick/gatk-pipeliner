@@ -69,26 +69,31 @@ maxMemory=$((allocMemory * ncores))$allocSize
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 
+# Test for Paired Ends
+head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/1"
+end1=$?
+head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/2"
+end2=$?
+
+# Is Interleaved?
+paired=""
+
 #
-# FASTQ File Pre-Processing
+# Paired End Input
 #
 
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
-if !(has_state $state); then
+if [ $end1 ] && [ $end2 ]; then
 
-    # Test for Paired Ends
-    head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/1"
-    end1=$?
-    head -n 1000 $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq | grep -qE "^@.*/2"
-    end2=$?
+    #
+    # FASTQ File Pre-Processing
+    #
 
-    # Is Interleaved?
-    paired=""
-    if [ $end1 ] && [ $end2 ]; then
-        paired="--paired-files"
-        format_status "Interleaved Paired-End Detected  (/1 = $end1, /2 = $end2)"
-        format_status "Splitting Paired End FASTQ to Single End"
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
+    if !(has_state $state); then
+
+        format_status "Interleaved Paired-End Detected (/1 = $end1, /2 = $end2)"
+        format_status "Splitting Paired End FASTQ"
         # Define Command
         call="python3 utils/paired-end-to-single-ends.py \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
@@ -99,74 +104,164 @@ if !(has_state $state); then
         # Update State on Exit
         status=$?
         put_state $status $state
-        input=$dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup*
-    else
-        format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
-        input=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
-        status=$?
-        put_state $status $state
-    fi  
-
-fi
-
-# 
-# Run Quorum
-# 
-
-# State Check - Run Block if it Has Not Already Been Executed Successfully
-state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
-if !(has_state $state); then
-
-    if [ "$parameters" = "default" ]; then
-
-        #
-        # Default Parameters
-        #
-        
-        format_status "Running Quorum - $parameters Parameters"
-        # Define Command
-        call="quorum \
-        $input \
-        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -t $ncores \
-        --size 43000000000 \
-        --no-discard \
-        --min-q-char 33 \
-        $paired --debug"
-        # Print & Call
-        format_status "Command:\n$call"
-        eval $call
-
-    elif [ "$parameters" = "custom" ]; then
-
-        #
-        # Custom Parameters
-        #
-        
-        format_status "Running Quorum - $parameters Parameters"
-        # Define Command
-        call="quorum \
-        $input \
-        --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
-        -t $ncores \
-        --size 43000000000 \
-        --no-discard \
-        --min-q-char 33 \
-        $paired --debug"
-        # Print & Call
-        format_status "Command:\n$call"
-        eval $call
 
     fi
 
-    # Update State on Exit
-    status=$?
-    put_state $status $state
-    format_status "Quorum ($parameters $readgroup) Complete"
+    # 
+    # Run Quorum - Paired End
+    # 
 
-    return $status
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:2"
+    if !(has_state $state); then
+
+        # Gather Unpaired Reads
+        input=$dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup.*.fastq
+
+        if [ "$parameters" = "default" ]; then
+
+            #
+            # Default Parameters
+            #
+            
+            format_status "Running Quorum - $parameters Parameters"
+            mkdir -p $paramDir/modeled/upaired
+            # Define Command
+            call="quorum \
+            $input \
+            --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 43000000000 \
+            --no-discard \
+            --min-q-char 33 \
+            --paired-files \
+            --debug"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+        elif [ "$parameters" = "custom" ]; then
+
+            #
+            # Custom Parameters
+            #
+            
+            format_status "Running Quorum - $parameters Parameters"
+            mkdir -p $paramDir/modeled/upaired
+            # Define Command
+            call="quorum \
+            $input \
+            --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 43000000000 \
+            --no-discard \
+            --min-q-char 33 \
+            --paired-files \
+            --debug"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+        fi
+
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+        format_status "Quorum ($parameters $readgroup) Complete"
+
+    fi
+
+    # 
+    # Interleave Split Pairs
+    # 
+
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:3"
+    if !(has_state $state); then
+
+        format_status "Merging Split FASTQ Pairs"
+        # Define Command
+        call="python3 utils/single-ends-to-paired-ends.py \
+        -1 $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
+        -2 $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
+        # Print & Call
+        format_status "Command:\n$call"
+        eval $call
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+
+        return $status
+
+    fi
+
+else
+
+    # 
+    # Run Quorum - Single End
+    # 
+
+    # State Check - Run Block if it Has Not Already Been Executed Successfully
+    state="$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup:QUORUM:1"
+    if !(has_state $state); then
+
+        format_status "Single-End Detected  (/1 = $end1, /2 = $end2)"
+        input=$dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq
+
+        if [ "$parameters" = "default" ]; then
+
+            #
+            # Default Parameters
+            #
+            
+            format_status "Running Quorum - $parameters Parameters"
+            # Define Command
+            call="quorum \
+            $input \
+            --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 43000000000 \
+            --no-discard \
+            --min-q-char 33 \
+            --debug"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+        elif [ "$parameters" = "custom" ]; then
+
+            #
+            # Custom Parameters
+            #
+            
+            format_status "Running Quorum - $parameters Parameters"
+            # Define Command
+            call="quorum \
+            $input \
+            --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
+            -t $ncores \
+            --size 43000000000 \
+            --no-discard \
+            --min-q-char 33 \
+            --debug"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+        fi
+
+        # Update State on Exit
+        status=$?
+        put_state $status $state
+        format_status "Quorum ($parameters $readgroup) Complete"
+
+        return $status
+
+    fi
 
 fi
+
 
 #
 # Quorum Arguments
