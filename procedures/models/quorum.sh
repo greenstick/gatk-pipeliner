@@ -125,13 +125,13 @@ if [ $end1 ] && [ $end2 ]; then
             #
             
             format_status "Running Quorum - $parameters Parameters"
-            mkdir -p $paramDir/modeled/upaired
+            mkdir -p $paramDir/modeled/unpaired
             # Define Command
             call="quorum \
             $input \
             --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
-            --size 100M \
+            --size 48000000000 \
             --no-discard \
             --min-q-char 33 \
             --paired-files \
@@ -147,13 +147,13 @@ if [ $end1 ] && [ $end2 ]; then
             #
             
             format_status "Running Quorum - $parameters Parameters"
-            mkdir -p $paramDir/modeled/upaired
+            mkdir -p $paramDir/modeled/unpaired
             # Define Command
             call="quorum \
             $input \
             --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
-            --size 100M \
+            --size 48000000000 \
             --no-discard \
             --min-q-char 33 \
             --paired-files \
