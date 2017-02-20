@@ -5,6 +5,7 @@ if __name__ == "__main__":
     # Imports
     import argparse
     import random
+    import os
     # Library Imports
     from Bio import SeqIO
 
@@ -39,39 +40,60 @@ if __name__ == "__main__":
     #
 
     # Open FastQ, Chunk File, Shuffle, & Write Chunk to Output
-    with open(fastq, "r") as handle, open(prefix + ".shuffled.fastq", "w") as output:
+    with open(fastq, "r") as handle:
         records = SeqIO.parse(handle, "fastq")
         chunk = []
-        i, nrecords = 0, 0
+        chunks, nrecords = 0, 0
         for record in records:
             try:
                 chunk.append([record, next(records)])
                 if len(chunk) > chunksize:
+                    print("meow")
+                    with open(prefix + ".shuffled.chunk_%d.fastq" % chunks, "w") as output:
+                        random.shuffle(chunk) # Inplace
+                        flattened = [item for sublist in chunk for item in sublist]
+                        SeqIO.write(flattened, output, "fastq")
+                        nrecords += len(flattened)
+                        print("Shuffle FastQ: Chunk Written to %s.shuffled.chunk_%d.fastq (%d Records)" % (prefix, chunks, nrecords))
+                        chunks += 1
+                        chunk = []
+            except:
+                print("moo")
+                with open(prefix + ".shuffled.chunk_%d.fastq" % chunks, "w") as output:
                     random.shuffle(chunk) # Inplace
                     flattened = [item for sublist in chunk for item in sublist]
                     SeqIO.write(flattened, output, "fastq")
-                    chunk = []
                     nrecords += len(flattened)
-                    i += 1
-                    print("Shuffle FastQ: %d Chunk(s) Written" % (i))
-            except:
+                    print("Shuffle FastQ: Chunk Written to %s.shuffled.chunk_%d.fastq (%d Records)" % (prefix, chunks, nrecords))
+                    chunks += 1
+                    chunk = []
+        # Write Tail
+        try:
+            print("bark")
+            with open(prefix + ".shuffled.chunk_%d.fastq" % chunks, "w") as output:
                 random.shuffle(chunk) # Inplace
                 flattened = [item for sublist in chunk for item in sublist]
                 SeqIO.write(flattened, output, "fastq")
-                chunk = []
                 nrecords += len(flattened)
-                i += 1
-                print("Shuffle FastQ: %d Chunk(s) Written" % (i))
-        # Write Tail
-        try:
-            random.shuffle(chunk) # Inplace
-            flattened = [item for sublist in chunk for item in sublist]
-            SeqIO.write(flattened, output, "fastq")
-            nrecords += len(flattened)
-            i += 1
-            print("Shuffle FastQ: %d Chunk(s) Written (%d Records)" % (i, nrecords))
+                print("Shuffle FastQ: Chunk Written to %s.shuffled.chunk_%d.fastq (%d Records)" % (prefix, chunks, nrecords))
+                chunks += 1
         except:
             pass
+
+    print("Shuffle FastQ: Shuffling Chunks & Reassembling FastQ")
+    # Write Chunk Files in Random Order
+    with open(prefix + ".shuffled.fastq", "w") as output:
+        i = 0
+        for chunk in random.sample(range(chunks), chunks):
+            with open(prefix + ".shuffled.chunk_%d.fastq" % chunk, "r") as chunkfile:
+                records = SeqIO.parse(chunkfile, "fastq")
+                SeqIO.write(records, output, "fastq")
+                # Delete Chunk
+                os.unlink(prefix + ".shuffled.chunk_%d.fastq" % chunk)
+                i += 1
+                print("Shuffle FastQ: Chunk %d Written (%d / %d)" % (chunk, i, chunks))
+
+
 
 else:
 
