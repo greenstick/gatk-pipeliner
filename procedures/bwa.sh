@@ -146,7 +146,7 @@ for file in $files
 
             # Call SeqKit Shuffle
             # Define Command
-            call="seqkit shuffle $file > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+            call="seqkit shuffle $file > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffle.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffle.fastq $file"
             # Print & Call
             format_status "Command:\n$call"
             eval $call
