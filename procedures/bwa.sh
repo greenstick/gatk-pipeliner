@@ -133,6 +133,8 @@ fi
 format_status "Shuffling Input FastQ Reads"
 # Retrieve Files
 files=$(echo $(ls $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.*.fastq))
+# Scaffold Shuffle Directory if Not Created
+mkdir -p $paramDir/modeled/shuffled/
 
 for file in $files
     do (
@@ -146,7 +148,7 @@ for file in $files
 
             # Call SeqKit Shuffle
             # Define Command
-            call="seqkit shuffle $file > $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffle.fastq && mv $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffle.fastq $file"
+            call="python3 utils/shuffle-fastq.py -i $file -o $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup && mv $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq $file"
             # Print & Call
             format_status "Command:\n$call"
             eval $call

@@ -14,8 +14,8 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-i", "--input", type = str, help = "Input Paired-End FastQ File")
-    parser.add_argument("-o", "--outputprefix", type = str, help = "Prefix to Output Single End FastQ Files (i.e. prefix.1.fastq and prefix.2.fastq")
-    parser.add_argument("-s", "--chunksize", type = int, help = "Size of Chunk (i.e. n Paired Reads) to Shuffle. Default = 50000")
+    parser.add_argument("-o", "--outputprefix", type = str, help = "Prefix for Output FastQ File (i.e. prefix.shuffled.fastq)")
+    parser.add_argument("-s", "--chunksize", type = int, help = "Size of Chunk (i.e. n Pairs of Reads) to Shuffle at a Time. Default = 50000")
     argsDict = vars(parser.parse_args())
 
     fastq = argsDict["input"]
@@ -44,7 +44,7 @@ if __name__ == "__main__":
     with open(fastq, "r") as handle, open(prefix + ".shuffled.fastq", "w") as output:
         records = SeqIO.parse(handle, "fastq")
         chunk = []
-        i = 0
+        i, nrecords = 0, 0
         for record in records:
             try:
                 chunk.append([record, next(records)])
@@ -53,23 +53,25 @@ if __name__ == "__main__":
                     flattened = [item for sublist in chunk for item in sublist]
                     SeqIO.write(flattened, output, "fastq")
                     chunk = []
+                    nrecords += len(flattened)
                     i += 1
-                    print("Meow: %d Chunks Written (n = %d)" % (i, chunksize))
+                    print("%d Chunk(s) Written" % (i))
             except:
                 random.shuffle(chunk) # Inplace
                 flattened = [item for sublist in chunk for item in sublist]
                 SeqIO.write(flattened, output, "fastq")
                 chunk = []
+                nrecords += len(flattened)
                 i += 1
-                print("Moo: %d Chunks Written (n = %d)" % (i, chunksize))
+                print("%d Chunk(s) Written" % (i))
         # Write Tail
         try:
             random.shuffle(chunk) # Inplace
             flattened = [item for sublist in chunk for item in sublist]
             SeqIO.write(flattened, output, "fastq")
-            chunk = []
+            nrecords += len(flattened)
             i += 1
-            print("Moo: %d Chunks Written (n = %d)" % (i, chunksize))
+            print("%d Chunk(s) Written (%d Records)" % (i, nrecords))
         except:
             pass
 
