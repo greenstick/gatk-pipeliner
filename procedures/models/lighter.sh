@@ -165,10 +165,6 @@ if !(has_state $state); then
     # Update State on Exit
     status=$?
     put_state $status $state
-
-    # Update State on Exit
-    status=$?
-    put_state $status $state
     format_status "Lighter ($parameters $readgroup) Complete"
     return $status
 

@@ -93,6 +93,7 @@ if !(has_state $state); then
         # Update State on Exit
         status=$?
         put_state $status $state
+
 fi
 
 # 
@@ -161,6 +162,7 @@ if !(has_state $state); then
         # Update State on Exit
         status=$?
         put_state $status $state
+        
 fi
 
 #
@@ -181,6 +183,7 @@ if !(has_state $state); then
         # Update State on Exit
         status=$?
         put_state $status $state
+
 fi
 
 #
