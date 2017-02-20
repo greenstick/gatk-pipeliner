@@ -53,7 +53,7 @@ if __name__ == "__main__":
                     chunk = []
                     nrecords += len(flattened)
                     i += 1
-                    print("%d Chunk(s) Written" % (i))
+                    print("Shuffle FastQ: %d Chunk(s) Written" % (i))
             except:
                 random.shuffle(chunk) # Inplace
                 flattened = [item for sublist in chunk for item in sublist]
@@ -61,7 +61,7 @@ if __name__ == "__main__":
                 chunk = []
                 nrecords += len(flattened)
                 i += 1
-                print("%d Chunk(s) Written" % (i))
+                print("Shuffle FastQ: %d Chunk(s) Written" % (i))
         # Write Tail
         try:
             random.shuffle(chunk) # Inplace
@@ -69,7 +69,7 @@ if __name__ == "__main__":
             SeqIO.write(flattened, output, "fastq")
             nrecords += len(flattened)
             i += 1
-            print("%d Chunk(s) Written (%d Records)" % (i, nrecords))
+            print("Shuffle FastQ: %d Chunk(s) Written (%d Records)" % (i, nrecords))
         except:
             pass
 
