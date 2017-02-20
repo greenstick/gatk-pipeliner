@@ -32,7 +32,7 @@ if __name__ == "__main__":
 
     # If No Chunk Size, Set Default
     if chunksize is None:
-        chunksize = 50000
+        chunksize = 100000
     assert (chunksize % 2 == 0), "Chunksize must be even!"
     
     # 
@@ -48,7 +48,6 @@ if __name__ == "__main__":
             try:
                 chunk.append([record, next(records)])
                 if len(chunk) > chunksize:
-                    print("meow")
                     with open(prefix + ".shuffled.chunk_%d.fastq" % chunks, "w") as output:
                         random.shuffle(chunk) # Inplace
                         flattened = [item for sublist in chunk for item in sublist]
@@ -58,7 +57,6 @@ if __name__ == "__main__":
                         chunks += 1
                         chunk = []
             except:
-                print("moo")
                 with open(prefix + ".shuffled.chunk_%d.fastq" % chunks, "w") as output:
                     random.shuffle(chunk) # Inplace
                     flattened = [item for sublist in chunk for item in sublist]
@@ -69,7 +67,6 @@ if __name__ == "__main__":
                     chunk = []
         # Write Tail
         try:
-            print("bark")
             with open(prefix + ".shuffled.chunk_%d.fastq" % chunks, "w") as output:
                 random.shuffle(chunk) # Inplace
                 flattened = [item for sublist in chunk for item in sublist]

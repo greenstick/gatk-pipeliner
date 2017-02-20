@@ -154,12 +154,13 @@ for file in $files
             eval $call
 
             # Update State on Exit
-            put_state $? $state
+            put_state $? $substate
 
         fi
     )
 
 done
+
 format_status "Shuffle Input FastQ Complete"
 
 #
