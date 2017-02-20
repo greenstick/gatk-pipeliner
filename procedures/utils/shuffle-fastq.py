@@ -28,8 +28,6 @@ if __name__ == "__main__":
     #  If No Prefix, Use Same as FASTQ
     if prefix is None: 
         prefix = ".".join(fastq.split(".")[0:-1])
-    print(prefix)
-    print(fastq)
 
     # If No Chunk Size, Set Default
     if chunksize is None:
