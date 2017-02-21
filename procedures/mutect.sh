@@ -187,7 +187,7 @@ if $contamination; then
 
         # Get Contamination
         contaminationPercent=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
-        contamination=$(python -c "print($contaminationPercent/100)")
+        contamination=$(python -c "print($contaminationPercent/100.0)")
         format_status "Proportion Contamination: $contamination"
 
         format_status "MuTect Start"
