@@ -157,7 +157,7 @@ if !(has_state $state); then
     call="python3 utils/single-ends-to-paired-end.py \
     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
-    -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
+    -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup"
     # Print & Call
     format_status "Command:\n$call"
     eval $call
