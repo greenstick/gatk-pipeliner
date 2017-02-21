@@ -17,7 +17,7 @@ format_status () {
 }
 
 # Emit Verbose Errors
-alias emit_status="python3 $PIPELINE_HOME/procedures/utils/emit-error.py -e"
+alias emit_status="python3 $PIPELINE_HOME/utils/emit-error.py -e"
 
 
 #
