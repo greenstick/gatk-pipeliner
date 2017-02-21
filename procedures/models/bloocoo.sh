@@ -83,7 +83,7 @@ if !(has_state $state); then
 
         format_status "Splitting FastQ to Fasta & Qual"
         # Define Command
-        call="python3 utils/fastq-to-fasta-qual.py \
+        call="python3 ../../utils/fastq-to-fasta-qual.py \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -o $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup"
         # Print & Call
@@ -151,7 +151,7 @@ if !(has_state $state); then
 
         format_status "Merging Fasta & Qual to FastQ"
         # Define Command
-        call="python3 utils/fasta-qual-to-fastq.py \
+        call="python3 ../../utils/fasta-qual-to-fastq.py \
         -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
         -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"

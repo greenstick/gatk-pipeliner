@@ -95,7 +95,7 @@ if [ $end1 ] && [ $end2 ]; then
         format_status "Interleaved Paired-End Detected (/1 = $end1, /2 = $end2)"
         format_status "Splitting Paired End FASTQ"
         # Define Command
-        call="python3 utils/paired-end-to-single-ends.py \
+        call="python3 $PIPELINE_HOME/utils/paired-end-to-single-ends.py \
         -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
         -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
         # Print & Call
@@ -181,7 +181,7 @@ if [ $end1 ] && [ $end2 ]; then
 
         format_status "Merging Split FASTQ Pairs"
         # Define Command
-        call="python3 utils/single-ends-to-paired-ends.py \
+        call="python3 $PIPELINE_HOME/utils/single-ends-to-paired-ends.py \
         -1 $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -2 $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
