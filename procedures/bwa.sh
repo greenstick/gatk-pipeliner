@@ -157,9 +157,10 @@ for file in $files
             put_state $? $substate
 
         fi
-    )
+    ) &
 
 done
+wait
 
 format_status "Shuffle Input FastQ Complete"
 
