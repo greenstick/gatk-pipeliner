@@ -192,7 +192,7 @@ if $contamination; then
         format_status "MuTect Start"
         # Define Command
 
-        call="/opt/installed/jdk1.7.0_60/bin/./java -Xmx$memory \
+        call="$JAVA7 -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
@@ -229,7 +229,7 @@ else
 
         format_status "MuTect Start"
         # Define Command
-        call="/opt/installed/jdk1.7.0_60/bin/./java -Xmx$memory \
+        call="$JAVA7 -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
