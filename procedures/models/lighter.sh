@@ -80,7 +80,7 @@ if !(has_state $state); then
 
      format_status "Splitting Paired End FASTQ to Single End"
      # Define Command
-     call="python3 $PIPELINE_HOME/utils/paired-end-to-single-ends.py \
+     call="$PYTHON $PIPELINE_HOME/utils/paired-end-to-single-ends.py \
      -i $dataDir/fastq/split/$fileprefix.$subset.$condition.$readgroup.fastq \
      -o $dataDir/fastq/split/unpaired/$fileprefix.$subset.$condition.$readgroup"
      # Print & Call
@@ -154,7 +154,7 @@ if !(has_state $state); then
 
     format_status "Merging Single End FASTQ to Interleaved Paired End"
     # Define Command
-    call="python3 $PIPELINE_HOME/utils/single-ends-to-paired-end.py \
+    call="$PYTHON $PIPELINE_HOME/utils/single-ends-to-paired-end.py \
     -1 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.1.cor.fq \
     -2 $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup.2.cor.fq \
     -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup"

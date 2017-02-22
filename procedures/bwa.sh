@@ -148,7 +148,7 @@ for file in $files
 
             # Call SeqKit Shuffle
             # Define Command
-            call="python3 $PIPELINE_HOME/utils/shuffle-fastq.py -i $file -o $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup && mv $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq $file"
+            call="$PYTHON $PIPELINE_HOME/utils/shuffle-fastq.py -i $file -o $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup && mv $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq $file"
             # Print & Call
             format_status "Command:\n$call"
             eval $call
