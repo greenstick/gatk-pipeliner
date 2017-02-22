@@ -35,7 +35,7 @@ put_state () {
         # If an Error Occurred Exit
         format_status "Unexpected Error $statuscode: $state"
         # Emit Verbose Error
-        python3 $PIPELINE_HOME/utils/emit-error.py -e $statuscode
+        python $PIPELINE_HOME/utils/emit-error.py -e $statuscode
         exit $statuscode
     fi
 }
