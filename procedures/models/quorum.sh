@@ -127,7 +127,7 @@ if [ $end1 ] && [ $end2 ]; then
             format_status "Running Quorum - $parameters Parameters"
             mkdir -p $paramDir/modeled/unpaired
             # Define Command
-            call="quorum \
+            call="$QUORUM \
             $input \
             --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
@@ -149,7 +149,7 @@ if [ $end1 ] && [ $end2 ]; then
             format_status "Running Quorum - $parameters Parameters"
             mkdir -p $paramDir/modeled/unpaired
             # Define Command
-            call="quorum \
+            call="$QUORUM \
             $input \
             --prefix $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
@@ -217,7 +217,7 @@ else
             
             format_status "Running Quorum - $parameters Parameters"
             # Define Command
-            call="quorum \
+            call="$QUORUM \
             $input \
             --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
@@ -237,7 +237,7 @@ else
             
             format_status "Running Quorum - $parameters Parameters"
             # Define Command
-            call="quorum \
+            call="$QUORUM \
             $input \
             --prefix $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup \
             -t $ncores \
