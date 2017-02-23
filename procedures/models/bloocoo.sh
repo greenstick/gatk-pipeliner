@@ -154,7 +154,7 @@ if !(has_state $state); then
         call="$PYTHON $PIPELINE_HOME/utils/fasta-qual-to-fastq.py \
         -f $proceduresDir/$fileprefix.$subset.$condition.$readgroup$corrected.fasta \
         -q $dataDir/fastq/split/unmerged/$fileprefix.$subset.$condition.$readgroup.qual \
-        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.fastq"
+        -o $paramDir/modeled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup"
         # Print & Call
         format_status "Command:\n$call"
         eval $call
