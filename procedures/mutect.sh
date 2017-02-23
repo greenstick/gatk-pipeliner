@@ -195,7 +195,7 @@ if $contamination; then
 
         call="$JAVA7 -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
-        -jar $GATK -T MuTect \
+        -jar $MUTECT -T MuTect \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I:tumor $recalDir/$fileprefix.$subset.tumor.$experiment.$parameters.$qualitymodel.bam \
         -I:normal $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam \
