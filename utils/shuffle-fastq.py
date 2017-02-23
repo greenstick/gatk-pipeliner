@@ -79,16 +79,17 @@ if __name__ == "__main__":
 
     print("Shuffle FastQ: Shuffling Chunks & Reassembling FastQ")
     # Write Chunk Files in Random Order
-    with open(prefix + ".shuffled.fastq", "w") as output:
+    with open(prefix + ".shuffled.fastq", "w") as output, open(prefix + ".shuffle_order.txt", "w") as order:
         i = 0
         for chunk in random.sample(range(chunks), chunks):
+            order.write(chunk)
             with open(prefix + ".shuffled.chunk_%d.fastq" % chunk, "r") as chunkfile:
                 records = SeqIO.parse(chunkfile, "fastq")
                 SeqIO.write(records, output, "fastq")
-                # Delete Chunk
-                os.unlink(prefix + ".shuffled.chunk_%d.fastq" % chunk)
-                i += 1
-                print("Shuffle FastQ: Chunk %d Written (%d / %d)" % (chunk, i, chunks))
+            # Delete Chunk
+            os.unlink(prefix + ".shuffled.chunk_%d.fastq" % chunk)
+            i += 1
+            print("Shuffle FastQ: Chunk %d Written (%d / %d)" % (chunk, i, chunks))
 
 
 
