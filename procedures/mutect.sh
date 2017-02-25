@@ -205,7 +205,6 @@ if $contamination; then
         --fraction_contamination $contamination \
         -o $recalDir/logs/mutect/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect/log_mutect_$experiment.txt \
-        -nct $ncores \
         --logging_level $loggingLevel \
         $monitorThreads $readbuffersize" # Additional Optional Args
         # Print & Call
@@ -242,7 +241,6 @@ else
         --fraction_contamination $contamination \
         -o $recalDir/logs/mutect/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect/log_mutect_$experiment.txt \
-        -nct $ncores \
         --logging_level $loggingLevel \
         $monitorThreads $readbuffersize" # Additional Optional Args
         # Print & Call
