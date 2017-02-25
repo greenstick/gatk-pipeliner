@@ -20,7 +20,7 @@ if __name__ == "__main__":
     # 
     # Parse Arguments
     # 
-
+    
     parser = argparse.ArgumentParser()
     parser.add_argument("-1", "--input1", type = str, help = "First Single-End FastQ File")
     parser.add_argument("-2", "--input2", type = str, help = "Second Single-End FastQ File")

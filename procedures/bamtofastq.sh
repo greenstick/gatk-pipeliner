@@ -87,7 +87,7 @@ tmpDir=$PIPELINE_HOME/$subset/tmp
 format_status "Running BAM to FastQ Script"
 
 #
-# Shuffle & Split BAM
+# Split BAM
 #
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
