@@ -202,7 +202,7 @@ if $contamination; then
         --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
-        --contamination_fraction_to_filter $contamination \
+        --fraction_contamination $contamination \
         -o $recalDir/logs/mutect/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect/log_mutect_$experiment.txt \
         -nct $ncores \
@@ -239,7 +239,7 @@ else
         --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
-        --contamination_fraction_to_filter $contamination \
+        --fraction_contamination $contamination \
         -o $recalDir/logs/mutect/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect/log_mutect_$experiment.txt \
         -nct $ncores \
