@@ -181,7 +181,7 @@ if [ $end1 ] && [ $end2 ]; then
 
         format_status "Merging Split FASTQ Pairs"
         # Define Command
-        call="$PYTHON $PIPELINE_HOME/utils/single-ends-to-paired-ends.py \
+        call="$PYTHON $PIPELINE_HOME/utils/single-ends-to-paired-end.py \
         -1 $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$readgroup.1.fastq \
         -2 $paramDir/modeled/unpaired/$fileprefix.$subset.$condition.$readgroup.2.fastq \
         -o $paramDir/modeled/$fileprefix.$subset.$condition.$readgroup"
