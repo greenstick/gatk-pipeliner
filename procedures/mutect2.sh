@@ -126,6 +126,7 @@ Do Cleanup          = $clean
 # Set Directories
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
+ioDir=/home/users/$USER/io/
 
 # Tool Specific Debugging - GATK
 monitorThreads=""
@@ -266,26 +267,32 @@ else
 
 fi
 
-# 
-# Copy VCFS to User I/O Directory
+#
+# Concatenate Interval VCFs
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
 if !(has_state $state); then
 
-    format_status "Copying VCFs to I/O Directory"
+    format_status "Concatenation VCF Files to I/O Directory"
     # Define Command
-    call="cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/"
+    call="java -Xmx$memory \
+        -Djava.io.tmpdir=$tmpDir \
+        -cp $GATK org.broadinstitute.gatk.tools.CatVariants \
+        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
+        --variant $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.*.raw.snps.indels.vcf \
+        --outputFile $ioDir/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf"
     # Print & Call
     format_status "Command:\n$call"
     eval $call
 
     # Update State on Exit
     put_state $? $state
-    format_status "VCFs Copied to I/O Directory"
+    format_status "VCF Concatenation Complete"
 
 fi
+
 
 format_status "Done"
 
