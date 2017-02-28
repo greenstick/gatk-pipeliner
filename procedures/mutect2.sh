@@ -126,7 +126,6 @@ Do Cleanup          = $clean
 # Set Directories
 recalDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters/recal/$qualitymodel
 tmpDir=$PIPELINE_HOME/$subset/tmp
-ioDir=/home/users/$USER/io/
 
 # Tool Specific Debugging - GATK
 monitorThreads=""
@@ -171,6 +170,7 @@ if $contamination; then
         format_status "Command:\n$call"
         eval $call
 
+
         # Update State on Exit
         put_state $? $state
         format_status "ContEst Complete"
@@ -185,15 +185,13 @@ if $contamination; then
     state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
     if !(has_state $state); then
 
-        # Get Contig / Chromosomes
-        intervals=$(samtools view -H $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam | grep '^@SQ' | awk -F '\t' '{print $2}' | sed 's|SN:||')
         # Get Contamination
         contaminationPercent=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
         contamination=$(python -c "print($contaminationPercent/100.0)")
         format_status "Proportion Contamination: $contamination"
 
         format_status "MuTect2 Start"
-        # Define MuTect 2 Parallel Call per Interval 
+        # Define Command
         call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
@@ -204,15 +202,15 @@ if $contamination; then
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
         --contamination_fraction_to_filter $contamination \
-        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.{}.raw.snps.indels.vcf \
-        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.$parameters.$qualitymodel.{}.txt \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
-        --intervals {} \
+        -nct $ncores \
         --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize"
+        $monitorThreads $readbuffersize" # Additional Optional Args
+        # Print & Call
         format_status "Command:\n$call"
-        # Run MuTect in Parallel by Interval
-        parallel --verbose --results $PIPELINE_HOME/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel -j $ncores eval $call ::: $intervals
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -230,15 +228,8 @@ else
     state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
     if !(has_state $state); then
 
-        # Get Contig / Chromosomes
-        intervals=$(samtools view -H $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam | grep '^@SQ' | awk -F '\t' '{print $2}' | sed 's|SN:||')
-        # Get Contamination
-        contaminationPercent=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
-        contamination=$(python -c "print($contaminationPercent/100.0)")
-        format_status "Proportion Contamination: $contamination"
-
         format_status "MuTect2 Start"
-        # Define MuTect 2 Parallel Call per Interval 
+        # Define Command
         call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
@@ -249,15 +240,15 @@ else
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
         --contamination_fraction_to_filter $contamination \
-        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.{}.raw.snps.indels.vcf \
-        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.$parameters.$qualitymodel.{}.txt \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
-        --intervals {} \
+        -nct $ncores \
         --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize"
+        $monitorThreads $readbuffersize" # Additional Optional Args
+        # Print & Call
         format_status "Command:\n$call"
-        # Run MuTect in Parallel by Interval
-        parallel --verbose --results $PIPELINE_HOME/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel -j $ncores eval $call ::: $intervals
+        eval $call
 
         # Update State on Exit
         put_state $? $state
@@ -267,32 +258,26 @@ else
 
 fi
 
-#
-# Concatenate Interval VCFs
+# 
+# Copy VCFS to User I/O Directory
 # 
 
 # State Check - Run Block if it Has Not Already Been Executed Successfully
 state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:3"
 if !(has_state $state); then
 
-    format_status "Concatenation VCF Files to I/O Directory"
+    format_status "Copying VCFs to I/O Directory"
     # Define Command
-    call="java -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -cp $GATK org.broadinstitute.gatk.tools.CatVariants \
-        -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
-        --variant $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.*.raw.snps.indels.vcf \
-        --outputFile $ioDir/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf"
+    call="cp $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf /home/users/$USER/io/"
     # Print & Call
     format_status "Command:\n$call"
     eval $call
 
     # Update State on Exit
     put_state $? $state
-    format_status "VCF Concatenation Complete"
+    format_status "VCFs Copied to I/O Directory"
 
 fi
-
 
 format_status "Done"
 
