@@ -170,7 +170,6 @@ if $contamination; then
         format_status "Command:\n$call"
         eval $call
 
-
         # Update State on Exit
         put_state $? $state
         format_status "ContEst Complete"
@@ -185,13 +184,15 @@ if $contamination; then
     state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
     if !(has_state $state); then
 
+        # Get Contig / Chromosomes
+        intervals=$(samtools view -H $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam | grep '^@SQ' | awk -F '\t' '{print $2}' | sed 's|SN:||')
         # Get Contamination
         contaminationPercent=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
         contamination=$(python -c "print($contaminationPercent/100.0)")
         format_status "Proportion Contamination: $contamination"
 
         format_status "MuTect2 Start"
-        # Define Command
+        # Define MuTect 2 Parallel Call per Interval 
         call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
@@ -202,15 +203,15 @@ if $contamination; then
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
         --contamination_fraction_to_filter $contamination \
-        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
-        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.{}.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.$parameters.$qualitymodel.{}.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
-        -nct $ncores \
+        --intervals {} \
         --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize" # Additional Optional Args
-        # Print & Call
+        $monitorThreads $readbuffersize"
         format_status "Command:\n$call"
-        eval $call
+        # Run MuTect in Parallel by Interval
+        parallel --verbose --results $PIPELINE_HOME/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel -j $ncores eval $call ::: $intervals
 
         # Update State on Exit
         put_state $? $state
@@ -228,8 +229,15 @@ else
     state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
     if !(has_state $state); then
 
+        # Get Contig / Chromosomes
+        intervals=$(samtools view -H $recalDir/$fileprefix.$subset.normal.$experiment.$parameters.$qualitymodel.bam | grep '^@SQ' | awk -F '\t' '{print $2}' | sed 's|SN:||')
+        # Get Contamination
+        contaminationPercent=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
+        contamination=$(python -c "print($contaminationPercent/100.0)")
+        format_status "Proportion Contamination: $contamination"
+
         format_status "MuTect2 Start"
-        # Define Command
+        # Define MuTect 2 Parallel Call per Interval 
         call="java -Xmx$memory \
         -Djava.io.tmpdir=$tmpDir \
         -jar $GATK -T MuTect2 \
@@ -240,15 +248,15 @@ else
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
         --contamination_fraction_to_filter $contamination \
-        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
-        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
+        -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.{}.raw.snps.indels.vcf \
+        --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.$parameters.$qualitymodel.{}.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
-        -nct $ncores \
+        --intervals {} \
         --logging_level $loggingLevel \
-        $monitorThreads $readbuffersize" # Additional Optional Args
-        # Print & Call
+        $monitorThreads $readbuffersize"
         format_status "Command:\n$call"
-        eval $call
+        # Run MuTect in Parallel by Interval
+        parallel --verbose --results $PIPELINE_HOME/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel -j $ncores eval $call ::: $intervals
 
         # Update State on Exit
         put_state $? $state
