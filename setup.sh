@@ -31,6 +31,9 @@ output_dir=$user_dir/io # Set to home directory off lustre FS for FTP access
 # Set Modules Directory
 modules_dir=$pipeline_dir/procedures
 
+# Set Validation Data Directory
+validation_dir=$pipeline_dir/validation
+
 # Set Logging Directory
 logging_dir=$pipeline_dir/logs
 
@@ -44,7 +47,7 @@ submit_dir=$pipeline_dir/submits
 printf "\nScaffolding Directories...\n"
 
 # Scaffold Pipeline Directory & Change Directory
-cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir && mkdir -p $logging_dir && mkdir -p $submit_dir/logs
+cd $root_dir && mkdir -p $pipeline_dir && cd $pipeline_dir && mkdir -p $logging_dir/truth && mkdir -p $logging_dir && mkdir -p $submit_dir/logs
 
 # Pipeline Scaffolding
 mkdir -p set{1..6}/model/{rcorrector,bfc,musket,decgpu,lighter,bayeshammer,blessec,bloocoo,karect,kgem,quorum,seecer,shorah,nomodel,norealign}/param/{default,custom}/{logs,post-align,pre-align,markdup,recal,merged,modeled}
