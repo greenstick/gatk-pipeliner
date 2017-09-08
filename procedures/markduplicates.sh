@@ -166,7 +166,7 @@ fi
 format_status "Running Mark Duplicates Script"
 
 # If Norealignment, Get Data From Download Directory & Skip Sorting
-if [ "$experiment" = "norealign" && $pass == false]; then
+if [ "$experiment" = "norealign" && $pass == false ]; then
 
     #
     # Mark Duplicates
