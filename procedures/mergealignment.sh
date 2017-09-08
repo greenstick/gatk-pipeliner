@@ -9,46 +9,62 @@ if [ -z $PIPELINE_HOME ]; then
     source ~/.bash_profile
 fi
 
+#
 # Assign Arguments
+# 
+
 for i in "$@"
     do case $i in
 
     # Standard Arguments
 
+        # Access & Write Files With This Prefix
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
-        shift # Access & Write Files With This Prefix
+        shift
         ;;
+
+        # Access & Write Files With This Subset
         -s=*|--subset=*)
         subset="${i#*=}"
-        shift # Access & Write Files With This Subset
+        shift
         ;;
+
+        # Access & Write Files With This Condition
         -c=*|--condition=*)
         condition="${i#*=}"
-        shift # Access & Write Files With This Condition
+        shift
         ;;
+
+        # Access & Write Files With This Experiment
         -x=*|--experiment=*)
         experiment="${i#*=}"
-        shift # Access & Write Files With This Experiment
+        shift
         ;;
+
+        # Access & Write Files With This Parameter Set
         -p=*|--parameters=*)
         parameters="${i#*=}"
-        shift # Access & Write Files With This Parameter Set
+        shift
         ;;
 
     # Optional Arguments With Defaults
 
+        # Number of Cores to Use
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
-        shift # Number of Cores to Use
+        shift
         ;;
+
+        # Per Core Memory Requirement
         -m=*|--memory=*)
         memoryOpt="${i#*=}"
-        shift # Per Core Memory Requirement
+        shift
         ;;
 
-    # Directory Cleanup (Voids All Other Parameters)
+    # Optional Flags
 
+        # Directory Cleanup (Voids All Other Parameters)
         --clean)
         cleanOpt=true
         ;;
@@ -115,8 +131,7 @@ for file in $files
         # Run Command
         if !(has_state $substate); then
             # Get Read Group Arguments to Pass to Samtools
-            rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{print $2,$3,$4,$5,$6,$7,$8}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-\:]*|-r &|g")
-            
+            rgArgs=$(samtools view -H $file | grep '@RG' | awk -F '\t' '{for (i=2; i<=NF; i++) print $i}' | sed "s|[A-Z][A-Z]:[a-zA-Z0-9\.\-\:]*|-r &|g")
             # Check for failed parallel call
             put_state $? $substate
         fi

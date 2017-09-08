@@ -9,35 +9,54 @@ if [ -z $PIPELINE_HOME ]; then
     source ~/.bash_profile
 fi
 
+#
 # Assign Arguments
+# 
+
 for i in "$@"
     do case $i in
 
     # Standard Arguments
 
+        # Access & Write Files With This Prefix
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
-        shift # Access & Write Files With This Prefix
+        shift
         ;;
+
+        # Access & Write Files With This Subset
         -s=*|--subset=*)
         subset="${i#*=}"
-        shift # Access & Write Files With This Subset
+        shift
         ;;
+
+        # Access & Write Files With This Condition
         -c=*|--condition=*)
         condition="${i#*=}"
-        shift # Access & Write Files With This Condition
+        shift
         ;;
+
+        # Access & Write Files With This Experiment
         -x=*|--experiment=*)
         experiment="${i#*=}"
-        shift # Access & Write Files With This Experiment
+        shift
         ;;
+
+        # Access & Write Files With This Parameter Set
         -p=*|--parameters=*)
         parameters="${i#*=}"
-        shift # Access & Write Files With This Parameter Set
+        shift
         ;;
 
     # Additional Arguments
 
+        # Sorting Chunk Size
+    	-C=*|--chunksize=*)
+    	chunksizeOpt="${i#*=}"
+    	shift
+    	;;
+
+        # Type of Alignment
         -a=*|--align=*)
         alignOpt="${i#*=}"
         shift
@@ -45,17 +64,21 @@ for i in "$@"
 
     # Optional Arguments With Defaults
 
+        # Number of Cores to Use
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
-        shift # Number of Cores to Use
+        shift
         ;;
+
+        # Per Core Memory Requirement
         -m=*|--memory=*)
         memoryOpt="${i#*=}"
-        shift # Per Core Memory Requirement
+        shift
         ;;
 
-    # Directory Cleanup (Voids All Other Parameters)
+    # Optional Flags
 
+        # Directory Cleanup (Voids All Other Parameters)
         --clean)
         cleanOpt=true
         ;;
@@ -73,13 +96,16 @@ done
 # Defaults if No Arguments Passed
 ncoresDef="16"
 memoryDef="6G"
+chunksizeDef="50000"
 alignDef="mem"
+cleanDef=false
 
 # Set Optional Values
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-cleanDef=false
+chunksize=${chunksizeOpt:-$chunksizeDef}
 align=${alignOpt:-$alignDef}
+clean=${cleanOpt:-$cleanDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -93,6 +119,7 @@ Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
 BWA Alignment       = $align
+Sort Chunk Size     = $chunksize
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
@@ -146,9 +173,9 @@ for file in $files
         # Run Command
         if !(has_state $substate); then
 
-            # Call SeqKit Shuffle
+            # Call Shuffle
             # Define Command
-            call="$PYTHON $PIPELINE_HOME/utils/shuffle-fastq.py -i $file -o $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup && mv $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq $file"
+            call="$PYTHON $PIPELINE_HOME/utils/shuffle-fastq.py -i $file -o $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup -s $chunksize && mv $paramDir/modeled/shuffled/$fileprefix.$subset.$condition.$experiment.$parameters.$readgroup.shuffled.fastq $file"
             # Print & Call
             format_status "Command:\n$call"
             eval $call

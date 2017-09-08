@@ -9,7 +9,10 @@ if [ -z $PIPELINE_HOME ]; then
     source ~/.bash_profile
 fi
 
+#
 # Assign Arguments
+# 
+
 for i in "$@"
     do case $i in
 

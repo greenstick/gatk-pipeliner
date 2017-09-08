@@ -9,54 +9,84 @@ if [ -z $PIPELINE_HOME ]; then
     source ~/.bash_profile
 fi
 
+#
 # Assign Arguments
+# 
+
 for i in "$@"
     do case $i in
 
     # Standard Arguments
 
+        # Access & Write Files With This Prefix
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
-        shift # Access & Write Files With This Prefix
+        shift
         ;;
+
+        # Access & Write Files With This Subset
         -s=*|--subset=*)
         subset="${i#*=}"
-        shift # Access & Write Files With This Subset
+        shift
         ;;
+
+        # Access & Write Files With This Condition
         -c=*|--condition=*)
         condition="${i#*=}"
-        shift # Access & Write Files With This Condition
+        shift
         ;;
+
+        # Access & Write Files With This Experiment
         -x=*|--experiment=*)
         experiment="${i#*=}"
-        shift # Access & Write Files With This Experiment
+        shift
         ;;
+
+        # Access & Write Files With This Parameter Set
         -p=*|--parameters=*)
         parameters="${i#*=}"
-        shift # Access & Write Files With This Parameter Set
+        shift
         ;;
 
     # Optional Arguments With Defaults
 
+        # n Reads Per GB or Memory
         -r=*|--reads=*)
         readsOpt="${i#*=}"
-        shift # n Reads Per GB or Memory
+        shift
         ;;
+
+        # Read Group Regex
+    	-g=*|--regex=*)
+    	regexOpt="${i#*=}"
+    	shift
+    	;;
+
+        # Number of Cores to Use
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
-        shift # Number of Cores to Use
+        shift
         ;;
+
+        # Per Core Memory Requirement
         -m=*|--memory=*)
         memoryOpt="${i#*=}"
-        shift # Per Core Memory Requirement
+        shift
         ;;
-        -d=*|--debug=*)
-        debugOpt="${i#*=}"
-        shift # Trigger Debugging Available in Tools
+        
+    # Optional Flags
+
+        # Trigger Debugging Available in Tools
+        --debug)
+        debugOpt=true
         ;;
 
-    # Directory Cleanup (Voids All Other Parameters)
+        # Pass Through, Not Applying Mark Duplicates
+        --pass)
+        passOpt=true
+        ;;
 
+        # Directory Cleanup (Voids All Other Parameters)
         --clean)
         cleanOpt=true
         ;;
@@ -72,18 +102,22 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
+readsDef=150000
+regexDef=""
 ncoresDef="16"
 memoryDef="6G"
-cleanDef=false
-readsDef=150000
+passDef=false
 debugDef=false
+cleanDef=false
 
 # Set Optional Values
+reads=${readsOpt:-$readsDef}
+regex=${regexOpt:-$regexDef}
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-clean=${cleanOpt:-$cleanDef}
-reads=${readsOpt:-$readsDef}
+pass=${passOpt:-$passDef}
 debug=${debugOpt:-$debugDef}
+clean=${cleanOpt:-$cleanDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
@@ -100,11 +134,13 @@ Data Subset         = $subset
 Condition           = $condition
 Experiment          = $experiment
 Parameter Set       = $parameters
+Read Group Regex    = $regex
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
 Max Reads in Memory = $maxReads
 Debug               = $debug
+Pass                = $pass
 Do Cleanup          = $clean
 \n"
 
@@ -112,6 +148,13 @@ Do Cleanup          = $clean
 dataDir=$PIPELINE_HOME/$subset
 paramDir=$PIPELINE_HOME/$subset/model/$experiment/param/$parameters
 tmpDir=$PIPELINE_HOME/$subset/tmp
+
+# Set Readgroup Regex
+if [ "$regex" = "" ]; then
+    rgRegex=""
+else
+    rgRegex="READ_NAME_REGEX=\"$regex\""
+fi
 
 # Tool Specific Debugging - Picard
 verbosity="INFO"
@@ -134,6 +177,7 @@ if [ "$experiment" = "norealign" ]; then
     if !(has_state $state); then
 
         format_status "MarkDuplicates Start"
+
         # Define Command
         call="java -Xmx$maxMemory \
         -Djava.io.tmpdir=$tmpDir \
@@ -145,9 +189,10 @@ if [ "$experiment" = "norealign" ]; then
         PG=null \
         TMP_DIR=$tmpDir \
         VERBOSITY=$verbosity"
+
         # Print & Call
-        format_status "Command:\n$call"
-        eval $call
+        format_status "Command:\n$call $rgRegex"
+        eval $call $rgRegex
 
         # Update State on Exit
         put_state $? $state
@@ -169,7 +214,6 @@ if [ "$experiment" = "norealign" ]; then
         # Print & Call
         format_status "Command:\n$call"
         eval $call
-
 
         # Update State on Exit
         put_state $? $state
@@ -226,49 +270,74 @@ else
     # Mark Duplicates
     #
 
-    # State Check - Run Block if it Has Not Already Been Executed Successfully
-    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
-    if !(has_state $state); then
+    # If Passing, Copy File to Output Directory
+    if $pass; then 
 
-        format_status "MarkDuplicates Start"
-        # Define Command
-        call="java -Xmx$memory \
-        -Djava.io.tmpdir=$tmpDir \
-        -jar $PICARD MarkDuplicates \
-        I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
-        O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
-        M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
-        MAX_RECORDS_IN_RAM=$maxReads \
-        PG=null \
-        TMP_DIR=$tmpDir"
-        # Print & Call
-        format_status "Command:\n$call"
-        eval $call
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
+        state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+        if !(has_state $state); then
 
-        # Update State on Exit
-        put_state $? $state
-        format_status "Mark Duplicates Complete"
+            format_status "Passing MarkDuplicates"
+            # Define Command
+            call="cp $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval #call
 
-    fi
+            put_state $? $state
+            format_status "Mark Duplicates Pass Complete"
 
-    #
-    # Create New BAM Index
-    #
+        fi
 
-    # State Check - Run Block if it Has Not Already Been Executed Successfully
-    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
-    if !(has_state $state); then
+    # Run Mark Duplicates
+    else
 
-        format_status "Indexing BAM Output"
-        # Define Command
-        call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
-        # Print & Call
-        format_status "Command:\n$call"
-        eval $call
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
+        state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+        if !(has_state $state); then
 
-        # Update State on Exit
-        put_state $? $state
-        format_status "BAM Indexing Complete"
+            format_status "MarkDuplicates Start"
+            # Define Command
+            call="java -Xmx$memory \
+            -Djava.io.tmpdir=$tmpDir \
+            -jar $PICARD MarkDuplicates \
+            I=$paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam \
+            O=$paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam \
+            M=$paramDir/markdup/log_marked_duplicates_metrics_$condition.txt \
+            MAX_RECORDS_IN_RAM=$maxReads \
+            PG=null \
+            TMP_DIR=$tmpDir \
+            VERBOSITY=$verbosity"
+            # Print & Call
+            format_status "Command:\n$call $rgRegex"
+            eval $call $rgRegex
+
+            # Update State on Exit
+            put_state $? $state
+            format_status "Mark Duplicates Complete"
+
+        fi
+
+        #
+        # Create New BAM Index
+        #
+
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
+        state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:4"
+        if !(has_state $state); then
+
+            format_status "Indexing BAM Output"
+            # Define Command
+            call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+            # Update State on Exit
+            put_state $? $state
+            format_status "BAM Indexing Complete"
+
+        fi
 
     fi
 

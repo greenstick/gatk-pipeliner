@@ -9,23 +9,31 @@ if [ -z $PIPELINE_HOME ]; then
     source ~/.bash_profile
 fi
 
+#
 # Assign Arguments
+# 
+
 for i in "$@"
     do case $i in
 
     # Standard Arguments
 
+        # Access & Write Files With This Prefix
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
-        shift # Access & Write Files With This Prefix
+        shift
         ;;
+
+        # Access & Write Files With This Subset
         -s=*|--subset=*)
         subset="${i#*=}"
-        shift # Access & Write Files With This Subset
+        shift
         ;;
+
+        # Access & Write Files With This Condition
         -c=*|--condition=*)
         condition="${i#*=}"
-        shift # Access & Write Files With This Condition
+        shift
         ;;
    
     # Optional Arguments With Defaults
@@ -34,13 +42,15 @@ for i in "$@"
         ncoresOpt="${i#*=}"
         shift # Number of Cores to Use
         ;;
+
         -m=*|--memory=*)
         memoryOpt="${i#*=}"
         shift # Per Core Memory Requirement
         ;;
 
-    # Directory Cleanup (Voids All Other Parameters)
+    # Optional Flags
 
+        # Directory Cleanup (Voids All Other Parameters)
         --clean)
         cleanOpt=true
         ;;

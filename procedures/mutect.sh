@@ -9,58 +9,90 @@ if [ -z $PIPELINE_HOME ]; then
     source ~/.bash_profile
 fi
 
+#
 # Assign Arguments
+# 
+
 for i in "$@"
     do case $i in
 
     # Standard Arguments
 
+        # Access & Write Files With This Prefix
         -f=*|--fileprefix=*)
         fileprefix="${i#*=}"
-        shift # Access & Write Files With This Prefix
+        shift
         ;;
+
+        # Access & Write Files With This Subset
         -s=*|--subset=*)
         subset="${i#*=}"
-        shift # Access & Write Files With This Subset
+        shift
         ;;
+
+        # Access & Write Files With This Experiment
         -x=*|--experiment=*)
         experiment="${i#*=}"
-        shift # Access & Write Files With This Experiment
+        shift
         ;;
+
+        # Access & Write Files With This Parameter Set
         -p=*|--parameters=*)
         parameters="${i#*=}"
-        shift # Access & Write Files With This Parameter Set
+        shift
         ;;
+
+        # Access & Write Files With This Quality Model
         -q=*|--qualitymodel=*)
         qualitymodel="${i#*=}"
-        shift # Access & Write Files With This Quality Model
+        shift
+        ;;
+
+        # Germline Tag
+        -g=*|--germline=*)
+        germline="${i#*=}"
+        shift
+        ;;
+
+        # Somatic Tag
+        -t=*|--tumor=*)
+        tumor="${i#*=}"
+        shift
         ;;
 
     # Optional Arguments With Defaults
 
-        -C=*|--contamination=*)
-        contaminationOpt="${i#*=}"
-        shift # Sample Contamination
-        ;;
+        # n Reads Per GB or Memory
         -r=*|--reads=*)
         readsOpt="${i#*=}"
-        shift # n Reads Per GB or Memory
+        shift
         ;;
+
+        # Number of Cores to Use
         -n=*|--ncores=*)
         ncoresOpt="${i#*=}"
-        shift # Number of Cores to Use
+        shift
         ;;
+
+        # Per Core Memory Requirement
         -m=*|--memory=*)
         memoryOpt="${i#*=}"
-        shift # Per Core Memory Requirement
-        ;;
-        -d=*|--debug=*)
-        debugOpt="${i#*=}"
-        shift # Trigger Debugging Available in Tools
+        shift
         ;;
 
-    # Directory Cleanup (Voids All Other Parameters)
+    # Optional Flags
 
+        # Estimate Cross Sample Contamination
+        --contamination)
+        contaminationOpt=true
+        ;;
+
+        # Trigger Debugging Available in Tools
+        --debug)
+        debugOpt=true
+        ;;
+
+        # Directory Cleanup (Voids All Other Parameters)
         --clean)
         cleanOpt=true
         ;;
@@ -68,7 +100,6 @@ for i in "$@"
     # Invalid Argument Handler
 
         *)
-        # invalid option
         printf "Invalid/Unused Parameter: $i"
         ;;
         
@@ -76,20 +107,20 @@ for i in "$@"
 done
 
 # Defaults if No Arguments Passed
+readsDef="0"
 ncoresDef="16"
 memoryDef="6G"
+contaminationDef=false
 cleanDef=false
-readsDef="0"
 debugDef=false
-contaminationDef=true
 
 # Set Optional Values
+reads=${readsOpt:-$readsDef}
 ncores=${ncoresOpt:-$ncoresDef}
 memory=${memoryOpt:-$memoryDef}
-clean=${cleanOpt:-$cleanDef}
-reads=${readsOpt:-$readsDef}
-debug=${debugOpt:-$debugDef}
 contamination=${contaminationOpt:-$contaminationDef}
+clean=${cleanOpt:-$cleanDef}
+debug=${debugOpt:-$debugDef}
 
 # Get Max Allowable Memory
 allocMemory=${memory//[GgMmKk]/}
