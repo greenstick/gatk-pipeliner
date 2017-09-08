@@ -261,7 +261,7 @@ else
             call="cp $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
             # Print & Call
             format_status "Command:\n$call"
-            eval #call
+            eval $call
 
             put_state $? $state
             format_status "Mark Duplicates Pass Complete"
