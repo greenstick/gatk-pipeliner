@@ -166,7 +166,7 @@ fi
 format_status "Running Mark Duplicates Script"
 
 # If Norealignment, Get Data From Download Directory & Skip Sorting
-if [ "$experiment" = "norealign" ]; then
+if [ "$experiment" = "norealign" && $pass == false]; then
 
     #
     # Mark Duplicates
@@ -246,27 +246,6 @@ else
     fi
 
     #
-    # Create New BAM Index
-    #
-
-    # State Check - Run Block if it Has Not Already Been Executed Successfully
-    state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
-    if !(has_state $state); then
-
-        format_status "Indexing BAM Output"
-        # Define Command
-        call="samtools index $paramDir/merged/$fileprefix.$subset.$condition.$experiment.$parameters.sorted.bam"
-        # Print & Call
-        format_status "Command:\n$call"
-        eval $call
-
-        # Update State on Exit
-        put_state $? $state
-        format_status "BAM Indexing Complete"
-
-    fi
-
-    #
     # Mark Duplicates
     #
 
@@ -274,7 +253,7 @@ else
     if $pass; then 
 
         # State Check - Run Block if it Has Not Already Been Executed Successfully
-        state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+        state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:2"
         if !(has_state $state); then
 
             format_status "Passing MarkDuplicates"
@@ -286,6 +265,27 @@ else
 
             put_state $? $state
             format_status "Mark Duplicates Pass Complete"
+
+        fi
+
+        #
+        # Create New BAM Index
+        #
+
+        # State Check - Run Block if it Has Not Already Been Executed Successfully
+        state="$fileprefix.$subset.$condition.$experiment.$parameters:MARKDUPLICATES:3"
+        if !(has_state $state); then
+
+            format_status "Indexing BAM Output"
+            # Define Command
+            call="samtools index $paramDir/markdup/$fileprefix.$subset.$condition.$experiment.$parameters.bam"
+            # Print & Call
+            format_status "Command:\n$call"
+            eval $call
+
+            # Update State on Exit
+            put_state $? $state
+            format_status "BAM Indexing Complete"
 
         fi
 
