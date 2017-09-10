@@ -49,13 +49,13 @@ for i in "$@"
         ;;
 
         # Germline Tag
-    	-g=*|--germline=*)
-    	germline="${i#*=}"
+    	-N=*|--normal=*)
+    	normal="${i#*=}"
     	shift
     	;;
 
         # Somatic Tag
-    	-t=*|--tumor=*)
+    	-T=*|--tumor=*)
     	tumor="${i#*=}"
     	shift
     	;;
@@ -146,8 +146,8 @@ Experiment          = $experiment
 Parameter Set       = $parameters
 Recalibration Model = $qualitymodel
 Contamination       = $contamination
-Germline Tag        = $germline
-Somatic Tag         = $tumor
+Normal File Tag     = $normal
+Tumor File Tag      = $tumor
 Memory              = $memory
 Cores               = $ncores
 Max Memory          = $maxMemory
@@ -191,7 +191,7 @@ if $contamination; then
         --precision 0.001 \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I:eval $recalDir/$fileprefix.$subset.$tumor.$experiment.$parameters.$qualitymodel.bam \
-        -I:genotype $recalDir/$fileprefix.$subset.$germline.$experiment.$parameters.$qualitymodel.bam \
+        -I:genotype $recalDir/$fileprefix.$subset.$normal.$experiment.$parameters.$qualitymodel.bam \
         -pf $PIPELINE_REF/hg19_population_stratified_af_hapmap_3.3.cleaned.vcf \
         -isr INTERSECTION \
         --population ALL \
@@ -230,7 +230,7 @@ if $contamination; then
         -jar $GATK -T MuTect2 \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I:tumor $recalDir/$fileprefix.$subset.$tumor.$experiment.$parameters.$qualitymodel.bam \
-        -I:normal $recalDir/$fileprefix.$subset.$germline.$experiment.$parameters.$qualitymodel.bam \
+        -I:normal $recalDir/$fileprefix.$subset.$normal.$experiment.$parameters.$qualitymodel.bam \
         --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
@@ -268,7 +268,7 @@ else
         -jar $GATK -T MuTect2 \
         -R $PIPELINE_REF/Homo_sapiens_assembly19.fasta \
         -I:tumor $recalDir/$fileprefix.$subset.$tumor.$experiment.$parameters.$qualitymodel.bam \
-        -I:normal $recalDir/$fileprefix.$subset.$germline.$experiment.$parameters.$qualitymodel.bam \
+        -I:normal $recalDir/$fileprefix.$subset.$normal.$experiment.$parameters.$qualitymodel.bam \
         --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
