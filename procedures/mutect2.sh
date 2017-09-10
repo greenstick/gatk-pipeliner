@@ -218,7 +218,7 @@ if $contamination; then
     state="$fileprefix.$subset.$experiment.$parameters.$qualitymodel:MUTECT2:2"
     if !(has_state $state); then
 
-        # Get Contamination
+        # Get Contamination Fraction
         contaminationPercent=$(awk -F '\t' 'NR >=2 {print $4}'  $recalDir/logs/contest/cont_est_recal_$experiment.txt)
         contamination=$(python -c "print($contaminationPercent/100.0)")
         format_status "Proportion Contamination: $contamination"
@@ -272,7 +272,7 @@ else
         --dbsnp $PIPELINE_REF/dbsnp_138.hg19_modified.vcf \
         --cosmic $PIPELINE_REF/b37_cosmic_v54_120711_modified.vcf \
         --tumor_lod 10.0 \
-        --contamination_fraction_to_filter $contamination \
+        --contamination_fraction_to_filter 0.0 \
         -o $recalDir/logs/mutect2/$fileprefix.$subset.$experiment.$parameters.$qualitymodel.raw.snps.indels.vcf \
         --log_to_file $recalDir/logs/mutect2/log_mutect2_$experiment.txt \
         --graphOutput $recalDir/logs/mutect2/assembly_graph_info.txt \
