@@ -8,19 +8,19 @@ Rather than a pipeline, this is more of a non-scalable pipeline management syste
 
 * To maintain a consistent API for calling disparate bioinformatics tools (e.g. GATK, Picard, Samtools)
 * To enforce requirements for the experimental design of the thesis
-* To enable complete logging of processes
+* To enable complete logging and auditing of pipeline processes
 
-Given the scoping constraints within the shell environment, the system relies almost entirely on namespacing for scope management. Further, if logging procedures (e.g. variant calling with Mutect2) is required, each module must be called within the context of a TMUX session that has been initialized within the scope of the systems' `$PIPELINE_HOME` directory. 
+Given the scoping constraints within the shell environment, the system relies almost entirely on namespacing for scope management. Further, if logging procedures (e.g. variant calling with Mutect2) are required, each module must be called within the context of a TMUX session that has been initialized within the scope of the systems' `$PIPELINE_HOME` directory. 
 
-As of yet, the system does not:
+Note, the system does not:
 
 * Guarantee each module will succeed in its computation
 * Expose system-level variables for supplemental data files used in processing (i.e. reference genomes, call sets, etc.)
 * Expose all parameters of the algorithms being run
 
-Regarding the last point, unexposed parameters are hard-coded into the scripts and can be updated to a user's needs. For example, the reference genome used is hard coded into all scripts (gross, I know). 
+Regarding the last point, unexposed parameters are hard-coded into the scripts and can be updated to as needed. For example, the HG19 reference genome used is hard coded into all scripts (gross, I know). 
 
-Finally, there is a basic state management system that, while imperfect, helps to reduce the opportunity cost of script failures on the cluster. The state management system makes heavy use of error codes from the software modules. This is a big caveat – if the software module does not pass relevant error codes, the state management system may indicate a procedure has run when it actually failed. 
+Finally, there is a basic state management system that, while imperfect, helps to reduce the opportunity cost of script failures on the cluster – HPC systems with distributed file systems are sometimes unstable, after all. The state management system makes heavy use of error codes from the software modules. This is a big caveat – if the software module does not pass relevant error codes, the state management system may indicate a procedure has run when it actually failed. If you intend to include novel modules into your pipelines managed by this tool, be mindful of the error codes they return. 
 
 ## Installation
 
