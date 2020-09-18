@@ -1,6 +1,6 @@
 # GATK Pipeliner
 
-This is a system that was developed to run experimental conditions for my master's thesis. It is based on the GATK pipeline and designed to allow for the inclusion of arbitrary error modelling modules into GATK with the aim of benchmarking their performance (see the [greenstick/thesis-analyses](https://github.com/greenstick/thesis-analyses)) for one approach to doing that. If you're interested in using this, I would point you to a much more robust solution: [snakemake](https://snakemake.github.io/). 
+This is a system that was developed to run experimental conditions for my master's thesis. It is based on the GATK pipeline and designed to allow for the inclusion of arbitrary error modeling modules into GATK. The ultimate aim of this research (completedd circa 2017) was to benchmark the GATK pipeline with andd without the BQSR module for the specific use case of detecting minimal residual disease (MRD) burden in acute myeloid leukemia (AML) – see the [greenstick/thesis-analyses](https://github.com/greenstick/thesis-analyses)) for one approach to doing this kind of benchmarking. If you're interested in using this as a tool to generate bioinformatics pipelines, I would suggest that a much more robust solution is [snakemake](https://snakemake.github.io/). 
 
 ## Overview & Limitations
 
