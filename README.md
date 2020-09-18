@@ -1,6 +1,6 @@
-# Thesis Pipeline
+# GATK Pipeliner
 
-A system to run experimental conditions for my master's thesis. 
+This is a system that was developed to run experimental conditions for my master's thesis. It is based on the GATK pipeline and designed to allow for the inclusion of arbitrary error modelling modules into GATK with the aim of benchmarking their performance (see the [greenstick/thesis-analyses](https://github.com/greenstick/thesis-analyses)) for one approach to doing that. If you're interested in using this, I would point you to a much more robust solution: [snakemake](https://snakemake.github.io/). 
 
 ## Overview & Limitations
 
